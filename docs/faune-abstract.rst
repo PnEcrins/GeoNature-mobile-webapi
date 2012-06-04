@@ -7,7 +7,7 @@ Challenges
 
 * Tuiles embarquées sur SD en projection 2154
 * Architecture Javascript : Intégration Offline Storage ~ MVC ~ Forms ~ Carto
-* Synchro sans connexion Web ? (MTP ? Bluetooth? tethering ?)
+* Synchro sans connexion Web ? (fichiers avec MTP ? Bluetooth? tethering ?)
 
 .. warning ::
 
@@ -104,6 +104,11 @@ Objectif :
 
     Cloisonner une problématique, un challenge, dans un exemple simple afin de valider
     les choix technologiques.
+    
+    Le livrable doit être : un exemple simple qui marche (HTML statique, script, etc.),
+    et accompagné éventuellement d'un article de blog.
+    
+    Le code n'a pas forcément vocation à être réutilisé tel quel.
 
 
 Offline-storage
@@ -147,11 +152,26 @@ disque "z/x/y.jpg".
 Voir comment sont référencées les tuiles d'un WMS-C en EPSG:2154 (bbox?) et trouver 
 un moyen simple de les stocker sur disque/sqlite.
 
-Leaflet supporte les projections, tester le résultat.
+
+Leaflet Lambert (2154)
+----------------------
+
+Leaflet supporte les projections, tester son comportement avec 2154 pour la 
+saisie de géométries (leaflet version 0.4), la superposition avec des WMS etc.
 
 
-Transfert MTP
--------------
+Support SD
+----------
 
-Petite application Qt qui détecte la connection MTP et accède aux fichiers.
+* Tester la lecture sur support SD avec Phonegap
+* Tester l'écriture de fichiers JSON sur le support (utile si synchronisation avec MTP)
 
+Resources:
+
+* http://stackoverflow.com/questions/6967696/writing-and-reading-file-in-phonegap
+
+
+Transferts MTP
+--------------
+
+Petite application (Qt?) qui détecte la connection MTP et accède aux fichiers sur la partition.
