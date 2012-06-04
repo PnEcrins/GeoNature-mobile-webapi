@@ -8,6 +8,7 @@ Challenges
 * Tuiles embarquées sur SD en projection 2154
 * Architecture Javascript : Intégration Offline Storage ~ MVC ~ Forms ~ Carto
 * Synchro sans connexion Web ? (fichiers avec MTP ? Bluetooth? tethering ?)
+* Rotation de la carte JS
 
 .. warning ::
 
@@ -90,12 +91,15 @@ Leaflet
     +++ : léger
           simple à étendre
     --- : une seule projection par carte
+          ne gère pas la rotation
 
 OpenLayers
 
     +++ : client SIG ultra complet
     --- : très lourd
+          rotation ?
 
+Modestmaps ?
 
 Proofs-of-concept
 =================
