@@ -2,6 +2,9 @@
 Écrins Faune
 ############
 
+L'application Web de visualisation développée par Les Écrins. (Login: admin/admin, 
+`<http://dev.ecrins-parcnational.fr/faune/synthese>`_).
+
 Challenges
 ==========
 
