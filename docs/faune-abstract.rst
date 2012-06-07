@@ -20,14 +20,20 @@ Challenges
 Principes
 =========
 
-* Tuiles sur support SD
+* Tuiles sur support SD (éclatées sur disque)
+
 * Téléchargement données Geo/JSON
+  * sqlite pour les taxons (sauf si < ~10Mo JSON)
+  * GeoJSON pour les zones du parcs
+  * Versionné
+
 * Backend en charge de la préparation des données et récupèration des ajouts
 * Synchronisation par cable : transfert de fichier(s).
 
 Questions
 =========
 
+* Bluetooth autorisé ?
 * Modification des éléments saisis ?
 * Suppression des éléments saisis ?
 * Consultations de l'historique ?
@@ -38,6 +44,10 @@ Technologies
 
 Backoffice
 ----------
+
+En charge de :
+* Préparer les fichiers à ut
+
 
 Django
 
@@ -103,6 +113,10 @@ OpenLayers
           rotation ?
 
 Modestmaps ?
+
+    --- : une seule couche
+    +++ : simple
+
 
 Proofs-of-concept
 =================
@@ -182,3 +196,8 @@ Transferts MTP
 --------------
 
 Petite application (Qt?) qui détecte la connection MTP et accède aux fichiers sur la partition.
+
+Rotation de la carte
+--------------------
+
+* http://leaflet.uservoice.com/forums/150880-ideas-and-suggestions-for-leaflet/suggestions/2616020-map-rotation
