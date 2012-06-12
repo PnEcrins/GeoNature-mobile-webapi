@@ -5,11 +5,17 @@
 L'application Web de visualisation développée par Les Écrins. (Login: admin/admin, 
 `<http://dev.ecrins-parcnational.fr/faune/synthese>`_).
 
+
+Intérêt de l'application mobile :
+- voir le résultat immédiatement lors de la synchro (dans chaîne papier actuelle, 
+  il faut attendre la saisie pendant des semaines)
+
+
 Challenges
 ==========
 
 * Tuiles embarquées sur SD en projection 2154
-* Architecture Javascript : Intégration Offline Storage ~ MVC ~ Forms ~ Carto
+* Architecture Javascript : Intégration Offline Storage ~ MVC ~ Workflows ~ Forms ~ Carto
 * Synchro sans connexion Web ? (fichiers avec MTP ? Bluetooth? tethering ?)
 * Rotation de la carte JS
 
@@ -33,20 +39,26 @@ Principes
 Questions
 =========
 
+* Recettes utilisateurs à chaque sprint ?
+
 * Bluetooth autorisé ?
 * Modification des éléments saisis ?
 * Suppression des éléments saisis ?
 * Consultations de l'historique ?
 
+Gil doit vous remettre un PDA avec l'application Flore actuelle pour
+s'en inspirer (ou au moins prendre les contraintes en compte dans le dév
+de l'appli faune)
+
 Technologies
 ============
-
 
 Backoffice
 ----------
 
 En charge de :
-* Préparer les fichiers à ut
+* Préparer les fichiers à utiliser en offline
+* On peut faire des exports Excel, QGIS
 
 
 Django
@@ -200,4 +212,5 @@ Petite application (Qt?) qui détecte la connection MTP et accède aux fichiers 
 Rotation de la carte
 --------------------
 
+* https://github.com/CloudMade/Leaflet/issues/268
 * http://leaflet.uservoice.com/forums/150880-ideas-and-suggestions-for-leaflet/suggestions/2616020-map-rotation
