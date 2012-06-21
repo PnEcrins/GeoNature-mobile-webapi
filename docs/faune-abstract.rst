@@ -76,6 +76,10 @@ Pour chaque contact avec un taxon, on renseigne le dénombrement pour chaque cri
            |                        
            +------1 Groupe
 
+Données
+=======
+
+c.f. document `infos_serveur.odt`
 
 Questions
 =========
