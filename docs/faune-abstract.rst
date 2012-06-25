@@ -140,6 +140,7 @@ MVC Forms
 * Ember.js ?
 * PureMVC ?
 
+
 Cartographie
 ------------
 
@@ -158,3 +159,14 @@ Modestmaps ?
 
     --- : une seule couche
     +++ : simple
+
+Synchronisation
+---------------
+
+* client riche (Qt ?) pour assurer la synchronisation via MTP
+    +++ :   permet une synchronisation locale hors connexion
+    --- :   développement spécifique par plateforme (Windows dans un premier temps)
+            complexe ?
+* mise en place d'un cloud pour assurer la synchronisation (voir et étudier http://code.google.com/p/openmobster/)
+    +++ :   solution générique et extensible
+    --- :   accès à un réseau (wifi) pour assurer la connexion avec le serveur
