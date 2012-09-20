@@ -6,10 +6,11 @@ from django.utils import simplejson
 from django.utils.datastructures import SortedDict
 from django.conf import settings
 
-from faune.utils import sync_db, query_db
+from faune.utils import sync_db, query_db, commit_transaction
 
 import json
 import time
+import datetime
 
 @csrf_exempt
 def import_data(request):
@@ -17,55 +18,104 @@ def import_data(request):
     Import data from json to DataBase
     """
 
+    response_content = []
+        
     params = request.POST
     data = params['data']
     
     if not check_token(request):
-        print "You're not allowed to retreive information from this webservice"
-        return HttpResponse()
+        response_content.append({
+            'status' : "You're not allowed to use this webservice"
+        })
+        response = HttpResponse()
+        simplejson.dump(response_content, response,
+                    ensure_ascii=False, separators=(',', ':'))                    
+        return response
 
     json_data = simplejson.loads(data)
         
-        
-    # TODO: insert TABLE_SHEET, then TABLE_STATEMENT, then TABLE_SHEET_ROLE
-    
-    # Insert into TABLE_SHEET
-    objects = []
-    new_feature = {}
-    new_feature['table_name'] = settings.TABLE_SHEET
-    new_feature['supprime'] = 'False'
-    #new_feature['fid'] = feature.get('fid')
-    #objects[key] = new_feature    
-    objects.append(new_feature)
-    sync_db(objects)
-    
-    #for key, feature in enumerate(objects): 
-    #    
-    #    table_name = feature.get('table_name')
-    
-    # Insert into TABLE_STATEMENT
-    
-    # Insert into TABLE_SHEET_ROLE
-    
-    print json_data['taxon']['id']
-    for key in json_data['taxon']['counting']:
-        print key
-        print json_data['taxon']['counting'][key]
-    for key in json_data['taxon']['observation']:
-        print key
-        print json_data['taxon']['observation'][key]
-    for key in json_data['taxon']['mortality']:
-        print key
-        print json_data['taxon']['mortality'][key]
-    print json_data['taxon']['comment']
-    
-    # TODO: ne pas oublier de remplir certains champs (par exemple: supprimer = false) automatiquement
-    taxa
-    response_content = []
-    response_content.append({
-        'status' : 'import'
-    })
+    try:
+        # Insert into TABLE_SHEET
+        objects = []
+        new_feature = {}
+        json_to_db = settings.FAUNE_TABLE_INFOS.get(settings.TABLE_SHEET).get('json_to_db_columns')
+        new_feature[settings.FAUNE_TABLE_INFOS.get(settings.TABLE_SHEET).get('id_col')] = json_data['id']
+        new_feature['table_name'] = settings.TABLE_SHEET
+        new_feature[json_to_db.get('dateobs')] = json_data['dateobs']
+        new_feature[json_to_db.get('initial_input')] = json_data['initial_input']
+        new_feature['supprime'] = 'False'
+        new_feature['id_protocole']= 140 # pour contact faune TODO: recuperer ces ID en dynamique, 142 pour mortalite
+        new_feature['id_organisme']= 2  # (parc national des ecrins = fk de utilisateurs.bib_organismes)
+        new_feature['id_lot'] = 4 # 4 pour contact faune ; 15 pour mortalite
 
+        # we need to transform into 2154
+        new_feature[json_to_db.get('geometry')] = "transform(ST_GeomFromText('POINT(%s %s)', 4326),2154)" % (json_data['geolocation']['longitude'], json_data['geolocation']['latitude'])
+        new_feature[json_to_db.get('accuracy')] = json_data['geolocation']['accuracy']
+        new_feature[json_to_db.get('altitude')] = json_data['geolocation']['altitude']
+        objects.append(new_feature)
+        cursor = sync_db(objects, False)
+        #id_fiche = cursor.fetchone()[0]
+
+        # Insert into TABLE_STATEMENT
+        objects = []
+        new_feature = {}
+        json_to_db = settings.FAUNE_TABLE_INFOS.get(settings.TABLE_STATEMENT).get('json_to_db_columns')
+        new_feature['table_name'] = settings.TABLE_STATEMENT
+        new_feature['supprime'] = 'False'
+        new_feature[settings.FAUNE_TABLE_INFOS.get(settings.TABLE_STATEMENT).get('id_col')] = json_data['id']
+        new_feature[settings.FAUNE_TABLE_INFOS.get(settings.TABLE_SHEET).get('id_col')] = json_data['id']
+        new_feature[json_to_db.get('id')] = json_data['taxon']['id']
+        new_feature[json_to_db.get('name_entered')] = json_data['taxon']['name_entered']
+        new_feature[json_to_db.get('adult_male')] = json_data['taxon']['counting']['adult_male']
+        new_feature[json_to_db.get('adult_female')] = json_data['taxon']['counting']['adult_female']
+        new_feature[json_to_db.get('adult')] = json_data['taxon']['counting']['adult']
+        new_feature[json_to_db.get('not_adult')] = json_data['taxon']['counting']['not_adult']
+        new_feature[json_to_db.get('young')] = json_data['taxon']['counting']['young']
+        new_feature[json_to_db.get('yearling')] = json_data['taxon']['counting']['yearling']
+        new_feature[json_to_db.get('sex_age_unspecified')] = json_data['taxon']['counting']['sex_age_unspecified']
+        new_feature[json_to_db.get('criterion')] = json_data['taxon']['observation']['criterion']
+
+        objects.append(new_feature)
+        cursor = sync_db(objects, False)
+        
+        # Insert into TABLE_SHEET_ROLE
+        objects = []
+        new_feature = {}
+        new_feature['table_name'] = settings.TABLE_SHEET_ROLE
+            
+        #new_feature['id_cf'] = id_fiche
+        new_feature['id_cf'] = json_data['id']
+        new_feature['id_role'] = json_data['observer_id']
+        objects.append(new_feature)
+        sync_db(objects, False)
+
+        # Commit transaction
+        commit_transaction();
+
+        response_content.append({
+            #'status' : "Import done - statement id = %s, sheet id = %s" % (id_releve, id_fiche)
+            'status' : "Import done - statement id = %s, sheet id = %s" % (json_data['id'], json_data['id'])
+        })
+            
+    except:
+        #  Insert rejected JSON into synchro_table (text format)
+        now = datetime.datetime.now()
+        objects = []
+        new_feature = {}
+        new_feature['table_name'] = settings.TABLE_FAILED_JSON
+        new_feature['date_import'] = "%d-%d-%d %d:%d:%d" % (now.year, now.month, now.day, now.hour, now.minute, now.second)
+        new_feature['json'] = data
+        objects.append(new_feature)
+        cursor = sync_db(objects, False)
+        id_failed = cursor.fetchone()[0]
+
+        # Commit transaction
+        commit_transaction();
+        
+        response_content.append({
+            'status' : "Bad json or data (%d)" % id_failed
+        })
+        
     response = HttpResponse()
     simplejson.dump(response_content, response,
                 ensure_ascii=False, separators=(',', ':'))
@@ -120,8 +170,13 @@ def export_data(request, table_name):
     Export table_name data from DataBase to JSON
     """
     if not check_token(request):
-        print "You're not allowed to retreive information from this webservice"
-        return HttpResponse()
+        response_content.append({
+            'status' : "You're not allowed to retreive information from this webservice"
+        })
+        response = HttpResponse()
+        simplejson.dump(response_content, response,
+                    ensure_ascii=False, separators=(',', ':'))                    
+        return response
     
     # Get infos 
     response_objects = []

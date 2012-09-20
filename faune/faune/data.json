@@ -1,33 +1,46 @@
 {
-	"taxon":
-	{
-		"id": 1,
-		"counting":
-		{
-			"adult_male": 1,
-			"adult_female": 0,
-			"adult": 0,
-			"not_adult": 0,
-			"sex_age_unspecified": 0
-		},
-		"observation":
-		{
-			"mating": true,
-			"pregnant_female": false,
-			"lactating_female": false,
-			"occupied burrow": false,
-			"hibernation": false
-		},
-		"mortality":
-		{
-			"adult_male": 1,
-			"adult_female": 0,
-			"adult": 0,
-			"not_adult": 0,
-			"sex_age_unspecified": 0,
-			"sample": true,
-			"comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-		},
-		"comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-	}
+    "id": 401382208,
+    "observer_id" : 1,
+    "dateobs": "2012/09/19",
+    "initial_input" : "pda",
+    "geolocation":
+    {
+        "longitude": -1.51,
+        "latitude": 47.24,
+        "accuracy": 22,
+        "altitude": 45,
+        "altitudeAccuracy": 2
+    },
+    "taxon":
+    {
+        "id": 1,
+        "name_entered": "Toté d'asie",
+        "counting":
+        {
+            "adult_male": 1,
+            "adult_female": 0,
+            "adult": 0,
+            "not_adult": 0,
+            "young": 0,
+            "yearling": 0,
+            "sex_age_unspecified": 0
+        },
+        "observation":
+        {
+            "criterion": 1
+        },
+        "mortality":
+        {
+            "adult_male": 1,
+            "adult_female": 0,
+            "adult": 0,
+            "not_adult": 0,
+            "young": 0,
+            "yearling": 0,
+            "sex_age_unspecified": 0,
+            "sample": true,
+            "comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        },
+        "comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    }
 }

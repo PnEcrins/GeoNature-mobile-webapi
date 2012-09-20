@@ -15,6 +15,13 @@ class QueryBuildError(Exception):
 class SynchronizeError(Exception):
     pass
 
+    
+def commit_transaction():
+    """
+    Commit the transaction
+    """
+    transaction.commit_unless_managed(using=settings.DATABASE_ID)
+    logger.debug(_("Faune SQL: COMMIT"))
 
 def query_db(sqlquery, commit=False):
     """
@@ -28,10 +35,10 @@ def query_db(sqlquery, commit=False):
     cursor = connections[settings.DATABASE_ID].cursor()
     # Execute SQL
     logger.debug(_("Faune SQL: %s") % sqlquery)
-    cursor.execute(sqlquery)
-    if commit:
-        logger.debug(_("Faune SQL: COMMIT"))
-        transaction.commit_unless_managed(using=settings.DATABASE_ID)
+    cursor.execute(sqlquery)    
+    #if commit:
+    #    logger.debug(_("Faune SQL: COMMIT"))
+    #    transaction.commit_unless_managed(using=settings.DATABASE_ID)
     return cursor
 
 
@@ -48,11 +55,12 @@ def sync_db(objects, atomic=True):
     try:
         for feature in objects:
             q = build_sync_query(feature)
-            query_db(q, commit=atomic)
-        if not atomic:
-            if len(objects) > 0:
-                logger.debug(_("Faune SQL: COMMIT %s operation(s)") % len(objects))
-                transaction.commit_unless_managed(using=settings.DATABASE_ID)
+            cursor = query_db(q, commit=atomic)
+        #if not atomic:
+        #    if len(objects) > 0:
+        #        logger.debug(_("Faune SQL: COMMIT %s operation(s)") % len(objects))
+        #        transaction.commit_unless_managed(using=settings.DATABASE_ID)
+        return cursor
     except IntegrityError, e:
         logger.error(e)
         logger.info(_("ROLLBACK"))
@@ -80,16 +88,6 @@ def build_sync_query(datafields, table_name=None):
     # Get column ID for the current table
     id_col = settings.FAUNE_TABLE_INFOS.get(table_name).get('id_col')
 
-    # Remove the column ID if present in the datafields
-    #obj_id = None
-    #if id_col in datafields:
-    #    obj_id = datafields.pop(id_col)
-    #if 'fid' in datafields:
-    #    obj_id = datafields.pop('fid')
-    # If table is specified in object id, remove it !
-    #if obj_id and obj_id.startswith(table_name + '.'):
-    #    obj_id = obj_id.replace(table_name + '.', '')
-
     updates = []
     for field, value in datafields.items():
         if value != None:
@@ -103,31 +101,17 @@ def build_sync_query(datafields, table_name=None):
 
     sql_string = ""
 
-    #if obj_id is None:
-    # We have to retreive a new ID from the table
-    # TODO
-    newid = gen_id()
-    updates.append((id_col, newid))
-    #else:
-    #    # If not quoted, quote !
-    #    if obj_id.replace("'", '') == obj_id:
-    #        obj_id = "'%s'" % obj_id
-    #    updates.append((id_col, obj_id))
+    # Retreive a new ID from the table
+    id_col_string = ""
+    if id_col :
+        id_col_string = " RETURNING %s" % id_col
     
-    sql_string = u"INSERT INTO %s (%s) VALUES (%s)" % (table_name, 
+    sql_string = u"INSERT INTO %s (%s) VALUES (%s) %s" % (table_name, 
                                                 ', '.join(map(itemgetter(0), updates)),
-                                                ', '.join(map(itemgetter(1), updates)))
+                                                ', '.join(map(itemgetter(1), updates)),
+                                                id_col_string)
     # Manage null values
     sql_string = sql_string.replace("'NULL_VALUE'","Null")
     sql_string = sql_string.replace("NULL_VALUE","Null")
     return sql_string
 
-
-def gen_id():
-    """
-    Generate a new ID base
-    Returns the newid.
-    
-    """
-    newid = "'%s'" % (uuid.uuid4())
-    return newid
