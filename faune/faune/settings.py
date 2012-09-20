@@ -139,18 +139,34 @@ LOGGING = {
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
+            #'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
     },
     'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False, # this tells logger to send logging message
+                                # to its parent (will send if set to True)
+        },        
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['console', 'mail_admins'],
             'level': 'ERROR',
             'propagate': True,
         },
+        'django': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        }        
     }
 }
+
 
 TOKEN = "666"
 
@@ -159,18 +175,23 @@ TABLE_FAMILY = 'taxonomie.bib_familles'
 TABLE_UNITY = 'layers.l_unites_geo'
 TABLE_TAXON_UNITY = 'contactfaune.cor_unite_taxon'
 TABLE_CRITERION = 'contactfaune.bib_criteres_cf'
+TABLE_USER = 'utilisateurs.t_roles'
 TABLE_STATEMENT = 'contactfaune.t_releves_cf'
 TABLE_SHEET = 'contactfaune.t_fiches_cf'
 TABLE_SHEET_ROLE = 'contactfaune.cor_role_fiche_cf'
-TABLE_USER = 'utilisateurs.t_roles'
+TABLE_FAILED_JSON = 'synchronomade.erreurs_cf'
 
 FAUNE_TABLE_INFOS =  {
+    TABLE_FAILED_JSON: {
+        'id_col': 'id',
+        'select_col': 'id,json_date_import'
+    },
     TABLE_SHEET_ROLE: {
-        'id_col': 'id_role',
+        #'id_col': 'id_role',
         'select_col': 'id_cf,id_role',
         'json_to_db_columns' : {
             'id_cf' : 'id_cf', 
-            'id_role' : 'id_role'    
+            'observer_id' : 'id_role'    
         }        
     },    
     TABLE_STATEMENT: {
@@ -185,9 +206,9 @@ FAUNE_TABLE_INFOS =  {
             'adult' : 'ai',
             'not_adult' : 'na',
             'sex_age_unspecified' : 'sai',
-            'jeune' : 'jeune',
+            'young' : 'jeune',
             'yearling' : 'yearling',
-            'nom_taxon_saisi' : 'nom_taxon_saisi',
+            'name_entered' : 'nom_taxon_saisi',
             'comment' : 'commentaire',
             'supprime' : 'supprime',
             'sample' : 'prelevement'    
@@ -197,15 +218,12 @@ FAUNE_TABLE_INFOS =  {
         'id_col': 'id_cf',
         'select_col': 'id_cf, dateobs, altitude_saisie, supprime, pdop, the_geom_2154, saisie_initiale, id_organisme, id_protocole, id_lot',
         'json_to_db_columns' : {
-            'date' : 'dateobs',
+            'dateobs' : 'dateobs',
             'altitude' : 'altitude_saisie',
             'supprime' : 'supprime',
-            'pdop' : 'pdop',
+            'accuracy' : 'pdop',
             'geometry' : 'the_geom_2154',
-            'saisie_initiale' : 'saisie_initiale',
-            'id_organisme' : 'id_organisme',
-            'id_protocole' : 'id_protocole',
-            'id_lot' : 'id_lot'        
+            'initial_input' : 'saisie_initiale'
         }        
     },
     TABLE_TAXON: {
