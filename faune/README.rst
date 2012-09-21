@@ -23,7 +23,7 @@ Then copy and extract the source archive :
 
     cd /path_to_webapi/faune/
     
-    sudo make install
+    make install
 
 
 Configuration
