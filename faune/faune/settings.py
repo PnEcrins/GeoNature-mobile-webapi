@@ -179,10 +179,15 @@ TABLE_USER = 'utilisateurs.t_roles'
 TABLE_STATEMENT = 'contactfaune.t_releves_cf'
 TABLE_SHEET = 'contactfaune.t_fiches_cf'
 TABLE_SHEET_ROLE = 'contactfaune.cor_role_fiche_cf'
-TABLE_FAILED_JSON = 'synchronomade.erreurs_cf'
+TABLE_FAILED_JSON_FAUNA = 'synchronomade.erreurs_cf'
+TABLE_FAILED_JSON_MORTALITY = 'synchronomade.erreurs_mortalite'
 
 FAUNE_TABLE_INFOS =  {
-    TABLE_FAILED_JSON: {
+    TABLE_FAILED_JSON_FAUNA: {
+        'id_col': 'id',
+        'select_col': 'id,json_date_import'
+    },
+    TABLE_FAILED_JSON_MORTALITY: {
         'id_col': 'id',
         'select_col': 'id,json_date_import'
     },
