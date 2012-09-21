@@ -44,6 +44,10 @@ Install wepapi
 
 Copy source code to $FAUNE_PROJECT/faune/
 
+Modify path in $FAUNE_PROJECT/faune/wsgi.py
+
+sys.path.append('/path_to_webapi/faune/')
+
 
 Configure apache vhost
 ----------------------
