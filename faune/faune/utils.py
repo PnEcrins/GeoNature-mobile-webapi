@@ -23,43 +23,34 @@ def commit_transaction():
     transaction.commit_unless_managed(using=settings.DATABASE_ID)
     logger.debug(_("Faune SQL: COMMIT"))
 
-def query_db(sqlquery, commit=False):
+def query_db(sqlquery):
     """
     Executes a single query on the Faune database defined in project settings.
     Returns a `cursor`
     
     sqlquery -- a SQL statement
-    commit -- whether to commit after running the query
     """
     # Connect to Faune DB
     cursor = connections[settings.DATABASE_ID].cursor()
     # Execute SQL
     logger.debug(_("Faune SQL: %s") % sqlquery)
     cursor.execute(sqlquery)    
-    #if commit:
-    #    logger.debug(_("Faune SQL: COMMIT"))
-    #    transaction.commit_unless_managed(using=settings.DATABASE_ID)
     return cursor
 
 
-def sync_db(objects, atomic=True):
+def sync_db(objects):
     """
     From a specified list of objects, executes equivalent insert or update
     statements on the gr@ce database.
     
     objects -- a list of dicts, as used in ``build_sync_query()``
-    atomic -- whether to commit between each query (Default: True)
     """
     logger.info(_("Synchronize %s objects") % len(objects))
     sid = transaction.savepoint()
     try:
         for feature in objects:
             q = build_sync_query(feature)
-            cursor = query_db(q, commit=atomic)
-        #if not atomic:
-        #    if len(objects) > 0:
-        #        logger.debug(_("Faune SQL: COMMIT %s operation(s)") % len(objects))
-        #        transaction.commit_unless_managed(using=settings.DATABASE_ID)
+            cursor = query_db(q)
         return cursor
     except IntegrityError, e:
         logger.error(e)
