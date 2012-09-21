@@ -46,7 +46,14 @@ Copy source code to $FAUNE_PROJECT/faune/
 
 Modify path in $FAUNE_PROJECT/faune/wsgi.py
 
-sys.path.append('/path_to_webapi/faune/')
+    sys.path.append('/path_to_webapi/faune/')
+
+Modify DB connection information in settings.py
+        'NAME': 'appli_faune',
+        'USER': 'gisuser',    
+        'PASSWORD': 'xxxx',   
+        'HOST': 'localhost',  
+        'PORT': '5432',       
 
 
 Configure apache vhost
