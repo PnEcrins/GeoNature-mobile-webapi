@@ -13,42 +13,26 @@ Requirements
 Installation
 ------------
 
-Once the OS is installed (basic installation, with OpenSSH server), copy and extract the source archive.
+Once the OS is installed (basic installation, with OpenSSH server), with the following packages :
 
-cd /path_to_webapi/faune/
-export FAUNE_PROJECT=`pwd`
+    sudo apt-get install -y python-virtualenv libapache2-mod-wsgi
 
-Set the Virtual env
--------------------
+Then copy and extract the source archive :
 
-cd $FAUNE_PROJECT
-virtualenv --no-site-packages .
+::
 
-Activate virtualenv
--------------------
-cd $FAUNE_PROJECT
-source $FAUNE_PROJECT/bin/activate
+    cd /path_to_webapi/faune/
+    
+    sudo make install
 
-Install django
+
+Configuration
 --------------
-cd $FAUNE_PROJECT
-# download Django : https://www.djangoproject.com/download/1.4.1/tarball/
-tar xzvf Django-1.4.1.tar.gz
-rm Django-1.4.1.tar.gz
-cd Django-1.4.1
-sudo python setup.py install
-easy_install psycopg2
-
-Install wepapi
---------------
-
-Copy source code to $FAUNE_PROJECT/faune/
-
-Modify path in $FAUNE_PROJECT/faune/wsgi.py
-
-    sys.path.append('/path_to_webapi/faune/')
 
 Modify DB connection information in settings.py
+
+::
+
         'NAME': 'appli_faune',
         'USER': 'gisuser',    
         'PASSWORD': 'xxxx',   
@@ -56,57 +40,48 @@ Modify DB connection information in settings.py
         'PORT': '5432',       
 
 
-Configure apache vhost
-----------------------
+Apache vhost
+------------
 
-sudo apt-get install libapache2-mod-wsgi
+Copy the virtual host example :
 
-Create a new file :
+::
 
-vi /etc/apache2/sites-available/faune
+    sudo cp faune/apache.vhost.sample /etc/apache2/sites-available/faune
 
-containing :
 
-    WSGIScriptAlias /faune /path_to_webapi/faune/faune/wsgi.py
-    WSGIPythonPath /path_to_webapi/faune/faune/lib/python2.7/site-packages
-    <Directory /path_to_webapi/faune/>
-        <Files wsgi.py>
-            Order deny,allow
-            Allow from all
-        </Files>
-    </Directory>
+Edit it and replace /path_to_webapi/faune/ by the correct path.
 
-Replace /path_to_webapi/faune/ by the correct path.
 
-Then, create a link :
+Activate it and restart apache :
 
-    sudo ln -s /etc/apache2/sites-available/faune /etc/apache2/sites-enabled/faune
-
-And restart apache :
-
+    sudo a2ensite faune
     sudo apache2ctl restart
 
 
-Webapi is now available on http://localhost/faune/.
+Web API is now available on http://server/faune/.
 
-URLs:
------
+
+=====
+USAGE
+=====
 
 Export data:
-http://localhost/faune/export/family
-http://localhost/faune/export/taxon
-http://localhost/faune/export/taxon_unity
-http://localhost/faune/export/criterion
-http://localhost/faune/export/unity
-http://localhost/faune/export/user
 
-POST parameter: 
-    token
+    http://server/faune/export/family
+    http://server/faune/export/taxon
+    http://server/faune/export/taxon_unity
+    http://server/faune/export/criterion
+    http://server/faune/export/unity
+    http://server/faune/export/user
+
+POST parameter (defined in settings.py)
 
 Import data:
-http://localhost/faune/import_data
 
-POST parameter: 
+    http://localhost/faune/import_data
+
+POST parameter:
     token
     data (json data for importing)
 
