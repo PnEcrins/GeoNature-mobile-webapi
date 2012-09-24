@@ -16,6 +16,7 @@ setup(
     install_requires = [
         'django == 1.4.1',  # pinned by buildout
         'psycopg2 == 2.4.1',
+        'easydict == 1.4',
     ],
     tests_requires = [],
     packages=find_packages(),
