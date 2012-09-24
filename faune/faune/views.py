@@ -9,7 +9,8 @@ from django.utils.translation import ugettext as _
 
 from faune.utils import sync_db, query_db, commit_transaction
 
-import json
+from easydict import EasyDict
+
 import time
 import datetime
 
@@ -43,6 +44,8 @@ def import_data(request):
         return response
 
     json_data = simplejson.loads(data)
+
+    d = EasyDict(json_data)
         
     try:
         # Insert into TABLE_SHEET
@@ -51,8 +54,8 @@ def import_data(request):
         json_to_db = settings.FAUNE_TABLE_INFOS.get(settings.TABLE_SHEET).get('json_to_db_columns')
         new_feature[settings.FAUNE_TABLE_INFOS.get(settings.TABLE_SHEET).get('id_col')] = json_data['id']
         new_feature['table_name'] = settings.TABLE_SHEET
-        new_feature[json_to_db.get('dateobs')] = json_data['dateobs']
-        new_feature[json_to_db.get('initial_input')] = json_data['initial_input']
+        new_feature[json_to_db.get('dateobs')] = d.dateobs
+        new_feature[json_to_db.get('initial_input')] = d.initial_input
         new_feature['supprime'] = 'False'
         new_feature['id_organisme']= 2  # (parc national des ecrins = fk de utilisateurs.bib_organismes)
         if json_data['input_type'] == 'fauna':
@@ -63,9 +66,9 @@ def import_data(request):
             new_feature['id_lot'] = 15 # mortality
 
         # we need to transform into 2154
-        new_feature[json_to_db.get('geometry')] = "transform(ST_GeomFromText('POINT(%s %s)', 4326),2154)" % (json_data['geolocation']['longitude'], json_data['geolocation']['latitude'])
-        new_feature[json_to_db.get('accuracy')] = json_data['geolocation']['accuracy']
-        new_feature[json_to_db.get('altitude')] = json_data['geolocation']['altitude']
+        new_feature[json_to_db.get('geometry')] = "transform(ST_GeomFromText('POINT(%s %s)', 4326),2154)" % (d.geolocation.longitude, d.geolocation.latitude)
+        new_feature[json_to_db.get('accuracy')] = d.geolocation.accuracy
+        new_feature[json_to_db.get('altitude')] = d.geolocation.altitude
         objects.append(new_feature)
         cursor = sync_db(objects)
         #id_fiche = cursor.fetchone()[0]
@@ -76,28 +79,30 @@ def import_data(request):
         json_to_db = settings.FAUNE_TABLE_INFOS.get(settings.TABLE_STATEMENT).get('json_to_db_columns')
         new_feature['table_name'] = settings.TABLE_STATEMENT
         new_feature['supprime'] = 'False'
-        new_feature[settings.FAUNE_TABLE_INFOS.get(settings.TABLE_STATEMENT).get('id_col')] = json_data['id']
-        new_feature[settings.FAUNE_TABLE_INFOS.get(settings.TABLE_SHEET).get('id_col')] = json_data['id']
-        new_feature[json_to_db.get('id')] = json_data['taxon']['id']
-        new_feature[json_to_db.get('name_entered')] = json_data['taxon']['name_entered']
+        new_feature[settings.FAUNE_TABLE_INFOS.get(settings.TABLE_STATEMENT).get('id_col')] = d.id
+        new_feature[settings.FAUNE_TABLE_INFOS.get(settings.TABLE_SHEET).get('id_col')] = d.id
+        new_feature[json_to_db.get('id')] = d.taxon.id
+        new_feature[json_to_db.get('name_entered')] = d.taxon.name_entered
         if json_data['input_type'] == 'fauna':
-            new_feature[json_to_db.get('adult_male')] = json_data['taxon']['counting']['adult_male']
-            new_feature[json_to_db.get('adult_female')] = json_data['taxon']['counting']['adult_female']
-            new_feature[json_to_db.get('adult')] = json_data['taxon']['counting']['adult']
-            new_feature[json_to_db.get('not_adult')] = json_data['taxon']['counting']['not_adult']
-            new_feature[json_to_db.get('young')] = json_data['taxon']['counting']['young']
-            new_feature[json_to_db.get('yearling')] = json_data['taxon']['counting']['yearling']
-            new_feature[json_to_db.get('sex_age_unspecified')] = json_data['taxon']['counting']['sex_age_unspecified']
-            new_feature[json_to_db.get('criterion')] = json_data['taxon']['observation']['criterion']
+            new_feature[json_to_db.get('adult_male')] = d.taxon.counting.adult_male
+            new_feature[json_to_db.get('adult_female')] = d.taxon.counting.adult_female
+            new_feature[json_to_db.get('adult')] = d.taxon.counting.adult
+            new_feature[json_to_db.get('not_adult')] = d.taxon.counting.not_adult
+            new_feature[json_to_db.get('young')] = d.taxon.counting.young
+            new_feature[json_to_db.get('yearling')] = d.taxon.counting.yearling
+            new_feature[json_to_db.get('sex_age_unspecified')] = d.taxon.counting.sex_age_unspecified
+            new_feature[json_to_db.get('criterion')] = d.taxon.observation.criterion
+            new_feature[json_to_db.get('comment')] = d.taxon.comment
         else :
-            new_feature[json_to_db.get('adult_male')] = json_data['taxon']['mortality']['adult_male']
-            new_feature[json_to_db.get('adult_female')] = json_data['taxon']['mortality']['adult_female']
-            new_feature[json_to_db.get('adult')] = json_data['taxon']['mortality']['adult']
-            new_feature[json_to_db.get('not_adult')] = json_data['taxon']['mortality']['not_adult']
-            new_feature[json_to_db.get('young')] = json_data['taxon']['mortality']['young']
-            new_feature[json_to_db.get('yearling')] = json_data['taxon']['mortality']['yearling']
-            new_feature[json_to_db.get('sex_age_unspecified')] = json_data['taxon']['mortality']['sex_age_unspecified']
-            new_feature[json_to_db.get('sample')] = json_data['taxon']['mortality']['sample']
+            new_feature[json_to_db.get('adult_male')] = d.taxon.mortality.adult_male
+            new_feature[json_to_db.get('adult_female')] = d.taxon.mortality.adult_female
+            new_feature[json_to_db.get('adult')] = d.taxon.mortality.adult
+            new_feature[json_to_db.get('not_adult')] = d.taxon.mortality.not_adult
+            new_feature[json_to_db.get('young')] = d.taxon.mortality.young
+            new_feature[json_to_db.get('yearling')] = d.taxon.mortality.yearling
+            new_feature[json_to_db.get('sex_age_unspecified')] = d.taxon.mortality.sex_age_unspecified
+            new_feature[json_to_db.get('sample')] = d.taxon.mortality.sample
+            new_feature[json_to_db.get('comment')] = d.taxon.mortality.comment
         
         objects.append(new_feature)
         cursor = sync_db(objects)
