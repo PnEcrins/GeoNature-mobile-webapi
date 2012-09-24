@@ -40,6 +40,12 @@ Modify DB connection information in settings.py
         'PORT': '5432',       
 
 
+BDD
+---
+
+Execute the sql/reject_tables.sql on the database.
+It will create a new schema synchronomade with 2 reject tables.
+
 Apache vhost
 ------------
 
