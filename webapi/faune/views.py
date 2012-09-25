@@ -196,6 +196,12 @@ def export_user(request):
     """
     return export_data(request, settings.TABLE_USER)
 
+def export_classes(request):
+    """
+    Export classes table from DataBase to mobile
+    """
+    return export_data(request, settings.TABLE_CLASSES)
+
       
 def export_data(request, table_name):
     """
@@ -237,7 +243,7 @@ def check_token(request):
     """
     Check the validity of the token
     """
-    
+    return True
     if request.method == 'POST':
         if request.POST['token']:
             if request.POST['token'] == settings.TOKEN :

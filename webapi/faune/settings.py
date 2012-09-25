@@ -170,7 +170,7 @@ LOGGING = {
 
 TOKEN = "666"
 
-TABLE_TAXON = 'taxonomie.bib_taxons_faune_pne'
+TABLE_TAXON = 'contactfaune.v_nomade_taxons_cf'
 TABLE_FAMILY = 'taxonomie.bib_familles'
 TABLE_UNITY = 'layers.l_unites_geo'
 TABLE_TAXON_UNITY = 'contactfaune.cor_unite_taxon'
@@ -181,6 +181,9 @@ TABLE_SHEET = 'contactfaune.t_fiches_cf'
 TABLE_SHEET_ROLE = 'contactfaune.cor_role_fiche_cf'
 TABLE_FAILED_JSON_FAUNA = 'synchronomade.erreurs_cf'
 TABLE_FAILED_JSON_MORTALITY = 'synchronomade.erreurs_mortalite'
+TABLE_CLASSES = 'taxonomie.bib_classes'
+
+    
 
 FAUNE_TABLE_INFOS =  {
     TABLE_FAILED_JSON_FAUNA: {
@@ -234,14 +237,20 @@ FAUNE_TABLE_INFOS =  {
     TABLE_TAXON: {
         'id_col': 'id_taxon',
         'json_name': 'taxa',
-        'select_col': 'id_taxon, nom_latin, nom_francais, id_famille',
+        'select_col': 'id_taxon, cd_ref, nom_latin, nom_francais, id_classe, denombrement, patrimonial, message',
         'db_to_json_columns' : {
             'id_taxon' : 'id',
+            'cd_ref' : 'cd_ref',
             'nom_latin' : 'name',
             'nom_francais' : 'name_fr',
-            'id_famille' : 'family_id'
+            'id_classe' : 'class_id',
+            'denombrement' : 'number',
+            'patrimonial' : 'patrimonial',
+            'message' : 'message'
         }
     },
+    
+    
     TABLE_FAMILY: {
         'id_col': 'id_famille',
         'json_name': 'family',
@@ -296,5 +305,15 @@ FAUNE_TABLE_INFOS =  {
             'prenom_role' : 'first_name',
             'organisme' : 'organism'
         }        
-    }    
+    },
+    TABLE_CLASSES: {
+        'id_col': 'id_classe',
+        'json_name': 'classes',
+        'select_col': 'id_classe, nom_classe, desc_classe',
+        'db_to_json_columns' : {
+            'id_classe' : 'id',
+            'nom_classe' : 'name',
+            'desc_classe' : 'desc'
+        }        
+    }
 }

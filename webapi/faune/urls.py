@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 
-from faune.views import import_data, export_taxon, export_family, export_unity, export_taxon_unity, export_criterion, export_user
+from faune.views import import_data, export_taxon, export_family, export_unity, export_taxon_unity, export_criterion, export_user, export_classes
 
 urlpatterns = patterns('',    
     (r'^import/$', import_data),
@@ -10,4 +10,5 @@ urlpatterns = patterns('',
     (r'^export/taxon_unity/$', export_taxon_unity),
     (r'^export/criterion/$', export_criterion),
     (r'^export/user/$', export_user),
+    (r'^export/classes/$', export_classes),
 )
