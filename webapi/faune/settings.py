@@ -173,6 +173,7 @@ TOKEN = "666"
 TABLE_TAXON = 'contactfaune.v_nomade_taxons_cf'
 TABLE_FAMILY = 'taxonomie.bib_familles'
 TABLE_UNITY = 'layers.l_unites_geo'
+TABLE_UNITY_GEOJSON = 'layers.l_unites_geo'
 TABLE_TAXON_UNITY = 'contactfaune.cor_unite_taxon'
 TABLE_CRITERION = 'contactfaune.bib_criteres_cf'
 TABLE_USER = 'utilisateurs.t_roles'
@@ -263,12 +264,22 @@ FAUNE_TABLE_INFOS =  {
     TABLE_UNITY: {
         'id_col': 'id_unite_geo',
         'json_name': 'unity',
-        'select_col': 'id_unite_geo, code_insee, commune, astext(the_geom)',
+        'select_col': 'id_unite_geo, code_insee, commune',
+        'db_to_json_columns' : {
+            'id_unite_geo' : 'id',
+            'code_insee' : 'insee',
+            'commune' : 'city'
+        }        
+    },
+    TABLE_UNITY_GEOJSON: {
+        'id_col': 'id_unite_geo',
+        'json_name': 'unity_geojson',
+        'select_col': 'id_unite_geo, code_insee, commune, astext(transform(the_geom,4326)) as geom',
         'db_to_json_columns' : {
             'id_unite_geo' : 'id',
             'code_insee' : 'insee',
             'commune' : 'city',
-            'the_geom': 'geometry'
+            'geom': 'geometry'
         }        
     },
     TABLE_TAXON_UNITY: {

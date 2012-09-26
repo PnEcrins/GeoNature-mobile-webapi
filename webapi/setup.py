@@ -17,6 +17,8 @@ setup(
         'django == 1.4.1',  # pinned by buildout
         'psycopg2 == 2.4.1',
         'easydict == 1.4',
+        'shapely == 1.2.16',
+        'geojson == 1.0.1',
     ],
     tests_requires = [],
     packages=find_packages(),

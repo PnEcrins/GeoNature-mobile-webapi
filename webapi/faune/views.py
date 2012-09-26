@@ -11,6 +11,10 @@ from faune.utils import sync_db, query_db, commit_transaction
 
 from easydict import EasyDict
 
+from shapely.wkt import loads
+from geojson import dumps
+
+
 import time
 import datetime
 
@@ -202,7 +206,44 @@ def export_classes(request):
     """
     return export_data(request, settings.TABLE_CLASSES)
 
-      
+    
+def export_unity_geojson(request):
+    """
+    Export unity table from DataBase as geojson format
+    """
+    
+    response_content = []
+    if not check_token(request):
+        response_content.append({
+            'status' : _("You're not allowed to retreive information from this webservice")
+        })
+        response = HttpResponse()
+        simplejson.dump(response_content, response,
+                    ensure_ascii=False, separators=(',', ':'))                    
+        return response
+    
+    # Get infos 
+    table_name = settings.TABLE_UNITY_GEOJSON
+    response_objects = []
+    json_table_name = settings.FAUNE_TABLE_INFOS.get(table_name).get('json_name')
+    response_content = {"type": "FeatureCollection", "features": []}
+    
+    get_data_object_geojson(response_objects, table_name)
+
+    response_content["features"] = response_objects
+    
+    response = HttpResponse()
+    simplejson.dump(response_content, response,
+                ensure_ascii=False, separators=(',', ':'))
+                
+    # get a string with JSON encoding the list
+    #s = simplejson.dumps(response_content, ensure_ascii=True, encoding='utf-8')
+    #f = open('/home/sbe/tmp/'+table_name+".geojson", 'w')
+    #f.write(s + "\n")
+    #f.close()
+                
+    return response
+    
 def export_data(request, table_name):
     """
     Export table_name data from DataBase to JSON
@@ -231,10 +272,10 @@ def export_data(request, table_name):
                 ensure_ascii=False, separators=(',', ':'))
                 
     # get a string with JSON encoding the list
-    s = simplejson.dumps(response_content, ensure_ascii=True, encoding='utf-8')
-    f = open('/home/sbe/tmp/'+table_name+".json", 'w')
-    f.write(s + "\n")
-    f.close()
+    #s = simplejson.dumps(response_content, ensure_ascii=True, encoding='utf-8')
+    #f = open('/home/sbe/tmp/'+table_name+".json", 'w')
+    #f.write(s + "\n")
+    #f.close()
                 
     return response
 
@@ -265,7 +306,6 @@ def get_data_object(response_content, table_name):
     for row in cursor.fetchall():
         data = zip([ column[0] for column in cursor.description], row)
         feat_dict = SortedDict({})
-        fid = ""
         for attr in data:
             key = attr[0]
             val = attr[1]
@@ -278,4 +318,38 @@ def get_data_object(response_content, table_name):
 
         response_content.append(feat_dict)
 
+def get_data_object_geojson(response_content, table_name):
+    """
+    Perform a SELECT on the DB to retreive infos on associated object, geojson format
+    Param: table_name : name of the table
+    """
+
+    select_columns = settings.FAUNE_TABLE_INFOS.get(table_name).get('select_col')
+    select_string = "SELECT %s FROM %s" \
+                    % (select_columns, table_name)
+
+    cursor = query_db(select_string)
+    i = 0 # feature index
+    for row in cursor.fetchall():
+        data = zip([ column[0] for column in cursor.description], row)
+        feat_dict = SortedDict({"type": "Feature", "id" : i})
+        properties_dict = SortedDict({})
+        geometry_dict = {}
+        for attr in data:
+            key = attr[0]
+            val = attr[1]
+            if type(val).__name__ == "date":
+                val = val.strftime("%d/%m/%Y")
+            
+            if key == "geom":
+                geom = loads(val)
+                geometry_dict = dumps(geom)
+            else:
+                new_key = settings.FAUNE_TABLE_INFOS.get(table_name).get('db_to_json_columns').get(key)
+                properties_dict[new_key] = val
+                
+        feat_dict["properties"] = properties_dict
+        feat_dict["geometry"] = geometry_dict
+        i = i + 1
+        response_content.append(feat_dict)
     
