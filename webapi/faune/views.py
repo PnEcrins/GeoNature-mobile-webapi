@@ -243,7 +243,6 @@ def check_token(request):
     """
     Check the validity of the token
     """
-    return True
     if request.method == 'POST':
         if request.POST['token']:
             if request.POST['token'] == settings.TOKEN :
