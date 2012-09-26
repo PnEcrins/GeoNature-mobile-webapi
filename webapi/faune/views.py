@@ -334,7 +334,6 @@ def get_data_object_geojson(response_content, table_name):
         data = zip([ column[0] for column in cursor.description], row)
         feat_dict = SortedDict({"type": "Feature", "id" : i})
         properties_dict = SortedDict({})
-        geometry_dict = {}
         for attr in data:
             key = attr[0]
             val = attr[1]
@@ -349,7 +348,8 @@ def get_data_object_geojson(response_content, table_name):
                 properties_dict[new_key] = val
                 
         feat_dict["properties"] = properties_dict
-        feat_dict["geometry"] = geometry_dict
+        feat_dict["geometry"] = simplejson.loads(geometry_dict)
+
         i = i + 1
         response_content.append(feat_dict)
     
