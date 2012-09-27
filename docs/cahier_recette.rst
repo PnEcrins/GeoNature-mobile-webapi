@@ -6,6 +6,29 @@
 Sprint 2
 ========
 
+#75 WebApi
+----------
+
+Lancer l'application de synchro et constater que l'application mobile et la base de données se synchronise bien.
+Pour tester manuellement la webapi, les URL à utiliser sont les suivantes :
+ * http://server/export/taxon/
+ * http://server/export/family/
+ * http://server/export/unity/
+ * http://server/export/taxon_unity/
+ * http://server/export/criterion/
+ * http://server/export/user/
+ * http://server/export/classes/
+ * http://server/export/unity_geojson/
+A noter que ces URL doivent être appelée en passant un paramètre POST (token).
+Pour l'import :
+ * http://server/import/
+ A noter que cette URL doit être appelée en passant 2 paramètres POST (token, et data au format json)
+
+#73 Api leaflet/titanium
+------------------------
+Lancer l'application et constater que la cartographie répond bien aux actions de l'utilisateur.
+
+
 #24 [Carto] Le fond : relief >scan250>scan100>scan25.... est déterminé automatiquement en fonction du niveau de zoom
 --------------------------------------------------------------------------------------------------------------------
 
@@ -17,10 +40,10 @@ un autre fond de plan. Dézoomer, et constater que la carte revient sur le fond 
 
 Le passage d'un fond à l'autre est automatique entre les niveaux de zoom mais pour les derniers niveaux de zoom, il est possible de forcer l'ortho.
 Lancer l'application sur le mobile et aller sur la cartograhie. Zoomer sur la carte jusqu'à provoquer le basculement sur un autre fond de plan. 
-Changer alors manuellement le fond de plan et constater que le changement s'affectue bien
+Changer alors manuellement le fond de plan et constater que le changement s'affectue bien.
 
 #59 mise en place de la recherche dans la liste des observateurs
-----------------------------------------------
+----------------------------------------------------------------
 
 Lancer l'application et commencer la saisie en cliquant sur le bouton "Input"
 Cliquer sur l'observateur par défaut ou sur le libellé "Select an observer"
@@ -34,6 +57,17 @@ Cliquer sur le bouton ayant une croix comme icône situé à droite du champ de 
 La barre de recherche disparaît et on retrouve la barre d'icônes. La liste des observateurs se remet à jour en supprimant la recherche effectuée préalablement
 Commencer une nouvelle recherche en tapant au moins trois caractères puis cliquer directement sur le bouton de recherche du clavier virtuel
 La liste des suggestions disparaît et la liste des observateurs se met à jour en tenant compte de la recherche effectuée
+
+#22 Afficher / masquer les unités sur la carte
+----------------------------------------------
+
+Lancer l'application mobile. Aller sur la cartographie, et activer la couche des unités. Contater qu'elle s'affiche bien et est réactive. Désactiver la couche, et constater qu'elle disparait bien.
+
+#50 Affichage des unités géographiques par défaut
+-------------------------------------------------
+
+Lancer l'application mobile, et aller dans les paramètres. Cocher unités géographiques. Aller sur la cartographie et constater que les unités sont bien affichées.
+Retourner dans les paramètres et désactiver les unités. Aller sur la carte, et constater que les unités ne sont plus affichées.
 
 #70 Module de recherche dans la vue des taxons
 ----------------------------------------------
