@@ -95,6 +95,10 @@ La liste des suggestions disparaît et la liste des taxons se met à jour en ten
 Lancer l'application sur le mobile et aller sur la cartographie. Constater que les boutons de zoom sont suffisament grands pour une utilisation fluide.
 
 
+#95 Génération de la base de données SQLite de l'application mobile
+-------------------------------------------------------------------
+
+Lancer l'application de synchro (en mode export de données). Vérifier que le fichier data.db est bien généré, et compatible avec l'application mobile.
 
 
 
