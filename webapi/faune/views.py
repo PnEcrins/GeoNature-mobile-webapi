@@ -165,7 +165,16 @@ def export_sqlite(request):
     """
     Export all data in sqlite format
     """
-    
+    response_content = []
+    if not check_token(request):
+        response_content.append({
+            'status' : _("You're not allowed to retreive information from this webservice")
+        })
+        response = HttpResponse()
+        simplejson.dump(response_content, response,
+                    ensure_ascii=False, separators=(',', ':'))                    
+        return response
+
     # Create the .db file
     src = "%s%s" % (settings.FAUNE_MOBILE_SQLITE_PATH,settings.FAUNE_MOBILE_SQLITE_SAMPLE)
     dest = "%s%s" % (settings.FAUNE_MOBILE_SQLITE_PATH,settings.FAUNE_MOBILE_SQLITE)
@@ -201,8 +210,11 @@ def export_sqlite(request):
                                     )
                 cur.execute(insert_string);
         
-    response = HttpResponse()
-    return response
+    #response = HttpResponse()
+    response = HttpResponse(mimetype='application/force-download')
+    response['Content-Disposition'] = 'attachment; filename=%s' % dest
+    response['X-Sendfile'] = dest
+    return response    
 
     
 def export_taxon(request):
