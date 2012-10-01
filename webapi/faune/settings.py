@@ -170,11 +170,11 @@ LOGGING = {
 
 TOKEN = "666"
 
-TABLE_TAXON = 'contactfaune.v_nomade_taxons_cf'
+TABLE_TAXA = 'contactfaune.v_nomade_taxons_cf'
 TABLE_FAMILY = 'taxonomie.bib_familles'
 TABLE_UNITY = 'layers.l_unites_geo'
 TABLE_UNITY_GEOJSON = 'layers.l_unites_geo'
-TABLE_TAXON_UNITY = 'contactfaune.cor_unite_taxon'
+TABLE_TAXA_UNITY = 'contactfaune.cor_unite_taxon'
 TABLE_CRITERION = 'contactfaune.bib_criteres_cf'
 TABLE_USER = 'utilisateurs.t_roles'
 TABLE_STATEMENT = 'contactfaune.t_releves_cf'
@@ -184,7 +184,6 @@ TABLE_FAILED_JSON_FAUNA = 'synchronomade.erreurs_cf'
 TABLE_FAILED_JSON_MORTALITY = 'synchronomade.erreurs_mortalite'
 TABLE_CLASSES = 'taxonomie.bib_classes'
 
-    
 
 FAUNE_TABLE_INFOS =  {
     TABLE_FAILED_JSON_FAUNA: {
@@ -235,9 +234,10 @@ FAUNE_TABLE_INFOS =  {
             'initial_input' : 'saisie_initiale'
         }        
     },
-    TABLE_TAXON: {
+    TABLE_TAXA: {
         'id_col': 'id_taxon',
         'json_name': 'taxa',
+        'sqlite_name': 'taxa',
         'select_col': 'id_taxon, cd_ref, nom_latin, nom_francais, id_classe, denombrement, patrimonial, message',
         'db_to_json_columns' : {
             'id_taxon' : 'id',
@@ -255,6 +255,7 @@ FAUNE_TABLE_INFOS =  {
     TABLE_FAMILY: {
         'id_col': 'id_famille',
         'json_name': 'family',
+        'sqlite_name': 'family',
         'select_col': 'id_famille, nom_famille',
         'db_to_json_columns' : {
             'id_famille' : 'id',
@@ -264,6 +265,7 @@ FAUNE_TABLE_INFOS =  {
     TABLE_UNITY: {
         'id_col': 'id_unite_geo',
         'json_name': 'unity',
+        'sqlite_name': 'unities',
         'select_col': 'id_unite_geo, code_insee, commune',
         'db_to_json_columns' : {
             'id_unite_geo' : 'id',
@@ -271,23 +273,13 @@ FAUNE_TABLE_INFOS =  {
             'commune' : 'city'
         }        
     },
-    TABLE_UNITY_GEOJSON: {
-        'id_col': 'id_unite_geo',
-        'json_name': 'unity_geojson',
-        'select_col': 'id_unite_geo, code_insee, commune, astext(transform(the_geom,4326)) as geom',
-        'db_to_json_columns' : {
-            'id_unite_geo' : 'id',
-            'code_insee' : 'insee',
-            'commune' : 'city',
-            'geom': 'geometry'
-        }        
-    },
-    TABLE_TAXON_UNITY: {
+    TABLE_TAXA_UNITY: {
         'id_col': 'id_unite_geo',
         'json_name': 'taxa_unity',
+        'sqlite_name': 'taxa_unities',
         'select_col': 'id_unite_geo, id_taxon, derniere_date, couleur, nb_obs',
         'db_to_json_columns' : {
-            'id_unite_geo' : 'unite_geo_id',
+            'id_unite_geo' : 'unity_id',
             'id_taxon' : 'taxon_id',
             'derniere_date' : 'date',
             'couleur' : 'color',
@@ -297,6 +289,7 @@ FAUNE_TABLE_INFOS =  {
     TABLE_CRITERION: {
         'id_col': 'id_critere_cf',
         'json_name': 'criterion',
+        'sqlite_name': 'criterion',
         'select_col': 'id_critere_cf, code_critere_cf, nom_critere_cf, tri_cf, cincomplet',
         'db_to_json_columns' : {
             'id_critere_cf' : 'id',
@@ -309,23 +302,52 @@ FAUNE_TABLE_INFOS =  {
     TABLE_USER: {
         'id_col': 'id_role',
         'json_name': 'user',
+        'sqlite_name': 'observers',
         'select_col': 'id_role, identifiant, nom_role, prenom_role, organisme',
         'db_to_json_columns' : {
             'id_role' : 'id',
             'identifiant' : 'ident',
-            'nom_role' : 'last_name',
-            'prenom_role' : 'first_name',
+            'nom_role' : 'lastname',
+            'prenom_role' : 'firstname',
             'organisme' : 'organism'
         }        
     },
     TABLE_CLASSES: {
         'id_col': 'id_classe',
         'json_name': 'classes',
+        'sqlite_name': 'classes',
         'select_col': 'id_classe, nom_classe, desc_classe',
         'db_to_json_columns' : {
             'id_classe' : 'id',
             'nom_classe' : 'name',
-            'desc_classe' : 'desc'
+            'desc_classe' : 'description'
         }        
     }
+}
+
+FAUNE_TABLE_INFOS_GEOJSON =  {
+    TABLE_UNITY_GEOJSON: {
+        'id_col': 'id_unite_geo',
+        'json_name': 'unity_geojson',
+        'select_col': 'id_unite_geo, code_insee, commune, astext(transform(the_geom,4326)) as geom',
+        'db_to_json_columns' : {
+            'id_unite_geo' : 'id',
+            'code_insee' : 'insee',
+            'commune' : 'city',
+            'geom': 'geometry'
+        }        
+    }
+}
+    
+FAUNE_MOBILE_SQLITE_SAMPLE = "data.db.sample"
+FAUNE_MOBILE_SQLITE = "data.db"
+FAUNE_MOBILE_SQLITE_PATH = "faune/"
+
+FAUNE_MOBILE_SQLITE_CREATE_QUERY = {
+    "CREATE TABLE IF NOT EXISTS OBSERVERS (ID INTEGER, IDENT TEXT, LASTNAME TEXT, FIRSTNAME TEXT, ORGANISM TEXT)",
+    "CREATE TABLE IF NOT EXISTS CLASSES (ID INTEGER, NAME TEXT, DESCRIPTION TEXT)",
+    "CREATE TABLE IF NOT EXISTS UNITIES (ID INTEGER, INSEE TEXT, CITY TEXT)",
+    "CREATE TABLE IF NOT EXISTS TAXA_UNITIES (UNITY_ID INTEGER, TAXON_ID INTEGER, DATE TEXT, COLOR TEXT, NB_OBS INTEGER)",
+    "CREATE TABLE IF NOT EXISTS TAXA (ID INTEGER, CD_REF INTEGER, NAME TEXT, NAME_FR TEXT, CLASS_ID INTEGER, NUMBER INTEGER, PATRIMONIAL INTEGER, MESSAGE INTEGER)",
+    "CREATE TABLE IF NOT EXISTS CRITERION (ID INTEGER, CODE TEXT, NAME TEXT, SORT INTEGER, INCOMPLETE TEXT)"
 }
