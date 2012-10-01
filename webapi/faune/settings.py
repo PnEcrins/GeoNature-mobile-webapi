@@ -13,10 +13,10 @@ DATABASE_ID = 'default'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'appli_faune',                      # Or path to database file if using sqlite3.
-        'USER': 'gisuser',                      # Not used with sqlite3.
-        'PASSWORD': 'Rivirwaktim9',                  # Not used with sqlite3.
-        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
+        'NAME': 'dbname',                      # Or path to database file if using sqlite3.
+        'USER': 'dbuser',                      # Not used with sqlite3.
+        'PASSWORD': 'userpassword',                  # Not used with sqlite3.
+        'HOST': 'url',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -341,7 +341,6 @@ FAUNE_TABLE_INFOS_GEOJSON =  {
     
 FAUNE_MOBILE_SQLITE_SAMPLE = "data.db.sample"
 FAUNE_MOBILE_SQLITE = "data.db"
-FAUNE_MOBILE_SQLITE_PATH = "faune/"
 
 FAUNE_MOBILE_SQLITE_CREATE_QUERY = {
     "CREATE TABLE IF NOT EXISTS OBSERVERS (ID INTEGER, IDENT TEXT, LASTNAME TEXT, FIRSTNAME TEXT, ORGANISM TEXT)",
@@ -351,3 +350,5 @@ FAUNE_MOBILE_SQLITE_CREATE_QUERY = {
     "CREATE TABLE IF NOT EXISTS TAXA (ID INTEGER, CD_REF INTEGER, NAME TEXT, NAME_FR TEXT, CLASS_ID INTEGER, NUMBER INTEGER, PATRIMONIAL INTEGER, MESSAGE INTEGER)",
     "CREATE TABLE IF NOT EXISTS CRITERION (ID INTEGER, CODE TEXT, NAME TEXT, SORT INTEGER, INCOMPLETE TEXT)"
 }
+
+from settings_local import *

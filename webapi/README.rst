@@ -29,16 +29,19 @@ Then copy and extract the source archive :
 Configuration
 --------------
 
-Modify DB connection information in settings.py
+Copy settings_local.py.sample to settings_local.py and modify informations in settings.py
 
 ::
 
         'NAME': 'appli_faune',
-        'USER': 'gisuser',    
+        'USER': 'dbuser',    
         'PASSWORD': 'xxxx',   
         'HOST': 'localhost',  
         'PORT': '5432',       
 
+        TOKEN = "666"
+
+        FAUNE_MOBILE_SQLITE_PATH = "faune/"
 
 BDD
 ---
