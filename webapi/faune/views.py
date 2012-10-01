@@ -187,7 +187,6 @@ def export_sqlite(request):
         for create_string in settings.FAUNE_MOBILE_SQLITE_CREATE_QUERY:
             cur.execute(create_string)
         
-        # TODO manage None values
         tabTab = [];
         tabTab.append(settings.TABLE_USER)
         tabTab.append(settings.TABLE_CLASSES)
@@ -351,7 +350,6 @@ def check_token(request):
     """
     Check the validity of the token
     """
-    return True
     if request.method == 'POST':
         if request.POST['token']:
             if request.POST['token'] == settings.TOKEN :

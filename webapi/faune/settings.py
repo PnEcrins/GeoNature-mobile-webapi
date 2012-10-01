@@ -277,7 +277,7 @@ FAUNE_TABLE_INFOS =  {
         'id_col': 'id_unite_geo',
         'json_name': 'taxa_unity',
         'sqlite_name': 'taxa_unities',
-        'select_col': 'id_unite_geo, id_taxon, derniere_date, couleur, nb_obs',
+        'select_col': 'id_unite_geo, id_taxon, to_char(derniere_date,\'YYYY/MM/dd\') as derniere_date, couleur, nb_obs',
         'db_to_json_columns' : {
             'id_unite_geo' : 'unity_id',
             'id_taxon' : 'taxon_id',
