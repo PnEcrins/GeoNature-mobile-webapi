@@ -1,0 +1,48 @@
+{
+	"id": 401382208,
+	"observersId" :
+	[
+		1, 4, 6
+	],
+	"dateobs": "2012/09/19",
+	"initial_input" : "pda",
+	"input_type" : "fauna",
+	"geolocation":
+	{
+		"longitude": -1.51,
+		"latitude": 47.24,
+		"accuracy": 22
+	},
+	"taxons":
+	[{
+		"id": 1,
+		"name_entered": "toto",
+		"counting":
+		{
+			"adult_male": 1,
+			"adult_female": 0,
+			"adult": 0,
+			"not_adult": 0,
+			"young": 0,
+			"yearling": 0,
+			"sex_age_unspecified": 0
+		},
+		"observation":
+		{
+			"criterion": 1
+		},
+		"mortality":
+		{
+			"adult_male": 1,
+			"adult_female": 0,
+			"adult": 0,
+			"not_adult": 0,
+			"young": 0,
+			"yearling": 0,
+			"sex_age_unspecified": 0,
+			"sample": true,
+			"comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+		},
+		"comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+	}]
+}
