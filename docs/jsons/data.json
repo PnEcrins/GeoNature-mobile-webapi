@@ -1,6 +1,6 @@
 {
 	"id": 401382208,
-	"observersId" :
+	"observers_id" :
 	[
 		1, 4, 6
 	],
@@ -16,7 +16,8 @@
 	"taxons":
 	[
         {
-            "id": 1,
+            "id": 401382208,
+            "id_taxon": 1,
             "name_entered": "taxon 1",
             "counting":
             {
@@ -47,7 +48,8 @@
             "comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         },
         {
-            "id": 2,
+            "id": 401382405,
+            "id_taxon": 2,
             "name_entered": "taxon 2",
             "counting":
             {
