@@ -19,6 +19,8 @@ Pour tester manuellement la webapi, les URL à utiliser sont les suivantes :
  * http://server/export/user/
  * http://server/export/classes/
  * http://server/export/unity_geojson/
+ * http://server/export/sqlite/
+
 A noter que ces URL doivent être appelée en passant un paramètre POST (token).
 Pour l'import :
  * http://server/import/
@@ -99,6 +101,12 @@ Lancer l'application sur le mobile et aller sur la cartographie. Constater que l
 -------------------------------------------------------------------
 
 Lancer l'application de synchro (en mode export de données). Vérifier que le fichier data.db est bien généré, et compatible avec l'application mobile.
+Pour tester de manière manuelle l'export du fichier sqlite, appeler un navigateur et appeler l'url suivante :
+
+ * http://server/export/sqlite/
+
+ (A noter qu'un paramètre POST token doit être fourni)
+ Constatez que la réponse est bien un fichier à télécharger de type sqlite.
 
 
 
