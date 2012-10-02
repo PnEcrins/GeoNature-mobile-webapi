@@ -6,6 +6,7 @@ from django.utils import simplejson
 from django.utils.datastructures import SortedDict
 from django.conf import settings
 from django.utils.translation import ugettext as _
+from django.core.servers.basehttp import FileWrapper
 
 from faune.utils import sync_db, query_db, commit_transaction
 
@@ -19,6 +20,7 @@ from shutil import copyfile
 
 import time
 import datetime
+import os
 
 @csrf_exempt
 def import_data(request):
@@ -208,11 +210,12 @@ def export_sqlite(request):
                                     )
                 cur.execute(insert_string);
         
-    #response = HttpResponse()
-    response = HttpResponse(mimetype='application/force-download')
-    response['Content-Disposition'] = 'attachment; filename=%s' % dest
-    response['X-Sendfile'] = dest
-    return response    
+    #response = HttpResponse(mimetype='application/x-sqlite3')
+    #response['Content-Disposition'] = 'attachment; filename=%s' % dest
+    wrapper = FileWrapper(file(dest))
+    response = HttpResponse(wrapper, content_type='application/x-sqlite3')
+    response['Content-Length'] = os.path.getsize(dest)
+    return response
 
     
 def export_taxon(request):
