@@ -99,7 +99,6 @@ def import_data(request):
                 new_feature[json_to_db.get('yearling')] = taxon.counting.yearling
                 new_feature[json_to_db.get('sex_age_unspecified')] = taxon.counting.sex_age_unspecified
                 new_feature[json_to_db.get('criterion')] = taxon.observation.criterion
-                new_feature[json_to_db.get('comment')] = taxon.comment
             else :
                 new_feature[json_to_db.get('adult_male')] = taxon.mortality.adult_male
                 new_feature[json_to_db.get('adult_female')] = taxon.mortality.adult_female
@@ -109,7 +108,9 @@ def import_data(request):
                 new_feature[json_to_db.get('yearling')] = taxon.mortality.yearling
                 new_feature[json_to_db.get('sex_age_unspecified')] = taxon.mortality.sex_age_unspecified
                 new_feature[json_to_db.get('sample')] = taxon.mortality.sample
-                new_feature[json_to_db.get('comment')] = taxon.mortality.comment
+                new_feature[json_to_db.get('criterion')] = taxon.observation.criterion
+
+            new_feature[json_to_db.get('comment')] = taxon.comment
             
             objects.append(new_feature)
             cursor = sync_db(objects)

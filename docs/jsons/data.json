@@ -42,8 +42,7 @@
                 "young": 0,
                 "yearling": 0,
                 "sex_age_unspecified": 0,
-                "sample": true,
-                "comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+                "sample": true
             },
             "comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         },
@@ -74,8 +73,7 @@
                 "young": 0,
                 "yearling": 0,
                 "sex_age_unspecified": 0,
-                "sample": true,
-                "comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+                "sample": true
             },
             "comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         }
