@@ -18,6 +18,8 @@ from geojson import dumps
 import sqlite3 as lite
 from shutil import copyfile
 
+from tempfile import NamedTemporaryFile
+
 import time
 import datetime
 import os
@@ -166,6 +168,8 @@ def export_sqlite(request):
     """
     Export all data in sqlite format
     """
+    # TODO : gerer le multi acces (temporary file)
+    
     response_content = []
     if not check_token(request):
         response_content.append({
@@ -177,6 +181,7 @@ def export_sqlite(request):
         return response
 
     # Create the .db file
+    output = None
     src = "%s%s" % (settings.FAUNE_MOBILE_SQLITE_PATH,settings.FAUNE_MOBILE_SQLITE_SAMPLE)
     dest = "%s%s" % (settings.FAUNE_MOBILE_SQLITE_PATH,settings.FAUNE_MOBILE_SQLITE)
     copyfile(src, dest)
