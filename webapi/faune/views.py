@@ -220,7 +220,7 @@ def export_sqlite(request):
             wrapper = FileWrapper(file(output))
             response = HttpResponse(wrapper, content_type='application/x-sqlite3')
             response['Content-Length'] = os.path.getsize(output)
-            response['Content-Disposition'] = 'attachment; filename=%s' % output
+            response['Content-Disposition'] = 'attachment; filename=data.db'
     finally:
         if output:
             os.unlink(output)
