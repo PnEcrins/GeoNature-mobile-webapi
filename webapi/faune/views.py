@@ -23,6 +23,7 @@ from tempfile import NamedTemporaryFile
 import time
 import datetime
 import os
+import tempfile
 
 @csrf_exempt
 def import_data(request):
@@ -168,8 +169,6 @@ def export_sqlite(request):
     """
     Export all data in sqlite format
     """
-    # TODO : gerer le multi acces (temporary file)
-    
     response_content = []
     if not check_token(request):
         response_content.append({
@@ -183,43 +182,49 @@ def export_sqlite(request):
     # Create the .db file
     output = None
     src = "%s%s" % (settings.FAUNE_MOBILE_SQLITE_PATH,settings.FAUNE_MOBILE_SQLITE_SAMPLE)
-    dest = "%s%s" % (settings.FAUNE_MOBILE_SQLITE_PATH,settings.FAUNE_MOBILE_SQLITE)
-    copyfile(src, dest)
-
-    # Create tables inside the DB
-    con = lite.connect(dest)
-    with con:    
-        cur = con.cursor()   
-        for create_string in settings.FAUNE_MOBILE_SQLITE_CREATE_QUERY:
-            cur.execute(create_string)
+    try:
+        with NamedTemporaryFile('w', delete=False, suffix='.db') as f:
+            output = f.name
+            handle=open(src,'r+')
+            f.write(handle.read())
+            f.flush()
+            
+            # Create tables inside the DB
+            con = lite.connect(output)
+            with con:    
+                cur = con.cursor()   
+                for create_string in settings.FAUNE_MOBILE_SQLITE_CREATE_QUERY:
+                    cur.execute(create_string)
+                
+                tabTab = [];
+                tabTab.append(settings.TABLE_USER)
+                tabTab.append(settings.TABLE_CLASSES)
+                tabTab.append(settings.TABLE_UNITY)
+                tabTab.append(settings.TABLE_TAXA_UNITY)
+                tabTab.append(settings.TABLE_TAXA)    
+                for pg_table_name in tabTab:
+                    li_table_name = settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('sqlite_name')
+                    response_content = get_data(request, pg_table_name)
+                    for obj in response_content[settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('json_name')]:
+                        colTab = []
+                        valTab = []
+                        for key in obj:
+                            colTab.append(key)
+                            valTab.append(unicode(obj[key]).replace("'", "''"))
+                        insert_string = "INSERT INTO %s (%s) values (%s)" % \
+                                            (li_table_name,
+                                            ",".join(colTab),
+                                            "'" + "','".join(map(unicode, valTab))+ "'"
+                                            )
+                        cur.execute(insert_string);
+            wrapper = FileWrapper(file(output))
+            response = HttpResponse(wrapper, content_type='application/x-sqlite3')
+            response['Content-Length'] = os.path.getsize(output)
+            response['Content-Disposition'] = 'attachment; filename=%s' % output
+    finally:
+        if output:
+            os.unlink(output)
         
-        tabTab = [];
-        tabTab.append(settings.TABLE_USER)
-        tabTab.append(settings.TABLE_CLASSES)
-        tabTab.append(settings.TABLE_UNITY)
-        tabTab.append(settings.TABLE_TAXA_UNITY)
-        tabTab.append(settings.TABLE_TAXA)    
-        for pg_table_name in tabTab:
-            li_table_name = settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('sqlite_name')
-            response_content = get_data(request, pg_table_name)
-            for obj in response_content[settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('json_name')]:
-                colTab = []
-                valTab = []
-                for key in obj:
-                    colTab.append(key)
-                    valTab.append(unicode(obj[key]).replace("'", "''"))
-                insert_string = "INSERT INTO %s (%s) values (%s)" % \
-                                    (li_table_name,
-                                    ",".join(colTab),
-                                    "'" + "','".join(map(unicode, valTab))+ "'"
-                                    )
-                cur.execute(insert_string);
-        
-    #response = HttpResponse(mimetype='application/x-sqlite3')
-    #response['Content-Disposition'] = 'attachment; filename=%s' % dest
-    wrapper = FileWrapper(file(dest))
-    response = HttpResponse(wrapper, content_type='application/x-sqlite3')
-    response['Content-Length'] = os.path.getsize(dest)
     return response
 
     
