@@ -10,14 +10,11 @@ class FauneViewsTestCase(TestCase):
         
         data = open('faune/data.json').read()
         jsonData = json.dumps(data)
-        resp = self.client.post('/import/', {'data': jsonData})
+        resp = self.client.post('/import/', {'data': data, 'token': '666'})
 
         self.assertEqual(resp.status_code, 200)
         
-    #def test_export_taxon(self):
-    #    resp = self.client.post('/export/taxon/', {'token': '666'})        
+    #def test_export_sqlite(self):
+    #    resp = self.client.post('/export/sqlite/', {'token': '666'})        
     #    self.assertEqual(resp.status_code, 200)
         
-    #def test_export_family(self):
-    #    resp = self.client.post('/export/famille/', {'token': '666'})        
-    #    self.assertEqual(resp.status_code, 200)        

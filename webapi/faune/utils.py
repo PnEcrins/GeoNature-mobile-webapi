@@ -12,10 +12,11 @@ logger = logging.getLogger(__name__)
 class QueryBuildError(Exception):
     pass
 
+
 class SynchronizeError(Exception):
     pass
 
-    
+
 def commit_transaction():
     """
     Commit the transaction
@@ -23,18 +24,19 @@ def commit_transaction():
     transaction.commit_unless_managed(using=settings.DATABASE_ID)
     logger.debug(_("Faune SQL: COMMIT"))
 
+
 def query_db(sqlquery):
     """
     Executes a single query on the Faune database defined in project settings.
     Returns a `cursor`
-    
+
     sqlquery -- a SQL statement
     """
     # Connect to Faune DB
     cursor = connections[settings.DATABASE_ID].cursor()
     # Execute SQL
     logger.debug(_("Faune SQL: %s") % sqlquery)
-    cursor.execute(sqlquery)    
+    cursor.execute(sqlquery)
     return cursor
 
 
@@ -42,7 +44,7 @@ def sync_db(objects):
     """
     From a specified list of objects, executes equivalent insert or update
     statements on the gr@ce database.
-    
+
     objects -- a list of dicts, as used in ``build_sync_query()``
     """
     logger.info(_("Synchronize %s objects") % len(objects))
@@ -94,15 +96,14 @@ def build_sync_query(datafields, table_name=None):
 
     # Retreive a new ID from the table
     id_col_string = ""
-    if id_col :
+    if id_col:
         id_col_string = " RETURNING %s" % id_col
-    
-    sql_string = u"INSERT INTO %s (%s) VALUES (%s) %s" % (table_name, 
+
+    sql_string = u"INSERT INTO %s (%s) VALUES (%s) %s" % (table_name,
                                                 ', '.join(map(itemgetter(0), updates)),
                                                 ', '.join(map(itemgetter(1), updates)),
                                                 id_col_string)
     # Manage null values
-    sql_string = sql_string.replace("'NULL_VALUE'","Null")
-    sql_string = sql_string.replace("NULL_VALUE","Null")
+    sql_string = sql_string.replace("'NULL_VALUE'", "Null")
+    sql_string = sql_string.replace("NULL_VALUE", "Null")
     return sql_string
-

@@ -330,7 +330,8 @@ FAUNE_TABLE_INFOS_GEOJSON =  {
         'id_col': 'id_unite_geo',
         'json_name': 'unity_geojson',
         #'select_col': 'id_unite_geo, code_insee, commune, astext(transform(the_geom,4326)) as geom',
-        'select_col': 'id_unite_geo, code_insee, astext(the_geom) as geom',
+        'select_col': 'id_unite_geo, astext(transform(the_geom,4326)) as geom',
+        #'select_col': 'id_unite_geo, code_insee, astext(the_geom) as geom',
         'db_to_json_columns' : {
             'id_unite_geo' : 'id',
             'code_insee' : 'insee',
