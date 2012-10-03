@@ -329,9 +329,7 @@ FAUNE_TABLE_INFOS_GEOJSON =  {
     TABLE_UNITY_GEOJSON: {
         'id_col': 'id_unite_geo',
         'json_name': 'unity_geojson',
-        #'select_col': 'id_unite_geo, code_insee, commune, astext(transform(the_geom,4326)) as geom',
         'select_col': 'id_unite_geo, astext(transform(the_geom,4326)) as geom',
-        #'select_col': 'id_unite_geo, code_insee, astext(the_geom) as geom',
         'db_to_json_columns' : {
             'id_unite_geo' : 'id',
             'code_insee' : 'insee',
@@ -342,7 +340,6 @@ FAUNE_TABLE_INFOS_GEOJSON =  {
 }
     
 FAUNE_MOBILE_SQLITE_SAMPLE = "data.db.sample"
-FAUNE_MOBILE_SQLITE = "data.db"
 
 FAUNE_MOBILE_SQLITE_CREATE_QUERY = {
     "CREATE TABLE IF NOT EXISTS OBSERVERS (ID INTEGER, IDENT TEXT, LASTNAME TEXT, FIRSTNAME TEXT, ORGANISM TEXT)",
