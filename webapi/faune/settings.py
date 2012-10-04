@@ -1,4 +1,7 @@
 # Django settings for faune project.
+import os
+
+PROJECT_ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -341,7 +344,7 @@ FAUNE_TABLE_INFOS_GEOJSON =  {
     }
 }
     
-FAUNE_MOBILE_SQLITE_SAMPLE = "data.db.sample"
+FAUNE_MOBILE_SQLITE_SAMPLE = os.path.join(PROJECT_ROOT_PATH, "data.db.sample")
 
 FAUNE_MOBILE_SQLITE_CREATE_QUERY = {
     "CREATE TABLE IF NOT EXISTS OBSERVERS (ID INTEGER, IDENT TEXT, LASTNAME TEXT, FIRSTNAME TEXT, ORGANISM TEXT)",
