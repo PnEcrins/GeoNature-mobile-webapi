@@ -6,6 +6,17 @@
 Sprint 2
 ========
 
+#15 Définir l'observateur par défaut dans les settings de l'application
+-----------------------------------------------------------------------
+
+Lancer l'application mobile, et aller dans les paramètres (depuis le menu Android)
+Cliquer sur "Ajouter un observateur" ou "Observateur par défaut" pour sélectionner un observateur
+La vue listant les observateurs s'affiche par ordre alphabétique avec la barre de recherche en haut
+Sélectionner un observateur depuis la liste
+La sélection d'un observateur entraîne la désélection de l'observateur sélectionné préalablement
+Cliquer sur bouton "Valider" pour quitter la vue des observateurs
+La vue des paramètres se met à jour et indique l'observateur sélectionné comme observateur par défaut
+
 #22 Afficher / masquer les unités sur la carte
 ----------------------------------------------
 
@@ -110,6 +121,17 @@ La liste des suggestions disparaît et la liste des taxons se met à jour en ten
 
 Lancer l'application sur le mobile et aller sur la cartographie. Constater que les boutons de zoom sont suffisament grands pour une utilisation fluide.
 
+#76 Sélection de un ou plusieurs observateurs lors de la saisie
+---------------------------------------------------------------
+
+Lancer l'application et commencer la saisie en cliquant sur le bouton "Input"
+La première vue affiche l'observateur par défaut tel que défini dans les paramètres de l'application
+Cliquer sur l'observateur par défaut pour afficher la liste des observateurs disponibles
+La liste des observateurs s'affiche avec l'observateur par défaut déjà sélectionné
+La sélection d'un autre observateur n'entraîne pas la désélection de l'observateur sélectionné préalablement
+Le bouton "Valider" se met à jour en indiquant le nombre d'observateur sélectionnés en tout
+Cliquer sur le bouton "Valider" pour terminer la sélection et revenir à la vue précédente
+La première vue de la saisie se met à jour en listant les observateurs sélectionnés pour cette saisie
 
 #95 Génération de la base de données SQLite de l'application mobile
 -------------------------------------------------------------------
