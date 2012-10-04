@@ -21,6 +21,7 @@ setup(
         'shapely == 1.2.16',
         'geojson == 1.0.1',
     ],
+    data_files=[('faune', ['faune/data.db.sample'])],
     tests_requires = [],
     packages=find_packages(),
     classifiers  = ['Natural Language :: English',
