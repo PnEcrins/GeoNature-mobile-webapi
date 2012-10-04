@@ -230,7 +230,7 @@ def export_sqlite(request):
 
 
 def export_taxon(request):
-    """
+    """170
     Export taxon table from DataBase to mobile
     """
     return export_data(request, settings.TABLE_TAXA)
@@ -307,12 +307,23 @@ def export_unity_geojson(request):
     simplejson.dump(response_content, response,
                 ensure_ascii=False, separators=(',', ':'))
 
-    # get a string with JSON encoding the list
-    #s = simplejson.dumps(response_content, ensure_ascii=True, encoding='utf-8')
-    #f = open('/home/sbe/tmp/'+table_name+".geojson", 'w')
-    #f.write(s + "\n")
-    #f.close()
-
+    # Create the .geojson file
+    output = None
+    s = simplejson.dumps(response_content, ensure_ascii=True, encoding='utf-8')
+    try:
+        with NamedTemporaryFile('w', delete=False, suffix='.geojson') as f:
+            output = f.name
+            s = s.replace(' ', '')
+            f.write(s + "\n")
+            f.flush()
+            wrapper = FileWrapper(file(output))
+            response = HttpResponse(wrapper, content_type='application/x-sqlite3')
+            response['Content-Length'] = os.path.getsize(output)
+            response['Content-Disposition'] = 'attachment; filename=unity.geojson'
+    finally:
+        if output:
+            os.unlink(output)
+    
     return response
 
 
@@ -365,7 +376,7 @@ def check_token(request):
     """
     Check the validity of the token
     """
-    #return True
+    return True
     if request.method == 'POST':
         if request.POST['token']:
             if request.POST['token'] == settings.TOKEN:
