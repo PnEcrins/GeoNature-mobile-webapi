@@ -182,11 +182,11 @@ def export_sqlite(request):
 
     # Create the .db file
     output = None
-    src = "%s%s" % (settings.FAUNE_MOBILE_SQLITE_PATH, settings.FAUNE_MOBILE_SQLITE_SAMPLE)
+    src = "%s" % (settings.FAUNE_MOBILE_SQLITE_SAMPLE)
     try:
         with NamedTemporaryFile('w', delete=False, suffix='.db') as f:
             output = f.name
-            handle = open(src, 'r+')
+            handle = open(src, 'r')
             f.write(handle.read())
             f.flush()
 

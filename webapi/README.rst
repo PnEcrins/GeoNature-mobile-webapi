@@ -26,8 +26,6 @@ Copy settings_local.py.sample to settings_local.py and modify informations in se
 
         TOKEN = "666"
 
-        FAUNE_MOBILE_SQLITE_PATH = "faune/"
-
 
 Installation
 ------------
