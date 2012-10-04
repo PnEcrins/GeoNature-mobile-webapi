@@ -34,7 +34,7 @@ Installation
 
 Once the OS is installed (basic installation, with OpenSSH server), with the following packages :
 
-    sudo apt-get install -y python-virtualenv libapache2-mod-wsgi
+    sudo apt-get install -y python-virtualenv libapache2-mod-wsgi python-dev build-essentials
 
 Install the webapi :
 
