@@ -13,6 +13,7 @@ setup(
     url='http://makina-corpus.com',
     description="Faune",
     long_description=open(os.path.join(here, 'README.rst')).read(),
+    zip_safe=False,
     install_requires = [
         'django == 1.4.1',  # pinned by buildout
         'psycopg2 == 2.4.1',

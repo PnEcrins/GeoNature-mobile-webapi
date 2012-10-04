@@ -9,25 +9,10 @@ Requirements
 
 * Ubuntu Server 12.04 Precise Pangolin (http://releases.ubuntu.com/12.04/)
 
-
-Installation
-------------
-
-Once the OS is installed (basic installation, with OpenSSH server), with the following packages :
-
-    sudo apt-get install -y python-virtualenv libapache2-mod-wsgi
-
-Then copy and extract the source archive :
-
-::
-
-    cd /path_to_webapi/faune/
-    
-    make install
-
-
 Configuration
---------------
+--------------  
+
+Copy and extract the source archive.
 
 Copy settings_local.py.sample to settings_local.py and modify informations in settings.py
 
@@ -42,6 +27,22 @@ Copy settings_local.py.sample to settings_local.py and modify informations in se
         TOKEN = "666"
 
         FAUNE_MOBILE_SQLITE_PATH = "faune/"
+
+
+Installation
+------------
+
+Once the OS is installed (basic installation, with OpenSSH server), with the following packages :
+
+    sudo apt-get install -y python-virtualenv libapache2-mod-wsgi
+
+Install the webapi :
+
+::
+
+    cd /path_to_webapi/faune/
+    
+    make install
 
 BDD
 ---
@@ -77,14 +78,11 @@ USAGE
 
 Export data:
 
-    http://server/faune/export/family
-    http://server/faune/export/taxon
-    http://server/faune/export/taxon_unity
-    http://server/faune/export/criterion
-    http://server/faune/export/unity
-    http://server/faune/export/user
+    http://server/faune/export/sqlite
+    http://server/faune/export/unity_geojson
 
-POST parameter (defined in settings.py)
+POST parameter (defined in settings.py) :
+    token
 
 Import data:
 
