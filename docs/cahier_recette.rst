@@ -6,6 +6,16 @@
 Sprint 2
 ========
 
+#22 Afficher / masquer les unités sur la carte
+----------------------------------------------
+
+Lancer l'application et commencer la saisie en cliquant sur le bouton "Input"
+Sélectionner au moins un observateur pour passer à la vue suivante (carte)
+La vue carte s'affiche et présente une barre d'action comportant un bouton permettant d'afficher ou non les unités géographiques
+Cliquer sur ce bouton pour afficher les unités géographiques
+Le bouton devient inactif le temps de charger les unités géographiques et de les afficher sur la carte
+Cliquer une nouvelle fois sur ce bouton pour masquer les unités géographiques
+
 #75 WebApi
 ----------
 
@@ -44,6 +54,21 @@ Le passage d'un fond à l'autre est automatique entre les niveaux de zoom mais p
 Lancer l'application sur le mobile et aller sur la cartograhie. Zoomer sur la carte jusqu'à provoquer le basculement sur un autre fond de plan. 
 Changer alors manuellement le fond de plan et constater que le changement s'affectue bien.
 
+#50 Affichage des unités géographiques par défaut
+-------------------------------------------------
+
+Lancer l'application mobile, et aller dans les paramètres (depuis le menu Android)
+Cocher "Afficher les unités géographiques"
+Quitter les paramètres via le bouton "Back" du terminal
+Commencer la saisie en cliquant sur le bouton "Input"
+Sélectionner au moins un observateur pour passer à la vue suivante (carte)
+La vue carte s'affiche en présentant aussi les unités géographiques
+Quitter la saisie en cliquant sur le bouton "Annuler" et confirmer ce choix
+Retourner dans les paramètres et désactiver "Afficher les unités géographiques"
+Commencer la saisie en cliquant sur le bouton "Input"
+Sélectionner au moins un observateur pour passer à la vue suivante (carte)
+La vue carte s'affiche sans présenter les unités géographiques
+
 #59 mise en place de la recherche dans la liste des observateurs
 ----------------------------------------------------------------
 
@@ -59,17 +84,6 @@ Cliquer sur le bouton ayant une croix comme icône situé à droite du champ de 
 La barre de recherche disparaît et on retrouve la barre d'icônes. La liste des observateurs se remet à jour en supprimant la recherche effectuée préalablement
 Commencer une nouvelle recherche en tapant au moins trois caractères puis cliquer directement sur le bouton de recherche du clavier virtuel
 La liste des suggestions disparaît et la liste des observateurs se met à jour en tenant compte de la recherche effectuée
-
-#22 Afficher / masquer les unités sur la carte
-----------------------------------------------
-
-Lancer l'application mobile. Aller sur la cartographie, et activer la couche des unités. Contater qu'elle s'affiche bien et est réactive. Désactiver la couche, et constater qu'elle disparait bien.
-
-#50 Affichage des unités géographiques par défaut
--------------------------------------------------
-
-Lancer l'application mobile, et aller dans les paramètres. Cocher unités géographiques. Aller sur la cartographie et constater que les unités sont bien affichées.
-Retourner dans les paramètres et désactiver les unités. Aller sur la carte, et constater que les unités ne sont plus affichées.
 
 #70 Module de recherche dans la vue des taxons
 ----------------------------------------------
