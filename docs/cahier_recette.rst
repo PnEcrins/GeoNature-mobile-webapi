@@ -6,6 +6,99 @@
 Sprint 2
 ========
 
+#75 Webapi refactoring
+----------------------
+
+Installer la webapi selon la procédure indiquée dans le README.rst.
+Tester les différentes URL (import / export) comme indiqué dans le fichier README.rst.
+Pour tester l'import de données, le JSON suivant peut-être utilisé :
+
+{
+    "id": 401382208,
+    "observers_id" :
+    [
+        1, 4, 6
+    ],
+    "dateobs": "2012/09/19",
+    "initial_input" : "pda",
+    "input_type" : "fauna",
+    "geolocation":
+    {
+        "longitude": -1.51,
+        "latitude": 47.24,
+        "accuracy": 22
+    },
+    "taxons":
+    [
+        {
+            "id": 401382208,
+            "id_taxon": 1,
+            "name_entered": "taxon 1",
+            "counting":
+            {
+                "adult_male": 1,
+                "adult_female": 0,
+                "adult": 0,
+                "not_adult": 0,
+                "young": 0,
+                "yearling": 0,
+                "sex_age_unspecified": 0
+            },
+            "observation":
+            {
+                "criterion": 1
+            },
+            "mortality":
+            {
+                "adult_male": 1,
+                "adult_female": 0,
+                "adult": 0,
+                "not_adult": 0,
+                "young": 0,
+                "yearling": 0,
+                "sex_age_unspecified": 0,
+                "sample": true
+            },
+            "comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        },
+        {
+            "id": 401382405,
+            "id_taxon": 2,
+            "name_entered": "taxon 2",
+            "counting":
+            {
+                "adult_male": 0,
+                "adult_female": 2,
+                "adult": 0,
+                "not_adult": 0,
+                "young": 0,
+                "yearling": 0,
+                "sex_age_unspecified": 0
+            },
+            "observation":
+            {
+                "criterion": 2
+            },
+            "mortality":
+            {
+                "adult_male": 1,
+                "adult_female": 0,
+                "adult": 0,
+                "not_adult": 0,
+                "young": 0,
+                "yearling": 0,
+                "sex_age_unspecified": 0,
+                "sample": true
+            },
+            "comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        }
+    ]
+}
+
+
+A noter que ce JSON doit être fourni à l'url en tant que paramètre POST "data", accompagné d'un "token".
+
+
 #15 Définir l'observateur par défaut dans les settings de l'application
 -----------------------------------------------------------------------
 
@@ -138,6 +231,19 @@ La sélection d'un autre observateur n'entraîne pas la désélection de l'obser
 Le bouton "Valider" se met à jour en indiquant le nombre d'observateur sélectionnés en tout
 Cliquer sur le bouton "Valider" pour terminer la sélection et revenir à la vue précédente
 La première vue de la saisie se met à jour en listant les observateurs sélectionnés pour cette saisie
+
+#23 Activer/désactiver le positionnement automatique en fonction du GPS
+-----------------------------------------------------------------------
+
+Lancer l'application et aller sur la cartographie. Cliquer sur l'icone correspondant au GPS. Constater qu'un marqueur se positionne sur la carte aux coordonnées du GPS.
+CLiquer à nouveau sur le bouton et constater que la marqueur disparait.
+
+#74 Gros boutons de zoom
+------------------------
+
+Lancer l'application et aller sur la cartographie. Manipuler le zoom + et zoom -. Constater que leur utilisation est facile et fluide.
+
+
 
 #95 Génération de la base de données SQLite de l'application mobile
 -------------------------------------------------------------------
