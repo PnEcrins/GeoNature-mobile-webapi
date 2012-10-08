@@ -200,25 +200,6 @@ Lancer l'application et constater que la cartographie répond bien aux actions d
 
 Lancer l'application sur le mobile et aller sur la cartographie. Constater que les boutons de zoom sont suffisament grands pour une utilisation fluide.
 
-#75 WebApi
-----------
-
-Lancer l'application de synchro et constater que l'application mobile et la base de données se synchronise bien.
-Pour tester manuellement la webapi, les URL à utiliser sont les suivantes :
- * http://server/export/taxon/
- * http://server/export/family/
- * http://server/export/unity/
- * http://server/export/taxon_unity/
- * http://server/export/criterion/
- * http://server/export/user/
- * http://server/export/classes/
- * http://server/export/unity_geojson/
- * http://server/export/sqlite/
-
-A noter que ces URL doivent être appelée en passant un paramètre POST (token).
-Pour l'import :
- * http://server/import/
- A noter que cette URL doit être appelée en passant 2 paramètres POST (token, et data au format json)
 
 #76 Sélection de un ou plusieurs observateurs lors de la saisie
 ---------------------------------------------------------------
