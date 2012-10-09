@@ -20,6 +20,7 @@ setup(
         'easydict == 1.4',
         'shapely == 1.2.16',
         'geojson == 1.0.1',
+        'simplejson == 2.6.2',        
     ],
     data_files=[('faune', ['faune/data.db.sample'])],
     tests_requires = [],
