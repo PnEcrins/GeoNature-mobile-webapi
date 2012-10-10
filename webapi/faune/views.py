@@ -34,7 +34,7 @@ def import_data(request):
     Import data from json to DataBase
     """
 
-    response_content = []
+    response_content = {}
 
     params = request.POST
     if params:
@@ -136,8 +136,10 @@ def import_data(request):
         # Commit transaction
         commit_transaction()
 
-        response_content.append({
-            'status': _("Import done - sheet id = %s, statement id = %s") % (d.id, ','.join(map(str, statement_ids)))
+        response_content.update({
+            'status': _("Import done"),
+            'id_sheet': "%s" % (d.id),
+            'ids_statements': "%s" % (','.join(map(str, statement_ids)))
         })
     except:
         #  Insert rejected JSON into synchro_table (text format)
