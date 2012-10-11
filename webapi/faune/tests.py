@@ -121,11 +121,6 @@ class FauneViewsTestCase(TestCase):
             
             django.db.connections['default'] = old_db         
         
-
-        
-        self.assertEqual(resp.status_code, 200)
-        
-        
         
         
     #def test_export_sqlite(self):

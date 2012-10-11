@@ -159,7 +159,7 @@ def import_data(request):
         # Commit transaction
         commit_transaction()
 
-        response_content.append({
+        response_content.update({
             'status': _("Bad json or data (%d)") % id_failed
         })
 
