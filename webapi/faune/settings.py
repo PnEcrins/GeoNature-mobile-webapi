@@ -175,6 +175,13 @@ LOGGING = {
 
 TOKEN = "666"
 
+FAUNA_ID_ORGANISM = 2
+FAUNA_ID_PROTOCOL = 140
+FAUNA_ID_LOT = 4
+MORTALITY_ID_PROTOCOL = 142
+MORTALITY_ID_LOT = 15
+            
+
 TABLE_TAXA = 'contactfaune.v_nomade_taxons_cf'
 TABLE_FAMILY = 'taxonomie.bib_familles'
 TABLE_UNITY = 'layers.l_unites_geo'

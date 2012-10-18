@@ -71,13 +71,13 @@ def import_data(request):
         new_feature[json_to_db.get('dateobs')] = d.dateobs
         new_feature[json_to_db.get('initial_input')] = d.initial_input
         new_feature['supprime'] = 'False'
-        new_feature['id_organisme'] = 2  # (parc national des ecrins = fk de utilisateurs.bib_organismes)
+        new_feature['id_organisme'] = settings.FAUNA_ID_ORGANISM
         if json_data['input_type'] == 'fauna':
-            new_feature['id_protocole'] = 140  # faune TODO: recuperer ces ID en dynamique, 142 pour mortalite
-            new_feature['id_lot'] = 4  # faune
+            new_feature['id_protocole'] = settings.FAUNA_ID_PROTOCOL
+            new_feature['id_lot'] = settings.FAUNA_ID_LOT
         else:
-            new_feature['id_protocole'] = 142  # mortality
-            new_feature['id_lot'] = 15  # mortality
+            new_feature['id_protocole'] = settings.MORTALITY_ID_PROTOCOL
+            new_feature['id_lot'] = settings.MORTALITY_ID_LOT
 
         # we need to transform into 2154
         new_feature[json_to_db.get('geometry')] = "transform(ST_GeomFromText('POINT(%s %s)', 4326),2154)" % (d.geolocation.longitude, d.geolocation.latitude)
