@@ -342,7 +342,8 @@ FAUNE_TABLE_INFOS_GEOJSON =  {
         'id_col': 'id_unite_geo',
         'json_name': 'unity_geojson',
         #'select_col': 'id_unite_geo, astext(transform(the_geom,4326)) as geom',
-        'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.0001)) as geom',
+        #'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.0001)) as geom',
+        'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.00001)) as geom',
         #'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.001)) as geom',
         'db_to_json_columns' : {
             'id_unite_geo' : 'id',

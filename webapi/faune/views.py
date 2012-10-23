@@ -169,7 +169,7 @@ def import_data(request):
 
     return response
 
-
+@csrf_exempt
 def export_sqlite(request):
     """
     Export all data in sqlite format
@@ -281,7 +281,7 @@ def export_classes(request):
     """
     return export_data(request, settings.TABLE_CLASSES)
 
-
+@csrf_exempt
 def export_unity_geojson(request):
     """
     Export unity table from DataBase as geojson format
@@ -321,7 +321,7 @@ def export_unity_geojson(request):
             f.write(s + "\n")
             f.flush()
             wrapper = FileWrapper(file(output))
-            response = HttpResponse(wrapper, content_type='application/x-sqlite3')
+            response = HttpResponse(wrapper, content_type='application/json')
             response['Content-Length'] = os.path.getsize(output)
             response['Content-Disposition'] = 'attachment; filename=unity.geojson'
     finally:
@@ -330,6 +330,49 @@ def export_unity_geojson(request):
     
     return response
 
+@csrf_exempt
+def export_unity_polygons(request):
+    """
+    Export unity table from DataBase as text format
+    One id,polygon per line
+    """
+
+    response_content = {}
+    if not check_token(request):
+        response_content.append({
+            'status': _("You're not allowed to retreive information from this webservice")
+        })
+        response = HttpResponse()
+        simplejson.dump(response_content, response,
+                    ensure_ascii=False, separators=(',', ':'))
+        return response
+
+    # Get infos
+    table_name = settings.TABLE_UNITY_GEOJSON
+    response_objects = []
+
+    get_data_object_txt(response_objects, table_name)
+
+    # Create the .txt file
+    output = None
+    try:
+        with NamedTemporaryFile('w', delete=False, suffix='.wkt') as f:
+            output = f.name
+            
+            for polygon in response_objects:
+                s = polygon.replace(' ', '')
+                f.write(s + "\n")
+                f.flush()
+            wrapper = FileWrapper(file(output))
+            response = HttpResponse(wrapper, content_type='application/txt')
+            response['Content-Length'] = os.path.getsize(output)
+            response['Content-Disposition'] = 'attachment; filename=unity.wkt'
+    finally:
+        if output:
+            os.unlink(output)
+    
+    return response
+    
 
 def export_data(request, table_name):
     """
@@ -448,3 +491,32 @@ def get_data_object_geojson(response_content, table_name):
 
         i = i + 1
         response_content.append(feat_dict)
+
+        
+def get_data_object_txt(response_content, table_name):
+    """
+    Perform a SELECT on the DB to retreive infos on associated object, txt format
+    Param: table_name : name of the table
+    """
+
+    select_columns = settings.FAUNE_TABLE_INFOS_GEOJSON.get(table_name).get('select_col')
+    select_string = "SELECT %s FROM %s" \
+                    % (select_columns, table_name)
+
+    cursor = query_db(select_string)
+    for row in cursor.fetchall():
+        data = zip([column[0] for column in cursor.description], row)
+        stringGeometry = ""
+        stringKey = ""
+        for attr in data:
+            key = attr[0]
+            val = attr[1]
+
+            if key == "geom":
+                stringGeometry = val
+            else:
+                stringKey = val
+
+        response_content.append("%s,%s" % (stringKey, stringGeometry))
+        
+        
