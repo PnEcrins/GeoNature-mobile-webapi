@@ -360,8 +360,7 @@ def export_unity_polygons(request):
             output = f.name
             
             for polygon in response_objects:
-                s = polygon.replace(' ', '')
-                f.write(s + "\n")
+                f.write(polygon + "\n")
                 f.flush()
             wrapper = FileWrapper(file(output))
             response = HttpResponse(wrapper, content_type='application/txt')
@@ -383,12 +382,6 @@ def export_data(request, table_name):
     response = HttpResponse()
     simplejson.dump(response_content, response,
                 ensure_ascii=False, separators=(',', ':'))
-
-    # get a string with JSON encoding the list
-    #s = simplejson.dumps(response_content, ensure_ascii=True, encoding='utf-8')
-    #f = open('/home/sbe/tmp/'+table_name+".json", 'w')
-    #f.write(s + "\n")
-    #f.close()
 
     return response
 
