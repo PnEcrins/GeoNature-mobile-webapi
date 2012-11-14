@@ -201,6 +201,11 @@ def export_sqlite(request):
                 for create_string in settings.FAUNE_MOBILE_SQLITE_CREATE_QUERY:
                     cur.execute(create_string)
 
+                # Extra SQL to execute on database
+                for insert_string in settings.FAUNE_MOBILE_SQLITE_EXTRA_SQL:
+                    cur.execute(insert_string)
+                
+                # Fill data
                 tabTab = []
                 tabTab.append(settings.TABLE_USER)
                 tabTab.append(settings.TABLE_CLASSES)
