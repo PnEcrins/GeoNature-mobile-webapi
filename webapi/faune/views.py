@@ -212,6 +212,7 @@ def export_sqlite(request):
                 tabTab.append(settings.TABLE_UNITY)
                 tabTab.append(settings.TABLE_TAXA_UNITY)
                 tabTab.append(settings.TABLE_TAXA)
+                tabTab.append(settings.TABLE_CRITERION)
                 for pg_table_name in tabTab:
                     li_table_name = settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('sqlite_name')
                     response_content = get_data(request, pg_table_name)
