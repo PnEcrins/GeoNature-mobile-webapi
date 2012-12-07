@@ -15,10 +15,6 @@
 			{
 				"name": "ortho.mbtiles",
 				"label": "Ortho"
-			},
-			{
-				"name": "unities.mbtiles",
-				"label": "Unités"
 			}
 		],
 		"unity_layer":
