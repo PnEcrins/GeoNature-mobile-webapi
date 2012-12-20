@@ -1,11 +1,15 @@
 {
+	"sync":
+	{
+		"url": "http://192.168.168.246/faune/"
+	},
 	"map":
 	{
 		"bbox": [700000, 6325197, 1060000, 6617738],
 		"max_bounds": [[44.44, 5.9], [45.17, 6.69]],
 		"center": [44.799134, 6.257887],
 		"start_zoom": 3,
-		"min_zoom_pointing": 4,
+		"min_zoom_pointing": 5,
 		"layers":
 		[
 			{
