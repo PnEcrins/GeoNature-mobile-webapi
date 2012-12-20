@@ -182,19 +182,20 @@ MORTALITY_ID_PROTOCOL = 142
 MORTALITY_ID_LOT = 15
             
 
-TABLE_TAXA = 'contactfaune.v_nomade_taxons_cf'
+TABLE_TAXA = 'contactfaune.v_nomade_taxons_faune'
 TABLE_FAMILY = 'taxonomie.bib_familles'
 TABLE_UNITY = 'layers.l_unites_geo'
 TABLE_UNITY_GEOJSON = 'layers.l_unites_geo'
 TABLE_TAXA_UNITY = 'contactfaune.cor_unite_taxon'
-TABLE_CRITERION = 'contactfaune.bib_criteres_cf'
-TABLE_USER = 'utilisateurs.t_roles'
+TABLE_CRITERION = 'contactfaune.v_nomade_criteres_cf'
+TABLE_USER = 'contactfaune.v_nomade_observateurs_faune'
 TABLE_STATEMENT = 'contactfaune.t_releves_cf'
 TABLE_SHEET = 'contactfaune.t_fiches_cf'
 TABLE_SHEET_ROLE = 'contactfaune.cor_role_fiche_cf'
 TABLE_FAILED_JSON_FAUNA = 'synchronomade.erreurs_cf'
 TABLE_FAILED_JSON_MORTALITY = 'synchronomade.erreurs_mortalite'
 TABLE_CLASSES = 'taxonomie.bib_classes'
+
 
 
 FAUNE_TABLE_INFOS =  {
@@ -250,7 +251,7 @@ FAUNE_TABLE_INFOS =  {
         'id_col': 'id_taxon',
         'json_name': 'taxa',
         'sqlite_name': 'taxa',
-        'select_col': 'id_taxon, cd_ref, nom_latin, nom_francais, id_classe, denombrement, patrimonial, message',
+        'select_col': 'id_taxon, nom_latin, nom_francais, id_classe, denombrement, patrimonial, message, contactfaune',
         'db_to_json_columns' : {
             'id_taxon' : '_id',
             'cd_ref' : 'cd_ref',
@@ -259,10 +260,10 @@ FAUNE_TABLE_INFOS =  {
             'id_classe' : 'class_id',
             'denombrement' : 'number',
             'patrimonial' : 'patrimonial',
-            'message' : 'message'
+            'message' : 'message',
+            'contactfaune' : 'cf'
         }
     },
-    
     
     TABLE_FAMILY: {
         'id_col': 'id_famille',
@@ -278,7 +279,8 @@ FAUNE_TABLE_INFOS =  {
         'id_col': 'id_unite_geo',
         'json_name': 'unity',
         'sqlite_name': 'unities',
-        'select_col': 'id_unite_geo, code_insee, commune',
+        #'select_col': 'id_unite_geo, code_insee, commune',
+        'select_col': 'id_unite_geo',
         'db_to_json_columns' : {
             'id_unite_geo' : '_id',
             'code_insee' : 'insee',
@@ -302,28 +304,26 @@ FAUNE_TABLE_INFOS =  {
         'id_col': 'id_critere_cf',
         'json_name': 'criterion',
         'sqlite_name': 'criterion',
-        'select_col': 'id_critere_cf, code_critere_cf, nom_critere_cf, tri_cf, cincomplet',
+        'select_col': 'id_critere_cf, nom_critere_cf, tri_cf',
         'db_to_json_columns' : {
             'id_critere_cf' : '_id',
-            'code_critere_cf' : 'code',
             'nom_critere_cf' : 'name',
-            'tri_cf' : 'sort',
-            'cincomplet' : 'incomplete'
+            'tri_cf' : 'sort'
         }        
     },
     TABLE_USER: {
         'id_col': 'id_role',
         'json_name': 'user',
         'sqlite_name': 'observers',
-        'select_col': 'id_role, identifiant, nom_role, prenom_role, organisme',
+        'select_col': 'id_role, nom_role, prenom_role',
         'db_to_json_columns' : {
             'id_role' : '_id',
             'identifiant' : 'ident',
             'nom_role' : 'lastname',
-            'prenom_role' : 'firstname',
-            'organisme' : 'organism'
+            'prenom_role' : 'firstname'
         }        
     },
+    
     TABLE_CLASSES: {
         'id_col': 'id_classe',
         'json_name': 'classes',
@@ -357,14 +357,16 @@ FAUNE_TABLE_INFOS_GEOJSON =  {
 FAUNE_MOBILE_SQLITE_SAMPLE = os.path.join(PROJECT_ROOT_PATH, "data.db.sample")
 
 FAUNE_MOBILE_SQLITE_CREATE_QUERY = (
-    'CREATE TABLE IF NOT EXISTS observers (_id INTEGER, ident TEXT, lastname TEXT, firstname TEXT, organism TEXT)',
-    'CREATE TABLE IF NOT EXISTS classes (_id INTEGER, name TEXT, description TEXT)',
-    'CREATE TABLE IF NOT EXISTS unities (_id INTEGER, insee TEXT, city TEXT)',
+    'CREATE TABLE IF NOT EXISTS observers (_id INTEGER, ident TEXT, lastname TEXT, firstname TEXT)',
     'CREATE TABLE IF NOT EXISTS taxa_unities (unity_id INTEGER, taxon_id INTEGER, date TEXT, color TEXT, nb_obs INTEGER)',
-    'CREATE TABLE IF NOT EXISTS taxa (_id INTEGER, cd_ref INTEGER, name TEXT, name_fr TEXT, class_id INTEGER, number INTEGER, patrimonial INTEGER, message TEXT)',
-    'CREATE TABLE IF NOT EXISTS criterion (_id INTEGER, code TEXT, name TEXT, sort INTEGER, incomplete TEXT)',
+    'CREATE TABLE IF NOT EXISTS taxa (_id INTEGER, name TEXT, name_fr TEXT, class_id INTEGER, number INTEGER, patrimonial INTEGER, message TEXT, cf INTEGER)',
+    'CREATE TABLE IF NOT EXISTS criterion (_id INTEGER, name TEXT, sort INTEGER)',
     'CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT DEFAULT "en_US")'
 )
+
+
+
+
 
 FAUNE_MOBILE_SQLITE_EXTRA_SQL = (
     'INSERT INTO android_metadata VALUES ("en_US")',

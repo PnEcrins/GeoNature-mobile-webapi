@@ -208,8 +208,6 @@ def export_sqlite(request):
                 # Fill data
                 tabTab = []
                 tabTab.append(settings.TABLE_USER)
-                tabTab.append(settings.TABLE_CLASSES)
-                tabTab.append(settings.TABLE_UNITY)
                 tabTab.append(settings.TABLE_TAXA_UNITY)
                 tabTab.append(settings.TABLE_TAXA)
                 tabTab.append(settings.TABLE_CRITERION)
@@ -222,6 +220,7 @@ def export_sqlite(request):
                         for key in obj:
                             colTab.append(key)
                             valTab.append(unicode(obj[key]).replace("'", "''"))
+                        print colTab
                         insert_string = "INSERT INTO %s (%s) values (%s)" % \
                                             (li_table_name,
                                             ",".join(colTab),
