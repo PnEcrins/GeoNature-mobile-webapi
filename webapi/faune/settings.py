@@ -184,8 +184,8 @@ MORTALITY_ID_LOT = 15
 
 TABLE_TAXA = 'contactfaune.v_nomade_taxons_faune'
 TABLE_FAMILY = 'taxonomie.bib_familles'
-TABLE_UNITY = 'layers.l_unites_geo'
-TABLE_UNITY_GEOJSON = 'layers.l_unites_geo'
+TABLE_UNITY = 'contactfaune.v_nomade_unites_geo_cf'
+TABLE_UNITY_GEOJSON = 'contactfaune.v_nomade_unites_geo_cf'
 TABLE_TAXA_UNITY = 'contactfaune.cor_unite_taxon'
 TABLE_CRITERION = 'contactfaune.v_nomade_criteres_cf'
 TABLE_USER = 'contactfaune.v_nomade_observateurs_faune'
@@ -304,11 +304,12 @@ FAUNE_TABLE_INFOS =  {
         'id_col': 'id_critere_cf',
         'json_name': 'criterion',
         'sqlite_name': 'criterion',
-        'select_col': 'id_critere_cf, nom_critere_cf, tri_cf',
+        'select_col': 'id_critere_cf, nom_critere_cf, tri_cf, id_classe',
         'db_to_json_columns' : {
             'id_critere_cf' : '_id',
             'nom_critere_cf' : 'name',
-            'tri_cf' : 'sort'
+            'tri_cf' : 'sort',
+            'id_classe' : 'class_id'
         }        
     },
     TABLE_USER: {
@@ -341,8 +342,6 @@ FAUNE_TABLE_INFOS_GEOJSON =  {
     TABLE_UNITY_GEOJSON: {
         'id_col': 'id_unite_geo',
         'json_name': 'unity_geojson',
-        #'select_col': 'id_unite_geo, astext(transform(the_geom,4326)) as geom',
-        #'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.0001)) as geom',
         'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.00001)) as geom',
         #'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.001)) as geom',
         'db_to_json_columns' : {
@@ -360,12 +359,9 @@ FAUNE_MOBILE_SQLITE_CREATE_QUERY = (
     'CREATE TABLE IF NOT EXISTS observers (_id INTEGER, ident TEXT, lastname TEXT, firstname TEXT)',
     'CREATE TABLE IF NOT EXISTS taxa_unities (unity_id INTEGER, taxon_id INTEGER, date TEXT, color TEXT, nb_obs INTEGER)',
     'CREATE TABLE IF NOT EXISTS taxa (_id INTEGER, name TEXT, name_fr TEXT, class_id INTEGER, number INTEGER, patrimonial INTEGER, message TEXT, cf INTEGER)',
-    'CREATE TABLE IF NOT EXISTS criterion (_id INTEGER, name TEXT, sort INTEGER)',
+    'CREATE TABLE IF NOT EXISTS criterion (_id INTEGER, name TEXT, sort INTEGER, class_id INTEGER)',
     'CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT DEFAULT "en_US")'
 )
-
-
-
 
 
 FAUNE_MOBILE_SQLITE_EXTRA_SQL = (
