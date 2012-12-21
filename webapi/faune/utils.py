@@ -25,6 +25,16 @@ def commit_transaction():
     logger.debug(_("Faune SQL: COMMIT"))
 
 
+def check_connection():
+    """
+    Check if connexion to database is active
+    """
+    try:
+        cursor = connections[settings.DATABASE_ID].cursor()
+        return True
+    except:
+        return False
+    
 def query_db(sqlquery):
     """
     Executes a single query on the Faune database defined in project settings.

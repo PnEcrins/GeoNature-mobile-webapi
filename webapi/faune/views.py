@@ -10,7 +10,7 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.core.servers.basehttp import FileWrapper
 
-from faune.utils import sync_db, query_db, commit_transaction
+from faune.utils import sync_db, query_db, commit_transaction, check_connection
 
 from easydict import EasyDict
 
@@ -48,13 +48,8 @@ def import_data(request):
                     ensure_ascii=False, separators=(',', ':'))
         return response
 
-    if not check_token(request):
-        response_content.append({
-            'status': _("You're not allowed to use this webservice")
-        })
-        response = HttpResponse()
-        simplejson.dump(response_content, response,
-                    ensure_ascii=False, separators=(',', ':'))
+    res, response = check_token(request)
+    if not res:
         return response
 
     json_data = simplejson.loads(data)
@@ -175,15 +170,10 @@ def export_sqlite(request):
     Export all data in sqlite format
     """
     response_content = []
-    if not check_token(request):
-        response_content.append({
-            'status': _("You're not allowed to retreive information from this webservice")
-        })
-        response = HttpResponse()
-        simplejson.dump(response_content, response,
-                    ensure_ascii=False, separators=(',', ':'))
+    res, response = check_token(request)
+    if not res:
         return response
-
+    
     # Create the .db file
     output = None
     src = "%s" % (settings.FAUNE_MOBILE_SQLITE_SAMPLE)
@@ -213,14 +203,13 @@ def export_sqlite(request):
                 tabTab.append(settings.TABLE_CRITERION)
                 for pg_table_name in tabTab:
                     li_table_name = settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('sqlite_name')
-                    response_content = get_data(request, pg_table_name)
+                    response_content = get_data(request, pg_table_name, False)
                     for obj in response_content[settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('json_name')]:
                         colTab = []
                         valTab = []
                         for key in obj:
                             colTab.append(key)
                             valTab.append(unicode(obj[key]).replace("'", "''"))
-                        print colTab
                         insert_string = "INSERT INTO %s (%s) values (%s)" % \
                                             (li_table_name,
                                             ",".join(colTab),
@@ -293,13 +282,8 @@ def export_unity_geojson(request):
     """
 
     response_content = []
-    if not check_token(request):
-        response_content.append({
-            'status': _("You're not allowed to retreive information from this webservice")
-        })
-        response = HttpResponse()
-        simplejson.dump(response_content, response,
-                    ensure_ascii=False, separators=(',', ':'))
+    res, response = check_token(request)
+    if not res:
         return response
 
     # Get infos
@@ -342,14 +326,8 @@ def export_unity_polygons(request):
     One id,polygon per line
     """
 
-    response_content = {}
-    if not check_token(request):
-        response_content.append({
-            'status': _("You're not allowed to retreive information from this webservice")
-        })
-        response = HttpResponse()
-        simplejson.dump(response_content, response,
-                    ensure_ascii=False, separators=(',', ':'))
+    res, response = check_token(request)
+    if not res:
         return response
 
     # Get infos
@@ -382,7 +360,7 @@ def export_data(request, table_name):
     """
     Export table_name data from DataBase to JSON
     """
-    response_content = get_data(request, table_name)
+    response_content = get_data(request, table_name, False)
 
     response = HttpResponse()
     simplejson.dump(response_content, response,
@@ -391,26 +369,22 @@ def export_data(request, table_name):
     return response
 
 
-def get_data(request, table_name):
+def get_data(request, table_name, testing):
     """
     Get table_name data from DataBase to object
+    Param testing is for testing Data
     """
     response_content = []
-    if not check_token(request):
-        response_content.append({
-            'status': _("You're not allowed to retreive information from this webservice")
-        })
-        response = HttpResponse()
-        simplejson.dump(response_content, response,
-                    ensure_ascii=False, separators=(',', ':'))
+    res, response = check_token(request)
+    if not res:
         return response
-
+    
     # Get infos
     response_objects = []
     json_table_name = settings.FAUNE_TABLE_INFOS.get(table_name).get('json_name')
     response_content = {json_table_name: []}
 
-    get_data_object(response_objects, table_name)
+    get_data_object(response_objects, table_name, testing)
 
     response_content[json_table_name] = response_objects
 
@@ -424,19 +398,30 @@ def check_token(request):
     if request.method == 'POST':
         if request.POST['token']:
             if request.POST['token'] == settings.TOKEN:
-                return True
-    return False
+                return True, None
+    
+    response_content = []
+    response_content.append({
+        'status': _("You're not allowed to retreive information from this webservice")
+    })
+    response = HttpResponse()
+    simplejson.dump(response_content, response,
+                ensure_ascii=False, separators=(',', ':'))
+
+    return False, response
 
 
-def get_data_object(response_content, table_name):
+def get_data_object(response_content, table_name, testing):
     """
     Perform a SELECT on the DB to retreive infos on associated object
     Param: table_name : name of the table
     """
-
+    test_string = ""
+    if testing:
+        test_string = " LIMIT 1"
     select_columns = settings.FAUNE_TABLE_INFOS.get(table_name).get('select_col')
-    select_string = "SELECT %s FROM %s" \
-                    % (select_columns, table_name)
+    select_string = "SELECT %s FROM %s %s" \
+                    % (select_columns, table_name, test_string)
 
     cursor = query_db(select_string)
     for row in cursor.fetchall():
@@ -517,4 +502,40 @@ def get_data_object_txt(response_content, table_name):
 
         response_content.append("%s,%s" % (stringKey, stringGeometry))
         
-        
+@csrf_exempt
+def check_status(request):
+    """
+    Check if database active and views are available
+    """
+    response_content = {}
+    res, response = check_token(request)
+    if not res:
+        return response
+
+    # check DB connection
+    res_connection = check_connection();
+    
+    # check if views are availables
+    res_views = True
+    try:
+        tabTab = []
+        tabTab.append(settings.TABLE_USER)
+        tabTab.append(settings.TABLE_TAXA_UNITY)
+        tabTab.append(settings.TABLE_TAXA)
+        tabTab.append(settings.TABLE_CRITERION)
+        for pg_table_name in tabTab:
+            li_table_name = settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('sqlite_name')
+            test_return = get_data(request, pg_table_name, True)
+    except:
+        res_views = False
+
+
+    response_content.update({
+        'DB connection': res_connection,
+        'Views available': res_views
+    })
+    response = HttpResponse()
+    simplejson.dump(response_content, response,
+                ensure_ascii=False, separators=(',', ':'))
+    return response
+    
