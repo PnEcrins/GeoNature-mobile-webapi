@@ -2,7 +2,8 @@
 	"sync":
 	{
 		"url": "http://192.168.168.246/faune/",
-		"token": 666
+		"token": 666,
+		"status_url": "status/"
 	},
 	"map":
 	{
