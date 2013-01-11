@@ -1,9 +1,20 @@
 {
 	"sync":
 	{
-		"url": "http://192.168.168.246/faune/",
+		"url": "http://192.168.168.245/faune/",
 		"token": 666,
-		"status_url": "status/"
+		"status_url": "status/",
+		"exports":
+		[
+			{
+				"url": "export/sqlite/",
+				"file": "databases/data.db"
+			},
+			{
+				"url": "export/unity_polygons/",
+				"file": "unities.wkt"
+			}
+		]
 	},
 	"map":
 	{
