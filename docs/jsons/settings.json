@@ -4,6 +4,7 @@
 		"url": "http://192.168.168.245/faune/",
 		"token": 666,
 		"status_url": "status/",
+		"import_url": "import/",
 		"exports":
 		[
 			{
