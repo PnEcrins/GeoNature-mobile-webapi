@@ -132,11 +132,11 @@ def import_data(request):
         commit_transaction()
 
         response_content.update({
-            'status': _("Import done"),
-            'id_sheet': "%s" % (d.id),
-            'ids_statements': "%s" % (','.join(map(str, statement_ids)))
+            'status_code': _("0"),
+            'status_message': "id_sheet: %s, ids_statements: %s" % (d.id, ','.join(map(str, statement_ids)))
         })
-    except:
+    except Exception as e:
+        print e
         #  Insert rejected JSON into synchro_table (text format)
         now = datetime.datetime.now()
         objects = []
@@ -155,7 +155,8 @@ def import_data(request):
         commit_transaction()
 
         response_content.update({
-            'status': _("Bad json or data (%d)") % id_failed
+            'status_code': _("1"),
+            'status_message': _("Bad json or data (%d)") % id_failed
         })
 
     response = HttpResponse()
@@ -531,8 +532,10 @@ def check_status(request):
 
 
     response_content.update({
-        'DB connection': res_connection,
-        'Views available': res_views
+        'status_code': _("0"),
+        'status_message': "DB connection %d, Views available %d" % (res_connection, res_views)
+        #'DB connection': res_connection,
+        #'Views available': res_views
     })
     response = HttpResponse()
     simplejson.dump(response_content, response,
