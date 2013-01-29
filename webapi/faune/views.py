@@ -26,6 +26,7 @@ import time
 import datetime
 import os
 import tempfile
+import json
 
 
 @csrf_exempt
@@ -541,4 +542,58 @@ def check_status(request):
     simplejson.dump(response_content, response,
                 ensure_ascii=False, separators=(',', ':'))
     return response
+
+@csrf_exempt
+def soft_version(request):
+    """
+    Return the version of the mobile soft (JSON)  by reading a json config file
+    """
+    response_content = {}
+    res, response = check_token(request)
+    if not res:
+        return response
+
+    # read the version file
+    version_file = "%sversion.json" % (settings.FAUNE_MOBILE_SOFT_PATH)
+        
+    json_data = open(version_file)   
+    version_data = json.load(json_data)
+    json_data.close()
+
+    response_content.update({
+        "package": version_data["package"],
+        "versionCode": version_data["versionCode"],
+        "versionName": version_data["versionName"],
+        "apkName": version_data["apkName"]
+    })
     
+    response = HttpResponse()
+    simplejson.dump(response_content, response,
+                ensure_ascii=False, separators=(',', ':'))
+    return response
+
+    
+@csrf_exempt
+def soft_download(request):
+    """
+    Return a downloadable file of the mobile soft
+    """
+    response_content = {}
+    res, response = check_token(request)
+    if not res:
+        return response
+
+    # read the version file
+    version_file = "%sversion.json" % (settings.FAUNE_MOBILE_SOFT_PATH)
+        
+    json_data = open(version_file)   
+    version_data = json.load(json_data)
+    json_data.close()
+
+    file_path = "%s%s" %  (settings.FAUNE_MOBILE_SOFT_PATH, version_data["apkName"])
+
+    response = HttpResponse(mimetype='application/force-download')
+    response['Content-Disposition'] = 'attachment; filename=%s' % (version_data["apkName"])
+    response['X-Sendfile'] = file_path
+    return response
+            
