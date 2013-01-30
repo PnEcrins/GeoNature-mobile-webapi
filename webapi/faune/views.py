@@ -592,10 +592,20 @@ def soft_download(request):
 
     file_path = "%s%s" %  (settings.FAUNE_MOBILE_SOFT_PATH, version_data["apkName"])
 
-    wrapper = FileWrapper(file(file_path))
-    response = HttpResponse(wrapper, content_type='text/plain')
-    response['Content-Length'] = os.path.getsize(file_path)
-    response['Content-Disposition'] = 'attachment; filename=%s' % (version_data["apkName"])
+    try:
+        wrapper = FileWrapper(file(file_path))
+        response = HttpResponse(wrapper, content_type='text/plain')
+        response['Content-Length'] = os.path.getsize(file_path)
+        response['Content-Disposition'] = 'attachment; filename=%s' % (version_data["apkName"])
+    except :
+        response_content.update({
+            'status_code': _("1"),
+            'status_message': "APK file is not available (%s)" % (version_data["apkName"])
+        })
+        response = HttpResponse()
+        simplejson.dump(response_content, response,
+                    ensure_ascii=False, separators=(',', ':'))
+        return response
     
     return response
             
