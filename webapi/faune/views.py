@@ -592,8 +592,10 @@ def soft_download(request):
 
     file_path = "%s%s" %  (settings.FAUNE_MOBILE_SOFT_PATH, version_data["apkName"])
 
-    response = HttpResponse(mimetype='application/force-download')
+    wrapper = FileWrapper(file(file_path))
+    response = HttpResponse(wrapper, content_type='text/plain')
+    response['Content-Length'] = os.path.getsize(file_path)
     response['Content-Disposition'] = 'attachment; filename=%s' % (version_data["apkName"])
-    response['X-Sendfile'] = file_path
+    
     return response
             
