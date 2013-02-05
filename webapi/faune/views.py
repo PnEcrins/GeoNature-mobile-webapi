@@ -56,108 +56,141 @@ def import_data(request):
 
     d = EasyDict(json_data)
 
-    try:
-        # Insert into TABLE_SHEET
-        objects = []
-        new_feature = {}
-        json_to_db = settings.FAUNE_TABLE_INFOS.get(settings.TABLE_SHEET).get('json_to_db_columns')
-        new_feature[settings.FAUNE_TABLE_INFOS.get(settings.TABLE_SHEET).get('id_col')] = d.id
-        new_feature['table_name'] = settings.TABLE_SHEET
-        new_feature[json_to_db.get('dateobs')] = d.dateobs
-        new_feature[json_to_db.get('initial_input')] = d.initial_input
-        new_feature['supprime'] = 'False'
-        new_feature['id_organisme'] = settings.FAUNA_ID_ORGANISM
-        if json_data['input_type'] == 'fauna':
-            new_feature['id_protocole'] = settings.FAUNA_ID_PROTOCOL
-            new_feature['id_lot'] = settings.FAUNA_ID_LOT
-        else:
-            new_feature['id_protocole'] = settings.MORTALITY_ID_PROTOCOL
-            new_feature['id_lot'] = settings.MORTALITY_ID_LOT
-
-        # we need to transform into 2154
-        new_feature[json_to_db.get('geometry')] = "transform(ST_GeomFromText('POINT(%s %s)', 4326),2154)" % (d.geolocation.longitude, d.geolocation.latitude)
-        new_feature[json_to_db.get('accuracy')] = d.geolocation.accuracy
-        objects.append(new_feature)
-        cursor = sync_db(objects)
-
-        # Insert into TABLE_STATEMENT
-        statement_ids = []
-        for taxon in d.taxons:
-            statement_ids.append(taxon.id)
+    bad_id = False
+    # Check if ID are unique
+    count_string = "SELECT count(*) FROM %s WHERE %s='%s'" % (settings.TABLE_SHEET, settings.FAUNE_TABLE_INFOS.get(settings.TABLE_SHEET).get('id_col'), d.id)
+    cursor = query_db(count_string)
+    row = cursor.fetchone()
+    if row :
+        datarow = zip([column[0] for column in cursor.description], row)
+        val = datarow[0][1]
+        if val == 1:
+            bad_id = True
+            response_content.update({
+                'status_code': _("1"),
+                'status_message': _("Existing ID in database (%s) (%s)") % (settings.TABLE_SHEET, d.id)
+            })
+    for taxon in d.taxons:
+        count_string = "SELECT count(*) FROM %s WHERE %s='%s'" % (settings.TABLE_STATEMENT, settings.FAUNE_TABLE_INFOS.get(settings.TABLE_STATEMENT).get('id_col'), taxon.id)
+        cursor = query_db(count_string)
+        row = cursor.fetchone()
+        if row :
+            datarow = zip([column[0] for column in cursor.description], row)
+            val = datarow[0][1]
+            if val == 1:
+                bad_id = True
+                response_content.update({
+                    'status_code': _("1"),
+                    'status_message': _("Existing ID in database (%s) (%s)") % (settings.TABLE_STATEMENT, taxon.id)
+                })
+    
+    if not bad_id: 
+        try:
             objects = []
             new_feature = {}
-            json_to_db = settings.FAUNE_TABLE_INFOS.get(settings.TABLE_STATEMENT).get('json_to_db_columns')
-            new_feature['table_name'] = settings.TABLE_STATEMENT
-            new_feature['supprime'] = 'False'
-            new_feature[settings.FAUNE_TABLE_INFOS.get(settings.TABLE_STATEMENT).get('id_col')] = taxon.id
+            json_to_db = settings.FAUNE_TABLE_INFOS.get(settings.TABLE_SHEET).get('json_to_db_columns')
+            
+            # Insert into TABLE_SHEET
             new_feature[settings.FAUNE_TABLE_INFOS.get(settings.TABLE_SHEET).get('id_col')] = d.id
-            new_feature[json_to_db.get('id')] = taxon.id_taxon
-            new_feature[json_to_db.get('name_entered')] = taxon.name_entered
+            new_feature['table_name'] = settings.TABLE_SHEET
+            new_feature[json_to_db.get('dateobs')] = d.dateobs
+            new_feature[json_to_db.get('initial_input')] = d.initial_input
+            new_feature['supprime'] = 'False'
+            new_feature['id_organisme'] = settings.FAUNA_ID_ORGANISM
             if json_data['input_type'] == 'fauna':
-                new_feature[json_to_db.get('adult_male')] = taxon.counting.adult_male
-                new_feature[json_to_db.get('adult_female')] = taxon.counting.adult_female
-                new_feature[json_to_db.get('adult')] = taxon.counting.adult
-                new_feature[json_to_db.get('not_adult')] = taxon.counting.not_adult
-                new_feature[json_to_db.get('young')] = taxon.counting.young
-                new_feature[json_to_db.get('yearling')] = taxon.counting.yearling
-                new_feature[json_to_db.get('sex_age_unspecified')] = taxon.counting.sex_age_unspecified
-                new_feature[json_to_db.get('criterion')] = taxon.observation.criterion
+                new_feature['id_protocole'] = settings.FAUNA_ID_PROTOCOL
+                new_feature['id_lot'] = settings.FAUNA_ID_LOT
             else:
-                new_feature[json_to_db.get('adult_male')] = taxon.mortality.adult_male
-                new_feature[json_to_db.get('adult_female')] = taxon.mortality.adult_female
-                new_feature[json_to_db.get('adult')] = taxon.mortality.adult
-                new_feature[json_to_db.get('not_adult')] = taxon.mortality.not_adult
-                new_feature[json_to_db.get('young')] = taxon.mortality.young
-                new_feature[json_to_db.get('yearling')] = taxon.mortality.yearling
-                new_feature[json_to_db.get('sex_age_unspecified')] = taxon.mortality.sex_age_unspecified
-                new_feature[json_to_db.get('sample')] = taxon.mortality.sample
-                new_feature[json_to_db.get('criterion')] = taxon.observation.criterion
+                new_feature['id_protocole'] = settings.MORTALITY_ID_PROTOCOL
+                new_feature['id_lot'] = settings.MORTALITY_ID_LOT
 
-            new_feature[json_to_db.get('comment')] = taxon.comment
-
+            # we need to transform into 2154
+            new_feature[json_to_db.get('geometry')] = "transform(ST_GeomFromText('POINT(%s %s)', 4326),2154)" % (d.geolocation.longitude, d.geolocation.latitude)
+            new_feature[json_to_db.get('accuracy')] = d.geolocation.accuracy
             objects.append(new_feature)
             cursor = sync_db(objects)
 
-        # Insert into TABLE_SHEET_ROLE (multiple observers enable)
-        for observer in d.observers_id:
-            objects = []
-            new_feature = {}
-            new_feature['table_name'] = settings.TABLE_SHEET_ROLE
-            new_feature['id_cf'] = d.id
-            new_feature['id_role'] = observer
-            objects.append(new_feature)
-            sync_db(objects)
+            # Insert into TABLE_STATEMENT
+            statement_ids = []
+            for taxon in d.taxons:
+                statement_ids.append(taxon.id)
+                objects = []
+                new_feature = {}
+                json_to_db = settings.FAUNE_TABLE_INFOS.get(settings.TABLE_STATEMENT).get('json_to_db_columns')
+                new_feature['table_name'] = settings.TABLE_STATEMENT
+                new_feature['supprime'] = 'False'
+                new_feature[settings.FAUNE_TABLE_INFOS.get(settings.TABLE_STATEMENT).get('id_col')] = taxon.id
+                new_feature[settings.FAUNE_TABLE_INFOS.get(settings.TABLE_SHEET).get('id_col')] = d.id
+                new_feature[json_to_db.get('id')] = taxon.id_taxon
+                new_feature[json_to_db.get('name_entered')] = taxon.name_entered
+                if json_data['input_type'] == 'fauna':
+                    new_feature[json_to_db.get('adult_male')] = taxon.counting.adult_male
+                    new_feature[json_to_db.get('adult_female')] = taxon.counting.adult_female
+                    new_feature[json_to_db.get('adult')] = taxon.counting.adult
+                    new_feature[json_to_db.get('not_adult')] = taxon.counting.not_adult
+                    new_feature[json_to_db.get('young')] = taxon.counting.young
+                    new_feature[json_to_db.get('yearling')] = taxon.counting.yearling
+                    new_feature[json_to_db.get('sex_age_unspecified')] = taxon.counting.sex_age_unspecified
+                    new_feature[json_to_db.get('criterion')] = taxon.observation.criterion
+                else:
+                    new_feature[json_to_db.get('adult_male')] = taxon.mortality.adult_male
+                    new_feature[json_to_db.get('adult_female')] = taxon.mortality.adult_female
+                    new_feature[json_to_db.get('adult')] = taxon.mortality.adult
+                    new_feature[json_to_db.get('not_adult')] = taxon.mortality.not_adult
+                    new_feature[json_to_db.get('young')] = taxon.mortality.young
+                    new_feature[json_to_db.get('yearling')] = taxon.mortality.yearling
+                    new_feature[json_to_db.get('sex_age_unspecified')] = taxon.mortality.sex_age_unspecified
+                    new_feature[json_to_db.get('sample')] = taxon.mortality.sample
+                    new_feature[json_to_db.get('criterion')] = taxon.observation.criterion
 
-        # Commit transaction
-        commit_transaction()
+                new_feature[json_to_db.get('comment')] = taxon.comment
 
-        response_content.update({
-            'status_code': _("0"),
-            'status_message': "id_sheet: %s, ids_statements: %s" % (d.id, ','.join(map(str, statement_ids)))
-        })
-    #except Exception as e:
-    except Exception, e:
-        #  Insert rejected JSON into synchro_table (text format)
-        now = datetime.datetime.now()
-        objects = []
-        new_feature = {}
-        if json_data['input_type'] == 'fauna':
-            new_feature['table_name'] = settings.TABLE_FAILED_JSON_FAUNA
-        else:
-            new_feature['table_name'] = settings.TABLE_FAILED_JSON_MORTALITY
-        new_feature['date_import'] = "%d-%d-%d %d:%d:%d" % (now.year, now.month, now.day, now.hour, now.minute, now.second)
-        new_feature['json'] = data
-        objects.append(new_feature)
-        cursor = sync_db(objects)
-        id_failed = cursor.fetchone()[0]
+                objects.append(new_feature)
+                cursor = sync_db(objects)
 
-        # Commit transaction
-        commit_transaction()
+            # Insert into TABLE_SHEET_ROLE (multiple observers enable)
+            for observer in d.observers_id:
+                objects = []
+                new_feature = {}
+                new_feature['table_name'] = settings.TABLE_SHEET_ROLE
+                new_feature['id_cf'] = d.id
+                new_feature['id_role'] = observer
+                objects.append(new_feature)
+                sync_db(objects)
 
-        response_content.update({
-            'status_code': _("1"),
-            'status_message': _("Bad json or data (%d)") % id_failed
-        })
+            # Commit transaction
+            commit_transaction()
+
+            response_content.update({
+                'status_code': _("0"),
+                'status_message': "id_sheet: %s, ids_statements: %s" % (d.id, ','.join(map(str, statement_ids)))
+            })
+        #except Exception as e:
+        except Exception, e:
+            #  Insert rejected JSON into synchro_table (text format)
+            archive_bad_data(data, json_data)
+            #now = datetime.datetime.now()
+            #objects = []
+            #new_feature = {}
+            #if json_data['input_type'] == 'fauna':
+            #    new_feature['table_name'] = settings.TABLE_FAILED_JSON_FAUNA
+            #else:
+            #    new_feature['table_name'] = settings.TABLE_FAILED_JSON_MORTALITY
+            #new_feature['date_import'] = "%d-%d-%d %d:%d:%d" % (now.year, now.month, now.day, now.hour, now.minute, now.second)
+            #new_feature['json'] = data
+            #objects.append(new_feature)
+            #cursor = sync_db(objects)
+            #id_failed = cursor.fetchone()[0]
+
+            # Commit transaction
+            #commit_transaction()
+
+            response_content.update({
+                'status_code': _("1"),
+                'status_message': _("Bad json or data (%d)") % id_failed
+            })
+    else:
+        archive_bad_data(data, json_data)
 
     response = HttpResponse()
     simplejson.dump(response_content, response,
@@ -165,6 +198,26 @@ def import_data(request):
 
     return response
 
+def archive_bad_data(data, json_data):
+    #  Insert rejected JSON into synchro_table (text format)
+    now = datetime.datetime.now()
+    objects = []
+    new_feature = {}
+    if json_data['input_type'] == 'fauna':
+        new_feature['table_name'] = settings.TABLE_FAILED_JSON_FAUNA
+    else:
+        new_feature['table_name'] = settings.TABLE_FAILED_JSON_MORTALITY
+    new_feature['date_import'] = "%d-%d-%d %d:%d:%d" % (now.year, now.month, now.day, now.hour, now.minute, now.second)
+    new_feature['json'] = data
+    objects.append(new_feature)
+    cursor = sync_db(objects)
+    id_failed = cursor.fetchone()[0]
+
+    # Commit transaction
+    commit_transaction()
+    
+    
+    
 @csrf_exempt
 def export_sqlite(request):
     """
