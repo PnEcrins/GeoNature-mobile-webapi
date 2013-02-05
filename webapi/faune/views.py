@@ -26,7 +26,6 @@ import time
 import datetime
 import os
 import tempfile
-import json
 
 
 @csrf_exempt
@@ -138,7 +137,6 @@ def import_data(request):
         })
     #except Exception as e:
     except Exception, e:
-        print e
         #  Insert rejected JSON into synchro_table (text format)
         now = datetime.datetime.now()
         objects = []
@@ -558,7 +556,7 @@ def soft_version(request):
     version_file = "%sversion.json" % (settings.FAUNE_MOBILE_SOFT_PATH)
         
     json_data = open(version_file)   
-    version_data = json.load(json_data)
+    version_data = simplejson.load(json_data)
     json_data.close()
 
     response_content.update({
@@ -588,7 +586,7 @@ def soft_download(request):
     version_file = "%sversion.json" % (settings.FAUNE_MOBILE_SOFT_PATH)
         
     json_data = open(version_file)   
-    version_data = json.load(json_data)
+    version_data = simplejson.load(json_data)
     json_data.close()
 
     file_path = "%s%s" %  (settings.FAUNE_MOBILE_SOFT_PATH, version_data["apkName"])
