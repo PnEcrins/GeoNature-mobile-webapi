@@ -136,7 +136,8 @@ def import_data(request):
             'status_code': _("0"),
             'status_message': "id_sheet: %s, ids_statements: %s" % (d.id, ','.join(map(str, statement_ids)))
         })
-    except Exception as e:
+    #except Exception as e:
+    except Exception, e:
         print e
         #  Insert rejected JSON into synchro_table (text format)
         now = datetime.datetime.now()
