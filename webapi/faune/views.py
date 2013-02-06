@@ -169,21 +169,6 @@ def import_data(request):
         except Exception, e:
             #  Insert rejected JSON into synchro_table (text format)
             archive_bad_data(data, json_data)
-            #now = datetime.datetime.now()
-            #objects = []
-            #new_feature = {}
-            #if json_data['input_type'] == 'fauna':
-            #    new_feature['table_name'] = settings.TABLE_FAILED_JSON_FAUNA
-            #else:
-            #    new_feature['table_name'] = settings.TABLE_FAILED_JSON_MORTALITY
-            #new_feature['date_import'] = "%d-%d-%d %d:%d:%d" % (now.year, now.month, now.day, now.hour, now.minute, now.second)
-            #new_feature['json'] = data
-            #objects.append(new_feature)
-            #cursor = sync_db(objects)
-            #id_failed = cursor.fetchone()[0]
-
-            # Commit transaction
-            #commit_transaction()
 
             response_content.update({
                 'status_code': _("1"),
@@ -607,17 +592,22 @@ def soft_version(request):
 
     # read the version file
     version_file = "%sversion.json" % (settings.FAUNE_MOBILE_SOFT_PATH)
-        
-    json_data = open(version_file)   
-    version_data = simplejson.load(json_data)
-    json_data.close()
-
-    response_content.update({
-        "package": version_data["package"],
-        "versionCode": version_data["versionCode"],
-        "versionName": version_data["versionName"],
-        "apkName": version_data["apkName"]
-    })
+    
+    try:
+        json_data = open(version_file)   
+        version_data = simplejson.load(json_data)
+        json_data.close()
+        response_content.update({
+            "package": version_data["package"],
+            "versionCode": version_data["versionCode"],
+            "versionName": version_data["versionName"],
+            "apkName": version_data["apkName"]
+        })
+    except:
+        response_content.update({
+            'status_code': _("1"),
+            'status_message': "Version file is not available"
+        })
     
     response = HttpResponse()
     simplejson.dump(response_content, response,
@@ -637,10 +627,20 @@ def soft_download(request):
 
     # read the version file
     version_file = "%sversion.json" % (settings.FAUNE_MOBILE_SOFT_PATH)
-        
-    json_data = open(version_file)   
-    version_data = simplejson.load(json_data)
-    json_data.close()
+    
+    try:
+        json_data = open(version_file)   
+        version_data = simplejson.load(json_data)
+        json_data.close()
+    except:
+        response_content.update({
+            'status_code': _("1"),
+            'status_message': "Version file is not available"
+        })        
+        response = HttpResponse()
+        simplejson.dump(response_content, response,
+                    ensure_ascii=False, separators=(',', ':'))
+        return response
 
     file_path = "%s%s" %  (settings.FAUNE_MOBILE_SOFT_PATH, version_data["apkName"])
 
