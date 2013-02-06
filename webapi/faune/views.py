@@ -217,7 +217,8 @@ def export_sqlite(request):
     output = None
     src = "%s" % (settings.FAUNE_MOBILE_SQLITE_SAMPLE)
     try:
-        with NamedTemporaryFile('w', delete=False, suffix='.db') as f:
+        #with NamedTemporaryFile('w', delete=False, suffix='.db') as f:
+        with tempfile.TemporaryFile('w', suffix='.db') as f:
             output = f.name
             handle = open(src, 'r')
             f.write(handle.read())
@@ -343,7 +344,8 @@ def export_unity_geojson(request):
     output = None
     s = simplejson.dumps(response_content, ensure_ascii=True, encoding='utf-8')
     try:
-        with NamedTemporaryFile('w', delete=False, suffix='.geojson') as f:
+        #with NamedTemporaryFile('w', delete=False, suffix='.geojson') as f:
+        with tempfile.TemporaryFile('w', suffix='.geojson') as f:
             output = f.name
             s = s.replace(' ', '')
             f.write(s + "\n")
@@ -377,20 +379,22 @@ def export_unity_polygons(request):
 
     # Create the .txt file
     output = None
+    export = ""
     try:
-        with NamedTemporaryFile('w', delete=False, suffix='.wkt') as f:
+        with tempfile.TemporaryFile('w', suffix='.wkt') as f:
             output = f.name
             
             for polygon in response_objects:
-                f.write(polygon + "\n")
-                f.flush()
-            wrapper = FileWrapper(file(output))
-            response = HttpResponse(wrapper, content_type='application/txt')
-            response['Content-Length'] = os.path.getsize(output)
+                export = "%s%s\n" % (export, polygon)
+                
+            wrapper = FileWrapper(f)
+            response = HttpResponse(export, content_type='application/txt')
+            response['Content-Length'] = len(export)
             response['Content-Disposition'] = 'attachment; filename=unity.wkt'
     finally:
-        if output:
-            os.unlink(output)
+        pass
+        #if output:
+        #    os.unlink(output)
     
     return response
     
