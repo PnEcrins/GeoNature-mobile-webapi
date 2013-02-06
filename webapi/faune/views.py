@@ -218,7 +218,8 @@ def export_sqlite(request):
     src = "%s" % (settings.FAUNE_MOBILE_SQLITE_SAMPLE)
     try:
         #with NamedTemporaryFile('w', delete=False, suffix='.db') as f:
-        with tempfile.TemporaryFile('w', suffix='.db') as f:
+        with NamedTemporaryFile('w', suffix='.db') as f:
+        #with tempfile.TemporaryFile('w', suffix='.db') as f:
             output = f.name
             handle = open(src, 'r')
             f.write(handle.read())
@@ -226,43 +227,47 @@ def export_sqlite(request):
 
             # Create tables inside the DB
             con = lite.connect(output)
-            with con:
-                cur = con.cursor()
-                for create_string in settings.FAUNE_MOBILE_SQLITE_CREATE_QUERY:
-                    cur.execute(create_string)
+            #with con:
+            cur = con.cursor()
+            for create_string in settings.FAUNE_MOBILE_SQLITE_CREATE_QUERY:
+                cur.execute(create_string)
 
-                # Extra SQL to execute on database
-                for insert_string in settings.FAUNE_MOBILE_SQLITE_EXTRA_SQL:
+            # Extra SQL to execute on database
+            for insert_string in settings.FAUNE_MOBILE_SQLITE_EXTRA_SQL:
+                cur.execute(insert_string)
+            
+            # Fill data
+            tabTab = []
+            tabTab.append(settings.TABLE_USER)
+            tabTab.append(settings.TABLE_TAXA_UNITY)
+            tabTab.append(settings.TABLE_TAXA)
+            tabTab.append(settings.TABLE_CRITERION)
+            for pg_table_name in tabTab:
+                li_table_name = settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('sqlite_name')
+                response_content = get_data(request, pg_table_name, False)
+                for obj in response_content[settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('json_name')]:
+                    colTab = []
+                    valTab = []
+                    for key in obj:
+                        colTab.append(key)
+                        valTab.append(unicode(obj[key]).replace("'", "''"))
+                    insert_string = "INSERT INTO %s (%s) values (%s)" % \
+                                        (li_table_name,
+                                        ",".join(colTab),
+                                        "'" + "','".join(map(unicode, valTab)) + "'"
+                                        )
                     cur.execute(insert_string)
-                
-                # Fill data
-                tabTab = []
-                tabTab.append(settings.TABLE_USER)
-                tabTab.append(settings.TABLE_TAXA_UNITY)
-                tabTab.append(settings.TABLE_TAXA)
-                tabTab.append(settings.TABLE_CRITERION)
-                for pg_table_name in tabTab:
-                    li_table_name = settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('sqlite_name')
-                    response_content = get_data(request, pg_table_name, False)
-                    for obj in response_content[settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('json_name')]:
-                        colTab = []
-                        valTab = []
-                        for key in obj:
-                            colTab.append(key)
-                            valTab.append(unicode(obj[key]).replace("'", "''"))
-                        insert_string = "INSERT INTO %s (%s) values (%s)" % \
-                                            (li_table_name,
-                                            ",".join(colTab),
-                                            "'" + "','".join(map(unicode, valTab)) + "'"
-                                            )
-                        cur.execute(insert_string)
+            con.commit()
+            con.close()
+            
             wrapper = FileWrapper(file(output))
             response = HttpResponse(wrapper, content_type='application/x-sqlite3')
             response['Content-Length'] = os.path.getsize(output)
             response['Content-Disposition'] = 'attachment; filename=data.db'
     finally:
-        if output:
-            os.unlink(output)
+        pass
+        #if output:
+        #    os.unlink(output)
 
     return response
 
