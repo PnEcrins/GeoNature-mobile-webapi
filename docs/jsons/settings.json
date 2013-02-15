@@ -1,0 +1,44 @@
+{
+	"sync":
+	{
+		"url": "http://192.168.168.245/faune/",
+		"token": 666,
+		"status_url": "status/",
+		"import_url": "import/",
+		"exports":
+		[
+			{
+				"url": "export/sqlite/",
+				"file": "databases/data.db"
+			},
+			{
+				"url": "export/unity_polygons/",
+				"file": "unities.wkt"
+			}
+		]
+	},
+	"map":
+	{
+		"bbox": [700000, 6325197, 1060000, 6617738],
+		"max_bounds": [[44.44, 5.9], [45.17, 6.69]],
+		"center": [44.799134, 6.257887],
+		"start_zoom": 3,
+		"min_zoom_pointing": 5,
+		"layers":
+		[
+			{
+				"name": "scan.mbtiles",
+				"label": "Scan"
+			},
+			{
+				"name": "ortho.mbtiles",
+				"label": "Ortho"
+			}
+		],
+		"unity_layer":
+		{
+			"name": "unities.mbtiles",
+			"label": "Unités"
+		}
+	}
+}
