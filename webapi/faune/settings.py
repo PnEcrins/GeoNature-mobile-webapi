@@ -262,7 +262,8 @@ FAUNE_TABLE_INFOS =  {
             'patrimonial' : 'patrimonial',
             'message' : 'message',
             'contactfaune' : 'cf'
-        }
+        },
+        'where_string' : 'contactfaune = TRUE'
     },
     
     TABLE_FAMILY: {

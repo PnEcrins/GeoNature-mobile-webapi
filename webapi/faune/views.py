@@ -217,9 +217,7 @@ def export_sqlite(request):
     output = None
     src = "%s" % (settings.FAUNE_MOBILE_SQLITE_SAMPLE)
     try:
-        #with NamedTemporaryFile('w', delete=False, suffix='.db') as f:
         with NamedTemporaryFile('w', suffix='.db') as f:
-        #with tempfile.TemporaryFile('w', suffix='.db') as f:
             output = f.name
             handle = open(src, 'r')
             f.write(handle.read())
@@ -244,7 +242,12 @@ def export_sqlite(request):
             tabTab.append(settings.TABLE_CRITERION)
             for pg_table_name in tabTab:
                 li_table_name = settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('sqlite_name')
-                response_content = get_data(request, pg_table_name, False)
+                where_string = settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('where_string')
+                if where_string != None:
+                    where_string = "WHERE %s" % (where_string)
+                else:
+                    where_string = ""
+                response_content = get_data(request, pg_table_name, where_string, False)
                 for obj in response_content[settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('json_name')]:
                     colTab = []
                     valTab = []
@@ -408,7 +411,7 @@ def export_data(request, table_name):
     """
     Export table_name data from DataBase to JSON
     """
-    response_content = get_data(request, table_name, False)
+    response_content = get_data(request, table_name, None, False)
 
     response = HttpResponse()
     simplejson.dump(response_content, response,
@@ -417,7 +420,7 @@ def export_data(request, table_name):
     return response
 
 
-def get_data(request, table_name, testing):
+def get_data(request, table_name, where_string, testing):
     """
     Get table_name data from DataBase to object
     Param testing is for testing Data
@@ -432,7 +435,7 @@ def get_data(request, table_name, testing):
     json_table_name = settings.FAUNE_TABLE_INFOS.get(table_name).get('json_name')
     response_content = {json_table_name: []}
 
-    get_data_object(response_objects, table_name, testing)
+    get_data_object(response_objects, table_name, where_string, testing)
 
     response_content[json_table_name] = response_objects
 
@@ -459,7 +462,7 @@ def check_token(request):
     return False, response
 
 
-def get_data_object(response_content, table_name, testing):
+def get_data_object(response_content, table_name, where_string, testing):
     """
     Perform a SELECT on the DB to retreive infos on associated object
     Param: table_name : name of the table
@@ -468,8 +471,8 @@ def get_data_object(response_content, table_name, testing):
     if testing:
         test_string = " LIMIT 1"
     select_columns = settings.FAUNE_TABLE_INFOS.get(table_name).get('select_col')
-    select_string = "SELECT %s FROM %s %s" \
-                    % (select_columns, table_name, test_string)
+    select_string = "SELECT %s FROM %s %s %s" \
+                    % (select_columns, table_name, where_string, test_string)
 
     cursor = query_db(select_string)
     for row in cursor.fetchall():
@@ -573,7 +576,7 @@ def check_status(request):
         tabTab.append(settings.TABLE_CRITERION)
         for pg_table_name in tabTab:
             li_table_name = settings.FAUNE_TABLE_INFOS.get(pg_table_name).get('sqlite_name')
-            test_return = get_data(request, pg_table_name, True)
+            test_return = get_data(request, pg_table_name, None, True)
     except:
         res_views = False
 
