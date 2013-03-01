@@ -597,7 +597,7 @@ def soft_version(request):
     """
     Return the version of the mobile soft (JSON)  by reading a json config file
     """
-    response_content = {}
+    response_content = {'apps': []}
     res, response = check_token(request)
     if not res:
         return response
@@ -609,12 +609,14 @@ def soft_version(request):
         json_data = open(version_file)   
         version_data = simplejson.load(json_data)
         json_data.close()
-        response_content.update({
-            "package": version_data["package"],
-            "versionCode": version_data["versionCode"],
-            "versionName": version_data["versionName"],
-            "apkName": version_data["apkName"]
-        })
+        
+        for apps in version_data['apps']:
+            response_content['apps'].append({
+                "package": apps["package"],
+                "versionCode": apps["versionCode"],
+                "versionName": apps["versionName"],
+                "apkName": apps["apkName"],
+            })        
     except:
         response_content.update({
             'status_code': _("1"),
@@ -628,7 +630,7 @@ def soft_version(request):
 
     
 @csrf_exempt
-def soft_download(request):
+def soft_download(request, apk_name):
     """
     Return a downloadable file of the mobile soft
     """
@@ -637,34 +639,17 @@ def soft_download(request):
     if not res:
         return response
 
-    # read the version file
-    version_file = "%sversion.json" % (settings.FAUNE_MOBILE_SOFT_PATH)
-    
-    try:
-        json_data = open(version_file)   
-        version_data = simplejson.load(json_data)
-        json_data.close()
-    except:
-        response_content.update({
-            'status_code': _("1"),
-            'status_message': "Version file is not available"
-        })        
-        response = HttpResponse()
-        simplejson.dump(response_content, response,
-                    ensure_ascii=False, separators=(',', ':'))
-        return response
-
-    file_path = "%s%s" %  (settings.FAUNE_MOBILE_SOFT_PATH, version_data["apkName"])
-
+    file_path = "%s%s.apk" %  (settings.FAUNE_MOBILE_SOFT_PATH, apk_name)
+    print file_path
     try:
         wrapper = FileWrapper(file(file_path))
         response = HttpResponse(wrapper, content_type='text/plain')
         response['Content-Length'] = os.path.getsize(file_path)
-        response['Content-Disposition'] = 'attachment; filename=%s' % (version_data["apkName"])
+        response['Content-Disposition'] = 'attachment; filename=%s.apk' % (apk_name)
     except :
         response_content.update({
             'status_code': _("1"),
-            'status_message': "APK file is not available (%s)" % (version_data["apkName"])
+            'status_message': "APK file is not available (%s.apk)" % (apk_name)
         })
         response = HttpResponse()
         simplejson.dump(response_content, response,
