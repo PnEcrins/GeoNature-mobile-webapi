@@ -639,17 +639,17 @@ def soft_download(request, apk_name):
     if not res:
         return response
 
-    file_path = "%s%s.apk" %  (settings.FAUNE_MOBILE_SOFT_PATH, apk_name)
+    file_path = "%s%s" %  (settings.FAUNE_MOBILE_SOFT_PATH, apk_name)
     print file_path
     try:
         wrapper = FileWrapper(file(file_path))
         response = HttpResponse(wrapper, content_type='text/plain')
         response['Content-Length'] = os.path.getsize(file_path)
-        response['Content-Disposition'] = 'attachment; filename=%s.apk' % (apk_name)
+        response['Content-Disposition'] = 'attachment; filename=%s' % (apk_name)
     except :
         response_content.update({
             'status_code': _("1"),
-            'status_message': "APK file is not available (%s.apk)" % (apk_name)
+            'status_message': "APK file is not available (%s)" % (apk_name)
         })
         response = HttpResponse()
         simplejson.dump(response_content, response,
