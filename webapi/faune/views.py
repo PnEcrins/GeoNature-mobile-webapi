@@ -168,7 +168,7 @@ def import_data(request):
         #except Exception as e:
         except Exception, e:
             #  Insert rejected JSON into synchro_table (text format)
-            archive_bad_data(data, json_data)
+            id_failed = archive_bad_data(data, json_data)
 
             response_content.update({
                 'status_code': _("1"),
@@ -201,6 +201,7 @@ def archive_bad_data(data, json_data):
     # Commit transaction
     commit_transaction()
     
+    return id_failed
     
     
 @csrf_exempt
