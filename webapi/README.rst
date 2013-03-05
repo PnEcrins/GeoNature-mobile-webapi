@@ -28,6 +28,8 @@ Copy settings_local.py.sample to settings_local.py and modify informations in se
 
         FAUNE_MOBILE_SOFT_PATH = "/full_path_to_mobile_soft_apk_and_version_file/"
 
+Note for the token: change to correct value (must be the same as the one defiend in the sync app)
+
 Installation
 ------------
 
