@@ -613,6 +613,7 @@ def soft_version(request):
         for apps in version_data['apps']:
             response_content['apps'].append({
                 "package": apps["package"],
+                "sharedUserId": apps["sharedUserId"],
                 "versionCode": apps["versionCode"],
                 "versionName": apps["versionName"],
                 "apkName": apps["apkName"],
