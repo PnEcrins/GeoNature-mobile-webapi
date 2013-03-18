@@ -641,7 +641,6 @@ def soft_download(request, apk_name):
         return response
 
     file_path = "%s%s" %  (settings.FAUNE_MOBILE_SOFT_PATH, apk_name)
-    print file_path
     try:
         wrapper = FileWrapper(file(file_path))
         response = HttpResponse(wrapper, content_type='text/plain')
