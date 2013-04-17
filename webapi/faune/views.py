@@ -456,7 +456,7 @@ def check_token(request):
     response_content.append({
         'status': _("You're not allowed to retreive information from this webservice")
     })
-    response = HttpResponse()
+    response = HttpResponse(status=404)
     simplejson.dump(response_content, response,
                 ensure_ascii=False, separators=(',', ':'))
 
@@ -652,7 +652,7 @@ def soft_download(request, apk_name):
             'status_code': _("1"),
             'status_message': "APK file is not available (%s)" % (apk_name)
         })
-        response = HttpResponse()
+        response = HttpResponse(status=404)
         simplejson.dump(response_content, response,
                     ensure_ascii=False, separators=(',', ':'))
         return response
@@ -680,7 +680,7 @@ def data_download(request, mbtiles_name):
             'status_code': _("1"),
             'status_message': "Mbtiles file is not available (%s)" % (mbtiles_name)
         })
-        response = HttpResponse()
+        response = HttpResponse(status=404)
         simplejson.dump(response_content, response,
                     ensure_ascii=False, separators=(',', ':'))
         return response
