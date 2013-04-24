@@ -18,6 +18,7 @@ Extraire le contenu de l'archive tilecache_filter :
 
     unzip tilecache_filter.zip
     mv tilecache_filter.py env/bin/
+    mv mbtilesplit.py env/bin/
     mv TileCache/Cleaner.py env/lib/python2.?/site-packages/TileCache/
 
 
@@ -112,6 +113,22 @@ Puis lancer la création du fichier MBTtiles.
 ::
 
     mb-util scan/ scan.mbtiles
+
+
+Creation d'un MBTiles découpés selon les X
+==========================================
+
+À cause de la limitation des partitions FAT à 4Go, il est nécessaire de découper les fichiers.
+
+Le script ``mbtilesplit.py`` fait ce travail. Il requiert d'avoir créé auparavant le fichier ``metadata.json``
+puisqu'il va être dupliqué dans chacun des fichiers mbtiles résultants.
+
+Il ne prend qu'une arborecensce de répertoire en paramètre, et crée les 10 fichiers Mbtiles.
+
+::
+
+    mbtilesplit.py ortho/
+
 
 
 Données d'entrée
