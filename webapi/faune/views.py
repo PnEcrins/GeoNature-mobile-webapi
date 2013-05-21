@@ -455,7 +455,7 @@ def check_token(request):
     response_content.append({
         'status': _("You're not allowed to retreive information from this webservice")
     })
-    response = HttpResponse()
+    response = HttpResponse(status=404)
     simplejson.dump(response_content, response,
                 ensure_ascii=False, separators=(',', ':'))
 
@@ -651,7 +651,35 @@ def soft_download(request, apk_name):
             'status_code': _("1"),
             'status_message': "APK file is not available (%s)" % (apk_name)
         })
-        response = HttpResponse()
+        response = HttpResponse(status=404)
+        simplejson.dump(response_content, response,
+                    ensure_ascii=False, separators=(',', ':'))
+        return response
+    
+    return response
+            
+@csrf_exempt
+def data_download(request, mbtiles_name):
+    """
+    Return the required mbtiles file
+    """
+    response_content = {}
+    res, response = check_token(request)
+    if not res:
+        return response
+
+    file_path = "%s%s" %  (settings.FAUNE_MOBILE_MBTILES_PATH, mbtiles_name)
+    try:
+        wrapper = FileWrapper(file(file_path))
+        response = HttpResponse(wrapper, content_type='text/plain')
+        response['Content-Length'] = os.path.getsize(file_path)
+        response['Content-Disposition'] = 'attachment; filename=%s' % (mbtiles_name)
+    except :
+        response_content.update({
+            'status_code': _("1"),
+            'status_message': "Mbtiles file is not available (%s)" % (mbtiles_name)
+        })
+        response = HttpResponse(status=404)
         simplejson.dump(response_content, response,
                     ensure_ascii=False, separators=(',', ':'))
         return response
