@@ -166,7 +166,6 @@ def import_data(request):
                 'status_code': _("0"),
                 'status_message': "id_sheet: %s, ids_statements: %s" % (d.id, ','.join(map(str, statement_ids)))
             })
-        #except Exception as e:
         except Exception, e:
             #  Insert rejected JSON into synchro_table (text format)
             id_failed = archive_bad_data(data, json_data)
