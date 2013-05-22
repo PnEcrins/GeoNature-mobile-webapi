@@ -3,6 +3,7 @@ from __future__ import with_statement
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse
+from django.utils.http import http_date
 from django.template import RequestContext, loader
 from django.utils import simplejson
 from django.utils.datastructures import SortedDict
@@ -266,8 +267,11 @@ def export_sqlite(request):
             
             wrapper = FileWrapper(file(output))
             response = HttpResponse(wrapper, content_type='application/x-sqlite3')
+            response["Last-Modified"] = http_date()
             response['Content-Length'] = os.path.getsize(output)
             response['Content-Disposition'] = 'attachment; filename=data.db'
+            
+            #header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($fn)).' GMT', true, 304);
     finally:
         pass
         #if output:
@@ -361,6 +365,7 @@ def export_unity_geojson(request):
             f.flush()
             wrapper = FileWrapper(file(output))
             response = HttpResponse(wrapper, content_type='application/json')
+            response['Last-Modified'] = http_date()
             response['Content-Length'] = os.path.getsize(output)
             response['Content-Disposition'] = 'attachment; filename=unity.geojson'
     finally:
@@ -398,6 +403,7 @@ def export_unity_polygons(request):
                 
             wrapper = FileWrapper(f)
             response = HttpResponse(export, content_type='application/txt')
+            response['Last-Modified'] = http_date()
             response['Content-Length'] = len(export)
             response['Content-Disposition'] = 'attachment; filename=unity.wkt'
     finally:
@@ -673,6 +679,7 @@ def data_download(request, mbtiles_name):
     try:
         wrapper = FileWrapper(file(file_path))
         response = HttpResponse(wrapper, content_type='text/plain')
+        response["Last-Modified"] = http_date(os.stat(file_path).st_mtime)
         response['Content-Length'] = os.path.getsize(file_path)
         response['Content-Disposition'] = 'attachment; filename=%s' % (mbtiles_name)
     except :
