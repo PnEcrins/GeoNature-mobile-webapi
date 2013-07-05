@@ -50,7 +50,7 @@ def query_db(sqlquery):
     return cursor
 
 
-def sync_db(objects):
+def sync_db(objects, table_infos):
     """
     From a specified list of objects, executes equivalent insert or update
     statements on the gr@ce database.
@@ -61,7 +61,7 @@ def sync_db(objects):
     sid = transaction.savepoint()
     try:
         for feature in objects:
-            q = build_sync_query(feature)
+            q = build_sync_query(feature, table_infos)
             cursor = query_db(q)
         return cursor
     except IntegrityError, e:
@@ -71,7 +71,7 @@ def sync_db(objects):
         raise SynchronizeError(str(e))
 
 
-def build_sync_query(datafields, table_name=None):
+def build_sync_query(datafields, table_infos, table_name=None):
     """
     Builds a SQL statement from a dict of (fields, values).
 
@@ -89,7 +89,7 @@ def build_sync_query(datafields, table_name=None):
     datafields = dict((k.lower(), v) for k, v in datafields.iteritems())
 
     # Get column ID for the current table
-    id_col = settings.FAUNE_TABLE_INFOS.get(table_name).get('id_col')
+    id_col = table_infos.get(table_name).get('id_col')
 
     updates = []
     for field, value in datafields.items():

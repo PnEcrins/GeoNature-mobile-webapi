@@ -17,3 +17,10 @@ CREATE TABLE synchronomade.erreurs_mortalite(
 );
 ALTER TABLE synchronomade.erreurs_mortalite ADD PRIMARY KEY (id);
 
+CREATE TABLE synchronomade.erreurs_inv(
+    id serial,
+    json text,
+    date_import date
+);
+ALTER TABLE synchronomade.erreurs_inv ADD PRIMARY KEY (id);
+

@@ -179,25 +179,43 @@ FAUNA_ID_ORGANISM = 2
 FAUNA_ID_PROTOCOL = 140
 FAUNA_ID_LOT = 4
 MORTALITY_ID_PROTOCOL = 142
-MORTALITY_ID_LOT = 15
+MORTALITY_ID_LOT = 15            
+INV_ID_LOT = 14
+INV_ID_PROTOCOL = 141
             
-
-TABLE_TAXA = 'contactfaune.v_nomade_taxons_faune'
-TABLE_FAMILY = 'taxonomie.bib_familles'
-TABLE_UNITY = 'contactfaune.v_nomade_unites_geo_cf'
-TABLE_UNITY_GEOJSON = 'contactfaune.v_nomade_unites_geo_cf'
-TABLE_TAXA_UNITY = 'contactfaune.cor_unite_taxon'
-TABLE_CRITERION = 'contactfaune.v_nomade_criteres_cf'
-TABLE_USER = 'contactfaune.v_nomade_observateurs_faune'
-TABLE_STATEMENT = 'contactfaune.t_releves_cf'
-TABLE_SHEET = 'contactfaune.t_fiches_cf'
-TABLE_SHEET_ROLE = 'contactfaune.cor_role_fiche_cf'
+            
+TABLE_FAUNA_TAXA = 'contactfaune.v_nomade_taxons_faune'
+TABLE_FAUNA_FAMILY = 'taxonomie.bib_familles'
+TABLE_FAUNA_UNITY = 'contactfaune.v_nomade_unites_geo_cf'
+TABLE_FAUNA_UNITY_GEOJSON = 'contactfaune.v_nomade_unites_geo_cf'
+TABLE_FAUNA_TAXA_UNITY = 'contactfaune.cor_unite_taxon'
+TABLE_FAUNA_CRITERION = 'contactfaune.v_nomade_criteres_cf'
+TABLE_FAUNA_USER = 'contactfaune.v_nomade_observateurs_faune'
+TABLE_FAUNA_STATEMENT = 'contactfaune.t_releves_cf'
+TABLE_FAUNA_SHEET = 'contactfaune.t_fiches_cf'
+TABLE_FAUNA_SHEET_ROLE = 'contactfaune.cor_role_fiche_cf'
 TABLE_FAILED_JSON_FAUNA = 'synchronomade.erreurs_cf'
 TABLE_FAILED_JSON_MORTALITY = 'synchronomade.erreurs_mortalite'
-TABLE_CLASSES = 'taxonomie.bib_classes'
+TABLE_FAUNA_CLASSES = 'taxonomie.bib_classes'
+
+
+TABLE_INV_TAXA = 'contactinv.v_nomade_taxons_inv'
+TABLE_INV_FAMILY = 'taxonomie.bib_familles'
+TABLE_INV_UNITY = 'contactinv.v_nomade_unites_geo_inv'
+TABLE_INV_UNITY_GEOJSON = 'contactinv.v_nomade_unites_geo_inv'
+TABLE_INV_TAXA_UNITY = 'contactinv.cor_unite_taxon_inv'
+TABLE_INV_CRITERION = 'contactinv.v_nomade_criteres_inv'
+TABLE_INV_USER = 'contactinv.v_nomade_observateurs_inv'
+TABLE_INV_STATEMENT = 'contactinv.t_releves_inv'
+TABLE_INV_SHEET = 'contactinv.t_fiches_inv'
+TABLE_INV_SHEET_ROLE = 'contactinv.cor_role_fiche_inv'
+TABLE_INV_ENVIRONEMENTS = 'contactinv.v_nomade_milieux_inv'
+TABLE_FAILED_JSON_INV = 'synchronomade.erreurs_inv'
+TABLE_INV_CLASSES = 'taxonomie.bib_classes'
 
 
 
+# FAUNA -------------------------------------------------------------------
 FAUNE_TABLE_INFOS =  {
     TABLE_FAILED_JSON_FAUNA: {
         'id_col': 'id',
@@ -207,7 +225,7 @@ FAUNE_TABLE_INFOS =  {
         'id_col': 'id',
         'select_col': 'id,json_date_import'
     },
-    TABLE_SHEET_ROLE: {
+    TABLE_FAUNA_SHEET_ROLE: {
         #'id_col': 'id_role',
         'select_col': 'id_cf,id_role',
         'json_to_db_columns' : {
@@ -215,7 +233,7 @@ FAUNE_TABLE_INFOS =  {
             'observer_id' : 'id_role'    
         }        
     },    
-    TABLE_STATEMENT: {
+    TABLE_FAUNA_STATEMENT: {
         'id_col': 'id_releve_cf',
         'select_col': 'id_releve_cf, id_cf, id_taxon, id_critere_cf, am, af, ai, na, sai, jeune, yearling, nom_taxon_saisi, commentaire, supprime, prelevement',
         'json_to_db_columns' : {
@@ -235,7 +253,7 @@ FAUNE_TABLE_INFOS =  {
             'sample' : 'prelevement'    
         }        
     },
-    TABLE_SHEET: {
+    TABLE_FAUNA_SHEET: {
         'id_col': 'id_cf',
         'select_col': 'id_cf, dateobs, altitude_saisie, supprime, pdop, the_geom_2154, saisie_initiale, id_organisme, id_protocole, id_lot',
         'json_to_db_columns' : {
@@ -247,7 +265,7 @@ FAUNE_TABLE_INFOS =  {
             'initial_input' : 'saisie_initiale'
         }        
     },
-    TABLE_TAXA: {
+    TABLE_FAUNA_TAXA: {
         'id_col': 'id_taxon',
         'json_name': 'taxa',
         'sqlite_name': 'taxa',
@@ -266,7 +284,7 @@ FAUNE_TABLE_INFOS =  {
         #'where_string' : 'contactfaune = TRUE'
     },
     
-    TABLE_FAMILY: {
+    TABLE_FAUNA_FAMILY: {
         'id_col': 'id_famille',
         'json_name': 'family',
         'sqlite_name': 'family',
@@ -276,7 +294,7 @@ FAUNE_TABLE_INFOS =  {
             'nom_famille' : 'name'
         }
     },
-    TABLE_UNITY: {
+    TABLE_FAUNA_UNITY: {
         'id_col': 'id_unite_geo',
         'json_name': 'unity',
         'sqlite_name': 'unities',
@@ -288,7 +306,7 @@ FAUNE_TABLE_INFOS =  {
             'commune' : 'city'
         }        
     },
-    TABLE_TAXA_UNITY: {
+    TABLE_FAUNA_TAXA_UNITY: {
         'id_col': 'id_unite_geo',
         'json_name': 'taxa_unity',
         'sqlite_name': 'taxa_unities',
@@ -301,7 +319,7 @@ FAUNE_TABLE_INFOS =  {
             'nb_obs' : 'nb_obs'
         }        
     },
-    TABLE_CRITERION: {
+    TABLE_FAUNA_CRITERION: {
         'id_col': 'id_critere_cf',
         'json_name': 'criterion',
         'sqlite_name': 'criterion',
@@ -313,7 +331,7 @@ FAUNE_TABLE_INFOS =  {
             'id_classe' : 'class_id'
         }        
     },
-    TABLE_USER: {
+    TABLE_FAUNA_USER: {
         'id_col': 'id_role',
         'json_name': 'user',
         'sqlite_name': 'observers',
@@ -326,7 +344,7 @@ FAUNE_TABLE_INFOS =  {
         }        
     },
     
-    TABLE_CLASSES: {
+    TABLE_FAUNA_CLASSES: {
         'id_col': 'id_classe',
         'json_name': 'classes',
         'sqlite_name': 'classes',
@@ -339,12 +357,161 @@ FAUNE_TABLE_INFOS =  {
     }
 }
 
+
+# INV -------------------------------------------------------------------
+INV_TABLE_INFOS =  {
+    TABLE_FAILED_JSON_INV: {
+        'id_col': 'id',
+        'select_col': 'id,json_date_import'
+    },
+    TABLE_INV_SHEET_ROLE: {
+        'select_col': 'id_inv,id_role',
+        'json_to_db_columns' : {
+            'id_inv' : 'id_inv', 
+            'observer_id' : 'id_role'    
+        }        
+    },    
+    TABLE_INV_STATEMENT: {
+        'id_col': 'id_releve_inv',
+        'select_col': 'id_releve_inv, id_inv, id_taxon, id_critere_inv, am, af, ai, na, nom_taxon_saisi, commentaire, supprime, prelevement',
+        'json_to_db_columns' : {
+            'id_inv' : 'id_inv', 
+            'id' : 'id_taxon',
+            'criterion' : 'id_critere_inv',
+            'adult_male' : 'am',
+            'adult_female' : 'af',
+            'adult' : 'ai',
+            'not_adult' : 'na',
+            'sex_age_unspecified' : 'sai',
+            'young' : 'jeune',
+            'yearling' : 'yearling',
+            'name_entered' : 'nom_taxon_saisi',
+            'comment' : 'commentaire',
+            'supprime' : 'supprime',
+            'sample' : 'prelevement'    
+        }        
+    },
+    TABLE_INV_SHEET: {
+        'id_col': 'id_inv',
+        'select_col': 'id_inv, dateobs, heure, altitude_saisie, supprime, pdop, the_geom_2154, saisie_initiale, id_organisme, id_protocole, id_lot, id_milieu_inv',
+        'json_to_db_columns' : {
+            'dateobs' : 'dateobs',
+            'altitude' : 'altitude_saisie',
+            'supprime' : 'supprime',
+            'accuracy' : 'pdop',
+            'geometry' : 'the_geom_2154',
+            'initial_input' : 'saisie_initiale',
+            'environment' : 'id_milieu_inv',
+            'heure' : 'heure'
+        }        
+    },
+    TABLE_INV_TAXA: {
+        'id_col': 'id_taxon',
+        'json_name': 'taxa',
+        'sqlite_name': 'taxa',
+        'select_col': 'id_taxon, nom_latin, nom_francais, id_classe, patrimonial, message',
+        'db_to_json_columns' : {
+            'id_taxon' : '_id',
+            'cd_ref' : 'cd_ref',
+            'nom_latin' : 'name',
+            'nom_francais' : 'name_fr',
+            'id_classe' : 'class_id',
+            'patrimonial' : 'patrimonial',
+            'message' : 'message'
+        },
+        #'where_string' : 'contactfaune = TRUE'
+    },
+    
+    TABLE_INV_FAMILY: {
+        'id_col': 'id_famille',
+        'json_name': 'family',
+        'sqlite_name': 'family',
+        'select_col': 'id_famille, nom_famille',
+        'db_to_json_columns' : {
+            'id_famille' : 'id',
+            'nom_famille' : 'name'
+        }
+    },
+    TABLE_INV_UNITY: {
+        'id_col': 'id_unite_geo',
+        'json_name': 'unity',
+        'sqlite_name': 'unities',
+        #'select_col': 'id_unite_geo, code_insee, commune',
+        'select_col': 'id_unite_geo',
+        'db_to_json_columns' : {
+            'id_unite_geo' : '_id',
+            'code_insee' : 'insee',
+            'commune' : 'city'
+        }        
+    },
+    TABLE_INV_TAXA_UNITY: {
+        'id_col': 'id_unite_geo',
+        'json_name': 'taxa_unity',
+        'sqlite_name': 'taxa_unities',
+        'select_col': 'id_unite_geo, id_taxon, to_char(derniere_date,\'YYYY/MM/dd\') as derniere_date, couleur, nb_obs',
+        'db_to_json_columns' : {
+            'id_unite_geo' : 'unity_id',
+            'id_taxon' : 'taxon_id',
+            'derniere_date' : 'date',
+            'couleur' : 'color',
+            'nb_obs' : 'nb_obs'
+        }        
+    },
+    TABLE_INV_CRITERION: {
+        'id_col': 'id_critere_inv',
+        'json_name': 'criterion',
+        'sqlite_name': 'criterion',
+        'select_col': 'id_critere_inv, nom_critere_inv, tri_inv',
+        'db_to_json_columns' : {
+            'id_critere_inv' : '_id',
+            'nom_critere_inv' : 'name',
+            'tri_inv' : 'sort'
+        }        
+    },
+    TABLE_INV_USER: {
+        'id_col': 'id_role',
+        'json_name': 'user',
+        'sqlite_name': 'observers',
+        'select_col': 'id_role, nom_role, prenom_role',
+        'db_to_json_columns' : {
+            'id_role' : '_id',
+            'identifiant' : 'ident',
+            'nom_role' : 'lastname',
+            'prenom_role' : 'firstname'
+        }        
+    },
+    
+    TABLE_INV_CLASSES: {
+        'id_col': 'id_classe',
+        'json_name': 'classes',
+        'sqlite_name': 'classes',
+        'select_col': 'id_classe, nom_classe, desc_classe',
+        'db_to_json_columns' : {
+            'id_classe' : '_id',
+            'nom_classe' : 'name',
+            'desc_classe' : 'description'
+        }        
+    },
+    
+    TABLE_INV_ENVIRONEMENTS: {
+        'id_col': 'id_milieu_inv',
+        'json_name': 'environments',
+        'sqlite_name': 'environments',
+        'select_col': 'id_milieu_inv, nom_milieu_inv',
+        'db_to_json_columns' : {
+            'id_milieu_inv' : '_id',
+            'nom_milieu_inv' : 'name'
+        }        
+    },
+    
+}
+
+
 FAUNE_TABLE_INFOS_GEOJSON =  {
-    TABLE_UNITY_GEOJSON: {
+    TABLE_FAUNA_UNITY_GEOJSON: {
         'id_col': 'id_unite_geo',
         'json_name': 'unity_geojson',
         'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.00001)) as geom',
-        #'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.001)) as geom',
         'db_to_json_columns' : {
             'id_unite_geo' : 'id',
             'code_insee' : 'insee',
@@ -353,19 +520,33 @@ FAUNE_TABLE_INFOS_GEOJSON =  {
         }        
     }
 }
-    
-FAUNE_MOBILE_SQLITE_SAMPLE = os.path.join(PROJECT_ROOT_PATH, "data.db.sample")
 
-FAUNE_MOBILE_SQLITE_CREATE_QUERY = (
-    'CREATE TABLE IF NOT EXISTS observers (_id INTEGER, ident TEXT, lastname TEXT, firstname TEXT)',
+INV_TABLE_INFOS_GEOJSON =  {
+    TABLE_INV_UNITY_GEOJSON: {
+        'id_col': 'id_unite_geo',
+        'json_name': 'unity_geojson',
+        'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.00001)) as geom',
+        'db_to_json_columns' : {
+            'id_unite_geo' : 'id',
+            'code_insee' : 'insee',
+            'commune' : 'city',
+            'geom': 'geometry'
+        }        
+    }
+}
+
+MOBILE_SQLITE_SAMPLE = os.path.join(PROJECT_ROOT_PATH, "data.db.sample")
+
+MOBILE_SQLITE_CREATE_QUERY = (
+    'CREATE TABLE IF NOT EXISTS observers (_id INTEGER, ident TEXT, lastname TEXT, firstname TEXT, filter INTEGER)',
     'CREATE TABLE IF NOT EXISTS taxa_unities (unity_id INTEGER, taxon_id INTEGER, date TEXT, color TEXT, nb_obs INTEGER)',
-    'CREATE TABLE IF NOT EXISTS taxa (_id INTEGER, name TEXT, name_fr TEXT, class_id INTEGER, number INTEGER, patrimonial INTEGER, message TEXT, cf INTEGER)',
+    'CREATE TABLE IF NOT EXISTS taxa (_id INTEGER, name TEXT, name_fr TEXT, class_id INTEGER, number INTEGER, patrimonial INTEGER, message TEXT, filter INTEGER)',
     'CREATE TABLE IF NOT EXISTS criterion (_id INTEGER, name TEXT, sort INTEGER, class_id INTEGER)',
+    'CREATE TABLE IF NOT EXISTS environments (_id INTEGER, name TEXT)',
     'CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT DEFAULT "en_US")'
 )
 
-
-FAUNE_MOBILE_SQLITE_EXTRA_SQL = (
+MOBILE_SQLITE_EXTRA_SQL = (
     'INSERT INTO android_metadata VALUES ("en_US")',
 )
 
