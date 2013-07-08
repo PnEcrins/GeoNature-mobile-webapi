@@ -58,5 +58,3 @@ TOKEN = "666"
 FAUNE_MOBILE_SOFT_PATH = "/tmp/"
 FAUNE_MOBILE_MBTILES_PATH = "/tmp/"
 
-# Webapi_mod: values available are : fauna, inv, flore
-WEBAPI_MOD = "inv"

@@ -29,10 +29,7 @@ Copy settings_local.py.sample to settings_local.py and modify informations in se
         MOBILE_SOFT_PATH = "/full_path_to_mobile_soft_apk_and_version_file/"
         MOBILE_MBTILES_PATH = "/full_path_to_mbtiles/"
 
-        WEBAPI_MOD = ""
-
 Note for the token: change to correct value (must be the same as the one defiend in the sync app)
-Note for the WEBAPI_MOD: you must fill with the correct value (fauna, inv or flore)
 
 Installation
 ------------
