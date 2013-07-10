@@ -213,6 +213,25 @@ TABLE_INV_ENVIRONEMENTS = 'contactinv.v_nomade_milieux_inv'
 TABLE_FAILED_JSON_INV = 'synchronomade.erreurs_inv'
 TABLE_INV_CLASSES = 'taxonomie.bib_classes'
 
+TABLE_USERS = 'utilisateurs.v_nomade_observateurs_all'
+
+# GLOBAL -------------------------------------------------------------------
+GLOBAL_TABLE_INFOS =  {
+    TABLE_USERS: {
+        'id_col': 'id_role',
+        'json_name': 'user',
+        'sqlite_name': 'observers',
+        'select_col': 'id_role, nom_role, prenom_role, string_agg(mode, \',\') as mode',
+        'db_to_json_columns' : {
+            'id_role' : '_id',
+            'identifiant' : 'ident',
+            'nom_role' : 'lastname',
+            'prenom_role' : 'firstname',
+            'mode' : 'mode',
+        },
+        'groupby_string' : 'id_role, nom_role, prenom_role'
+    }
+}
 
 
 # FAUNA -------------------------------------------------------------------

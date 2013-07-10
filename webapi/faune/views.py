@@ -276,17 +276,66 @@ def export_sqlite(request):
             for insert_string in settings.MOBILE_SQLITE_EXTRA_SQL:
                 cur.execute(insert_string)
             
+            # Fill data (global)
+            table_infos = settings.GLOBAL_TABLE_INFOS 
+            tabTab = []
+            tabTab.append({'table_name': settings.TABLE_USERS})
+            for current_tab in tabTab:
+                pg_table_name = current_tab['table_name']
+                li_table_name = table_infos.get(pg_table_name).get('sqlite_name')
+                where_string = table_infos.get(pg_table_name).get('where_string')
+                complement_string = table_infos.get(pg_table_name).get('groupby_string')
+                if where_string != None:
+                    where_string = "WHERE %s" % (where_string)
+                else:
+                    where_string = ""
+                if complement_string != None:
+                    complement_string = "GROUP BY %s" % (complement_string)
+                else:
+                    complement_string = ""
+                  
+                response_content = get_data(request, pg_table_name, where_string, complement_string, table_infos, False)
+                for obj in response_content[table_infos.get(pg_table_name).get('json_name')]:
+                    colTab = []
+                    valTab = []
+                    mask = 0
+                    for key in obj:
+                        if key == "mode":
+                            # fauna, flora, inv
+                            mask = 00000000
+                            if "fauna" in obj[key]:
+                                mask += 11000000
+                            if "inv" in obj[key]:
+                                mask += 100000
+                            if "flora" in obj[key]:
+                                mask += 10000
+                            
+                            mask = int("%s" % (mask), 2)
+                                
+                            colTab.append("filter")
+                            valTab.append(mask)    
+                        else:    
+                            colTab.append(key)
+                            valTab.append(unicode(obj[key]).replace("'", "''"))
+
+                    insert_string = "INSERT INTO %s (%s) values (%s)" % \
+                                        (li_table_name,
+                                        ",".join(colTab),
+                                        "'" + "','".join(map(unicode, valTab)) + "'"
+                                        )
+                    cur.execute(insert_string)
+            
+            
             # Fill data (fauna, invertebrate...)
             for mode in tables_infos :
                 table_infos = tables_infos[mode]
                 tabTab = []
                 if mode == "fauna":
-                    tabTab.append({'table_name': settings.TABLE_FAUNA_USER, 'filter' : True})
+                    # filter : tells if we have calculate a filter
                     tabTab.append({'table_name': settings.TABLE_FAUNA_TAXA_UNITY, 'filter' : False})
                     tabTab.append({'table_name': settings.TABLE_FAUNA_TAXA, 'filter' : True})
                     tabTab.append({'table_name': settings.TABLE_FAUNA_CRITERION, 'filter' : False})
                 if mode == "invertebrate":
-                    tabTab.append({'table_name': settings.TABLE_INV_USER, 'filter' : True})
                     tabTab.append({'table_name': settings.TABLE_INV_TAXA_UNITY, 'filter' : False})
                     tabTab.append({'table_name': settings.TABLE_INV_TAXA, 'filter' : True})
                     tabTab.append({'table_name': settings.TABLE_INV_CRITERION, 'filter' : False})
@@ -301,7 +350,7 @@ def export_sqlite(request):
                         where_string = "WHERE %s" % (where_string)
                     else:
                         where_string = ""
-                    response_content = get_data(request, pg_table_name, where_string, table_infos, False)
+                    response_content = get_data(request, pg_table_name, where_string, None, table_infos, False)
                     for obj in response_content[table_infos.get(pg_table_name).get('json_name')]:
                         colTab = []
                         valTab = []
@@ -400,7 +449,7 @@ def export_unity_polygons(request):
     return response
     
 
-def get_data(request, table_name, where_string, table_infos, testing):
+def get_data(request, table_name, where_string, complement_string, table_infos, testing):
     """
     Get table_name data from DataBase to object
     Param testing is for testing Data
@@ -415,7 +464,7 @@ def get_data(request, table_name, where_string, table_infos, testing):
     json_table_name = table_infos.get(table_name).get('json_name')
     response_content = {json_table_name: []}
 
-    get_data_object(response_objects, table_name, where_string, table_infos, testing)
+    get_data_object(response_objects, table_name, where_string, complement_string, table_infos, testing)
 
     response_content[json_table_name] = response_objects
 
@@ -442,7 +491,7 @@ def check_token(request):
     return False, response
 
 
-def get_data_object(response_content, table_name, where_string, table_infos, testing):
+def get_data_object(response_content, table_name, where_string, complement_string, table_infos, testing):
     """
     Perform a SELECT on the DB to retreive infos on associated object
     Param: table_name : name of the table
@@ -451,8 +500,8 @@ def get_data_object(response_content, table_name, where_string, table_infos, tes
     if testing:
         test_string = " LIMIT 1"
     select_columns = table_infos.get(table_name).get('select_col')
-    select_string = "SELECT %s FROM %s %s %s" \
-                    % (select_columns, table_name, where_string, test_string)
+    select_string = "SELECT %s FROM %s %s %s %s" \
+                    % (select_columns, table_name, where_string, complement_string, test_string)
 
     cursor = query_db(select_string)
     for row in cursor.fetchall():
@@ -531,7 +580,7 @@ def check_status(request):
                 
             for pg_table_name in tabTab:
                 li_table_name = table_infos.get(pg_table_name).get('sqlite_name')
-                test_return = get_data(request, pg_table_name, None, table_infos, True)
+                test_return = get_data(request, pg_table_name, None, None, table_infos, True)
     except:
         res_views = False
 
@@ -700,7 +749,7 @@ def export_data(request, table_name):
     """
     Export table_name data from DataBase to JSON
     """
-    response_content = get_data(request, table_name, None, False)
+    response_content = get_data(request, table_name, None, None, False)
 
     response = HttpResponse()
     simplejson.dump(response_content, response,
