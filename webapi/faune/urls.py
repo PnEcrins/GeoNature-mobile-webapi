@@ -6,7 +6,7 @@ urlpatterns = patterns('',
     (r'^status/$', check_status),
     (r'^soft_version/$', soft_version),
     (r'^soft_download/(?P<apk_name>[A-Za-z0-9\-\.]+)/$', soft_download),
-    (r'^data_download/(?P<mbtiles_name>[A-Za-z0-9\-\.]+)/$', data_download),
+    (r'^data_download/(?P<mbtiles_name>[A-Za-z0-9\-\.\_]+)/$', data_download),
     
     (r'^import/$', import_data),
     (r'^export/sqlite/$', export_sqlite),

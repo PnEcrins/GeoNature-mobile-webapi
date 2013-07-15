@@ -475,6 +475,7 @@ def check_token(request):
     """
     Check the validity of the token
     """
+
     if request.method == 'POST':
         if request.POST['token']:
             if request.POST['token'] == settings.TOKEN:
@@ -682,7 +683,7 @@ def data_download(request, mbtiles_name):
     except :
         response_content.update({
             'status_code': _("1"),
-            'status_message': "Mbtiles file is not available (%s)" % (mbtiles_name)
+            'status_message': "File is not available (%s)" % (mbtiles_name)
         })
         response = HttpResponse(status=404)
         simplejson.dump(response_content, response,
