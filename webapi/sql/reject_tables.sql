@@ -24,3 +24,11 @@ CREATE TABLE synchronomade.erreurs_inv(
 );
 ALTER TABLE synchronomade.erreurs_inv ADD PRIMARY KEY (id);
 
+
+CREATE TABLE synchronomade.erreurs_flora(
+    id serial,
+    json text,
+    date_import date
+);
+ALTER TABLE synchronomade.erreurs_flora ADD PRIMARY KEY (id);
+

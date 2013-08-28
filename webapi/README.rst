@@ -29,6 +29,9 @@ Copy settings_local.py.sample to settings_local.py and modify informations in se
         MOBILE_SOFT_PATH = "/full_path_to_mobile_soft_apk_and_version_file/"
         MOBILE_MBTILES_PATH = "/full_path_to_mbtiles/"
 
+
+You need to fill the correct database connections for the 3 applications, and leave the default empty.
+
 Note for the token: change to correct value (must be the same as the one defiend in the sync app)
 
 Installation

@@ -17,40 +17,40 @@ class SynchronizeError(Exception):
     pass
 
 
-def commit_transaction():
+def commit_transaction(database_id):
     """
     Commit the transaction
     """
-    transaction.commit_unless_managed(using=settings.DATABASE_ID)
+    transaction.commit_unless_managed(using=database_id)
     logger.debug(_("Faune SQL: COMMIT"))
 
 
-def check_connection():
+def check_connection(database_id):
     """
     Check if connexion to database is active
     """
     try:
-        cursor = connections[settings.DATABASE_ID].cursor()
+        cursor = connections[database_id].cursor()
         return True
     except:
         return False
     
-def query_db(sqlquery):
+def query_db(sqlquery, database_id):
     """
     Executes a single query on the Faune database defined in project settings.
     Returns a `cursor`
 
     sqlquery -- a SQL statement
     """
-    # Connect to Faune DB
-    cursor = connections[settings.DATABASE_ID].cursor()
+    # Connect to correct DB
+    cursor = connections[database_id].cursor()
     # Execute SQL
     logger.debug(_("Faune SQL: %s") % sqlquery)
     cursor.execute(sqlquery)
     return cursor
 
 
-def sync_db(objects, table_infos):
+def sync_db(objects, table_infos, database_id):
     """
     From a specified list of objects, executes equivalent insert or update
     statements on the gr@ce database.
@@ -62,7 +62,7 @@ def sync_db(objects, table_infos):
     try:
         for feature in objects:
             q = build_sync_query(feature, table_infos)
-            cursor = query_db(q)
+            cursor = query_db(q, database_id)
         return cursor
     except IntegrityError, e:
         logger.error(e)

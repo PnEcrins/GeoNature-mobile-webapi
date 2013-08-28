@@ -11,22 +11,18 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.core.servers.basehttp import FileWrapper
 
-from faune.utils import sync_db, query_db, commit_transaction, check_connection
-
 from easydict import EasyDict
-
 from shapely.wkt import loads
 from geojson import dumps
-
 import sqlite3 as lite
 from shutil import copyfile
-
 from tempfile import NamedTemporaryFile
-
 import time
 import datetime
 import os
 import tempfile
+
+from faune.utils import sync_db, query_db, commit_transaction, check_connection
 
 
 @csrf_exempt
@@ -41,7 +37,7 @@ def import_data(request):
     if params:
         data = params['data']
     else:
-        response_content.append({
+        response_content.update({
             'status': _("No POST param given")
         })
         response = HttpResponse()
@@ -55,23 +51,41 @@ def import_data(request):
 
     json_data = simplejson.loads(data)
 
+    if json_data['input_type'] == 'flora':
+        response = import_data_flora(json_data, data)
+    else:
+        response = import_data_fmi(json_data, data)
+
+    return response
+
+
+@csrf_exempt
+def import_data_fmi(json_data, data):
+    """
+    Import data for fauna, mortality and invertebrate (fmi)
+    """
+
+    response_content = {}
+
     if json_data['input_type'] == 'fauna' or json_data['input_type'] == 'mortality':
         table_infos = settings.FAUNE_TABLE_INFOS
         table_sheet = settings.TABLE_FAUNA_SHEET
         table_statement = settings.TABLE_FAUNA_STATEMENT
+        database_id = settings.DB_FAUNA
     if json_data['input_type'] == 'invertebrate':
         table_infos = settings.INV_TABLE_INFOS
         table_sheet = settings.TABLE_INV_SHEET
         table_statement = settings.TABLE_INV_STATEMENT
-    
+        database_id = settings.DB_INV
+
     d = EasyDict(json_data)
 
     bad_id = False
     # Check if ID are unique
     count_string = "SELECT count(*) FROM %s WHERE %s='%s'" % (table_sheet, table_infos.get(table_sheet).get('id_col'), d.id)
-    cursor = query_db(count_string)
+    cursor = query_db(count_string, database_id)
     row = cursor.fetchone()
-    if row :
+    if row:
         datarow = zip([column[0] for column in cursor.description], row)
         val = datarow[0][1]
         if val == 1:
@@ -82,9 +96,9 @@ def import_data(request):
             })
     for taxon in d.taxons:
         count_string = "SELECT count(*) FROM %s WHERE %s='%s'" % (table_statement, table_infos.get(table_statement).get('id_col'), taxon.id)
-        cursor = query_db(count_string)
+        cursor = query_db(count_string, database_id)
         row = cursor.fetchone()
-        if row :
+        if row:
             datarow = zip([column[0] for column in cursor.description], row)
             val = datarow[0][1]
             if val == 1:
@@ -93,17 +107,17 @@ def import_data(request):
                     'status_code': _("1"),
                     'status_message': _("Existing ID in database (%s) (%s)") % (table_statement, taxon.id)
                 })
-    
-    if not bad_id: 
+
+    if not bad_id:
         try:
             objects = []
             new_feature = {}
             json_to_db = table_infos.get(table_sheet).get('json_to_db_columns')
-            
+
             # Insert into TABLE_SHEET
             new_feature[table_infos.get(table_sheet).get('id_col')] = d.id
             new_feature['table_name'] = table_sheet
-            date_obs = d.dateobs.split(" ")            
+            date_obs = d.dateobs.split(" ")
             new_feature[json_to_db.get('dateobs')] = date_obs[0]
             if json_data['input_type'] == 'invertebrate':
                 new_feature[json_to_db.get('heure')] = date_obs[1].split(":")[0]
@@ -127,7 +141,7 @@ def import_data(request):
             new_feature[json_to_db.get('geometry')] = "transform(ST_GeomFromText('POINT(%s %s)', 4326),2154)" % (d.geolocation.longitude, d.geolocation.latitude)
             new_feature[json_to_db.get('accuracy')] = d.geolocation.accuracy
             objects.append(new_feature)
-            cursor = sync_db(objects, table_infos)
+            cursor = sync_db(objects, table_infos, database_id)
 
             # Insert into TABLE_STATEMENT
             statement_ids = []
@@ -172,26 +186,26 @@ def import_data(request):
                 new_feature[json_to_db.get('comment')] = taxon.comment
 
                 objects.append(new_feature)
-                cursor = sync_db(objects, table_infos)
+                cursor = sync_db(objects, table_infos, database_id)
 
             # Insert into TABLE_SHEET_ROLE (multiple observers enable)
             for observer in d.observers_id:
                 objects = []
                 new_feature = {}
-                
+
                 if json_data['input_type'] == 'fauna' or json_data['input_type'] == 'mortality':
                     new_feature['table_name'] = settings.TABLE_FAUNA_SHEET_ROLE
                     new_feature['id_cf'] = d.id
                 if json_data['input_type'] == 'invertebrate':
                     new_feature['table_name'] = settings.TABLE_INV_SHEET_ROLE
                     new_feature['id_inv'] = d.id
-                
+
                 new_feature['id_role'] = observer
                 objects.append(new_feature)
-                sync_db(objects, table_infos)
+                sync_db(objects, table_infos, database_id)
 
             # Commit transaction
-            commit_transaction()
+            commit_transaction(database_id)
 
             response_content.update({
                 'status_code': _("0"),
@@ -215,33 +229,252 @@ def import_data(request):
 
     return response
 
+
+@csrf_exempt
+def import_data_flora(json_data, data):
+    """
+    Import data for flora
+    """
+
+    response_content = {}
+
+    table_infos = settings.FLORA_TABLE_INFOS
+    table_apresence = settings.TABLE_FLORA_T_APRESENCE
+    table_zprospection = settings.TABLE_FLORA_T_ZPROSPECTION
+    database_id = settings.DB_FLORA
+
+    d = EasyDict(json_data)
+
+    bad_id = False
+    # Check if ID are unique
+    count_string = "SELECT count(*) FROM %s WHERE %s='%s'" % (table_zprospection, table_infos.get(table_zprospection).get('id_col'), d.id)
+    cursor = query_db(count_string, database_id)
+    row = cursor.fetchone()
+    if row:
+        datarow = zip([column[0] for column in cursor.description], row)
+        val = datarow[0][1]
+        if val == 1:
+            bad_id = True
+            response_content.update({
+                'status_code': _("1"),
+                'status_message': _("Existing ID in database (%s) (%s)") % (table_zprospection, d.id)
+            })
+    for taxon in d.taxons:
+        for area in taxon.areas:
+            count_string = "SELECT count(*) FROM %s WHERE %s='%s'" % (table_apresence, table_infos.get(table_apresence).get('id_col'), area.id)
+            cursor = query_db(count_string, database_id)
+            row = cursor.fetchone()
+            if row:
+                datarow = zip([column[0] for column in cursor.description], row)
+                val = datarow[0][1]
+                if val == 1:
+                    bad_id = True
+                    response_content.update({
+                        'status_code': _("1"),
+                        'status_message': _("Existing ID in database (%s) (%s)") % (table_apresence, area.id)
+                    })
+        # even the json offers a list, there's only one taxa
+        break
+
+    if not bad_id:
+        #try: # TODO reactivate
+        objects = []
+        new_feature = {}
+        json_to_db = table_infos.get(table_zprospection).get('json_to_db_columns')
+        areas_ids = []
+        for taxon in d.taxons:
+            # Insert into ZPROSPECTION
+            new_feature[table_infos.get(table_zprospection).get('id_col')] = d.id
+            new_feature['table_name'] = table_zprospection
+            date_obs = d.dateobs.split(" ")
+            new_feature[json_to_db.get('dateobs')] = date_obs[0]
+            new_feature[json_to_db.get('initial_input')] = d.initial_input
+            new_feature['supprime'] = 'False'
+            new_feature[json_to_db.get('name_entered')] = taxon.name_entered
+            new_feature[json_to_db.get('id_taxon')] = taxon.id_taxon
+            new_feature['id_organisme'] = settings.FLORA_ID_ORGANISM
+
+            # we need to transform geometry into 2154
+            string_geom = get_geometry_string_from_coords(taxon.prospecting_area.feature.geometry.coordinates, taxon.prospecting_area.feature.geometry.type)
+            new_feature[json_to_db.get('geometry')] = string_geom
+
+            objects.append(new_feature)
+            cursor = sync_db(objects, table_infos, database_id)
+
+            # Insert into APRESENCE
+            for area in taxon.areas:
+                areas_ids.append(area.id)
+                objects = []
+                new_feature = {}
+                json_to_db = table_infos.get(table_apresence).get('json_to_db_columns')
+                new_feature['table_name'] = table_apresence
+                new_feature['supprime'] = 'False'
+                new_feature[table_infos.get(table_apresence).get('id_col')] = area.id
+                new_feature[table_infos.get(table_zprospection).get('id_col')] = d.id
+                new_feature[json_to_db.get('id')] = area.id
+                new_feature[json_to_db.get('phenology')] = area.phenology
+                new_feature[json_to_db.get('computed_area')] = area.computed_area
+
+                if area.frequency.type == "estimation":
+                    new_feature[json_to_db.get('frequenceap')] = area.frequency.value
+                    new_feature[json_to_db.get('id_frequence_methodo_new')] = settings.FLORA_FREQUENCY_ESTIMATION
+                if area.frequency.type == "transect":
+                    new_feature[json_to_db.get('frequenceap')] = area.frequency.value
+                    new_feature[json_to_db.get('nb_transects_frequence')] = area.frequency.transects
+                    new_feature[json_to_db.get('nb_points_frequence')] = area.frequency.transect_no # TODO check
+                    new_feature[json_to_db.get('nb_contacts_frequence')] = area.frequency.transect_yes # TODO check
+                    new_feature[json_to_db.get('longueur_pas')] = area.frequency.computed_recommended_step
+                    new_feature[json_to_db.get('id_frequence_methodo_new')] = settings.FLORA_FREQUENCY_TRANSECT
+
+                string_geom = get_geometry_string_from_coords(area.feature.geometry.coordinates, area.feature.geometry.type)
+                new_feature[json_to_db.get('geometry')] = string_geom
+
+                if area.counting.type == "none":
+                    new_feature[json_to_db.get('id_comptage_methodo')] = settings.FLORA_COUNTING_NONE
+                if area.counting.type == "exhaustive":
+                    new_feature[json_to_db.get('total_steriles')] = area.counting.total_sterile
+                    new_feature[json_to_db.get('total_fertiles')] = area.counting.total_fertile
+                    new_feature[json_to_db.get('id_comptage_methodo')] = settings.FLORA_COUTING_EXHAUSTIVE
+                if area.counting.type == "sampling":
+                    new_feature[json_to_db.get('total_steriles')] = area.counting.total_sterile
+                    new_feature[json_to_db.get('total_fertiles')] = area.counting.total_fertile
+                    new_feature[json_to_db.get('nb_placettes_comptage')] = area.counting.plots
+                    new_feature[json_to_db.get('surface_placette_comptage')] = area.counting.plot_surface
+                    new_feature[json_to_db.get('effectif_placettes_steriles')] = area.counting.sterile
+                    new_feature[json_to_db.get('effectif_placettes_fertiles')] = area.counting.fertile
+                    new_feature[json_to_db.get('id_comptage_methodo')] = settings.FLORA_COUTING_SAMPLING
+                    
+                new_feature[json_to_db.get('comment')] = area.comment
+
+                objects.append(new_feature)
+                cursor = sync_db(objects, table_infos, database_id)
+
+                # Physiognomies
+                for physiognomy in area.physiognomy:
+                    objects = []
+                    new_feature = {}
+
+                    new_feature['table_name'] = settings.TABLE_FLORA_COR_AP_PHYSIONOMIE
+                    new_feature['indexap'] = area.id
+                    new_feature['id_physionomie'] = physiognomy
+                    objects.append(new_feature)
+                    sync_db(objects, table_infos, database_id)
+
+                # Disturbances
+                for disturbance in area.disturbances:
+                    objects = []
+                    new_feature = {}
+
+                    new_feature['table_name'] = settings.TABLE_FLORA_COR_AP_PERTURB
+                    new_feature['indexap'] = area.id
+                    new_feature['codeper'] = disturbance
+                    objects.append(new_feature)
+                    sync_db(objects, table_infos, database_id)
+
+            break  # even the json offers a list, there's only one taxa
+
+        # Insert into TABLE_SHEET_ROLE (multiple observers enable)
+        for observer in d.observers_id:
+            objects = []
+            new_feature = {}
+
+            new_feature['table_name'] = settings.TABLE_FLORA_COR_ZP_OBS
+            new_feature['indexzp'] = d.id
+
+            new_feature['codeobs'] = observer
+            objects.append(new_feature)
+            sync_db(objects, table_infos, database_id)
+
+        # Commit transaction
+        commit_transaction(database_id)
+
+        response_content.update({
+            'status_code': _("0"),
+            'status_message': "id_prospection: %s, ids_areass: %s" % (d.id, ','.join(map(str, areas_ids)))
+        })
+        #except Exception, e:
+            ##  Insert rejected JSON into synchro_table (text format)
+            #print e
+            #id_failed = archive_bad_data(data, json_data)
+
+            #response_content.update({
+                #'status_code': _("1"),
+                #'status_message': _("Bad json or data (%d)") % id_failed
+            #})
+    else:
+        archive_bad_data(data, json_data)
+
+    response = HttpResponse()
+    simplejson.dump(response_content, response,
+                ensure_ascii=False, separators=(',', ':'))
+
+    return response
+
+
+def get_geometry_string_from_coords(coords_list, type):
+
+    coords = []
+    extra_parenthesis = ""
+    if type == "Point":
+        string_geom = "transform(ST_GeomFromText('POINT("
+    if type == "LineString":
+        string_geom = "transform(ST_GeomFromText('LINESTRING("
+    if type == "Polygon":
+        string_geom = "transform(ST_GeomFromText('POLYGON(("
+        extra_parenthesis = ")"
+
+    if type == "Point":
+        coords.append("%s %s" % (coords_list[0], coords_list[1]))
+    else:
+        for coord in coords_list:
+            coords.append("%s %s" % (coord[0], coord[1]))
+
+    # close the shape for polygons
+    if type == "Polygon":
+        for coord in coords_list:
+            coords.append("%s %s" % (coord[0], coord[1]))
+            break
+        
+    string_geom = "%s%s)%s', 4326),27572)" % (string_geom, ",".join(coords), extra_parenthesis)
+
+    return string_geom
+
+
 def archive_bad_data(data, json_data):
     #  Insert rejected JSON into synchro_table (text format)
     now = datetime.datetime.now()
     objects = []
     new_feature = {}
-    
+
     if json_data['input_type'] == 'fauna':
         new_feature['table_name'] = settings.TABLE_FAILED_JSON_FAUNA
         table_infos = settings.FAUNE_TABLE_INFOS
+        database_id = settings.DB_FAUNA
     if json_data['input_type'] == 'mortality':
         new_feature['table_name'] = settings.TABLE_FAILED_JSON_MORTALITY
         table_infos = settings.FAUNE_TABLE_INFOS
+        database_id = settings.DB_FAUNA
     if json_data['input_type'] == 'invertebrate':
         new_feature['table_name'] = settings.TABLE_FAILED_JSON_INV
         table_infos = settings.INV_TABLE_INFOS
+        database_id = settings.DB_INV
+    if json_data['input_type'] == 'flora':
+        new_feature['table_name'] = settings.TABLE_FAILED_JSON_FLORA
+        table_infos = settings.FLORA_TABLE_INFOS
+        database_id = settings.DB_FLORA
+
     new_feature['date_import'] = "%d-%d-%d %d:%d:%d" % (now.year, now.month, now.day, now.hour, now.minute, now.second)
     new_feature['json'] = data
     objects.append(new_feature)
-    cursor = sync_db(objects, table_infos)
+    cursor = sync_db(objects, table_infos, database_id)
     id_failed = cursor.fetchone()[0]
 
     # Commit transaction
-    commit_transaction()
-    
+    commit_transaction(database_id)
+
     return id_failed
-    
-    
+
+
 @csrf_exempt
 def export_sqlite(request):
     """
@@ -251,7 +484,7 @@ def export_sqlite(request):
     res, response = check_token(request)
     if not res:
         return response
-    
+
     # Create the .db file
     output = None
     src = "%s" % (settings.MOBILE_SQLITE_SAMPLE)
@@ -266,18 +499,18 @@ def export_sqlite(request):
             con = lite.connect(output)
             #with con:
             cur = con.cursor()
-            
-            tables_infos = {'fauna': settings.FAUNE_TABLE_INFOS, 'invertebrate': settings.INV_TABLE_INFOS}
-            
+
+            tables_infos = {'fauna': settings.FAUNE_TABLE_INFOS, 'invertebrate': settings.INV_TABLE_INFOS, 'flora': settings.FLORA_TABLE_INFOS}
+
             for create_string in settings.MOBILE_SQLITE_CREATE_QUERY:
                 cur.execute(create_string)
 
             # Extra SQL to execute on database
             for insert_string in settings.MOBILE_SQLITE_EXTRA_SQL:
                 cur.execute(insert_string)
-            
+
             # Fill data (global)
-            table_infos = settings.GLOBAL_TABLE_INFOS 
+            table_infos = settings.GLOBAL_TABLE_INFOS
             tabTab = []
             tabTab.append({'table_name': settings.TABLE_USERS})
             for current_tab in tabTab:
@@ -285,6 +518,7 @@ def export_sqlite(request):
                 li_table_name = table_infos.get(pg_table_name).get('sqlite_name')
                 where_string = table_infos.get(pg_table_name).get('where_string')
                 complement_string = table_infos.get(pg_table_name).get('groupby_string')
+                database_id = table_infos.get('database_id')
                 if where_string != None:
                     where_string = "WHERE %s" % (where_string)
                 else:
@@ -293,8 +527,8 @@ def export_sqlite(request):
                     complement_string = "GROUP BY %s" % (complement_string)
                 else:
                     complement_string = ""
-                  
-                response_content = get_data(request, pg_table_name, where_string, complement_string, table_infos, False)
+
+                response_content = get_data(request, pg_table_name, where_string, complement_string, table_infos, False, database_id)
                 for obj in response_content[table_infos.get(pg_table_name).get('json_name')]:
                     colTab = []
                     valTab = []
@@ -309,12 +543,12 @@ def export_sqlite(request):
                                 mask += 100000
                             if "flora" in obj[key]:
                                 mask += 10000
-                            
+
                             mask = int("%s" % (mask), 2)
-                                
+
                             colTab.append("filter")
-                            valTab.append(mask)    
-                        else:    
+                            valTab.append(mask)
+                        else:
                             colTab.append(key)
                             valTab.append(unicode(obj[key]).replace("'", "''"))
 
@@ -324,10 +558,9 @@ def export_sqlite(request):
                                         "'" + "','".join(map(unicode, valTab)) + "'"
                                         )
                     cur.execute(insert_string)
-            
-            
+
             # Fill data (fauna, invertebrate...)
-            for mode in tables_infos :
+            for mode in tables_infos:
                 table_infos = tables_infos[mode]
                 tabTab = []
                 if mode == "fauna":
@@ -340,17 +573,24 @@ def export_sqlite(request):
                     tabTab.append({'table_name': settings.TABLE_INV_TAXA, 'filter' : True})
                     tabTab.append({'table_name': settings.TABLE_INV_CRITERION, 'filter' : False})
                     tabTab.append({'table_name': settings.TABLE_INV_ENVIRONEMENTS, 'filter' : False})
-                    
+                if mode == "flora":
+                    tabTab.append({'table_name': settings.TABLE_FLORA_TAXA, 'filter' : True})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_INCLINES, 'filter' : False})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_DISTURBANCES, 'filter' : False})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_PHENOLOGY, 'filter' : False})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_PHYSIOGNOMY, 'filter' : False})
+
                 for current_tab in tabTab:
                     pg_table_name = current_tab['table_name']
                     apply_filter = current_tab['filter']
                     li_table_name = table_infos.get(pg_table_name).get('sqlite_name')
                     where_string = table_infos.get(pg_table_name).get('where_string')
+                    database_id = table_infos.get('database_id')
                     if where_string != None:
                         where_string = "WHERE %s" % (where_string)
                     else:
                         where_string = ""
-                    response_content = get_data(request, pg_table_name, where_string, None, table_infos, False)
+                    response_content = get_data(request, pg_table_name, where_string, None, table_infos, False, database_id)
                     for obj in response_content[table_infos.get(pg_table_name).get('json_name')]:
                         colTab = []
                         valTab = []
@@ -362,10 +602,10 @@ def export_sqlite(request):
                                     mask = int('11000000', 2)
                                 else:
                                     mask = int('01000000', 2)
-                            else:    
+                            else:
                                 colTab.append(key)
                                 valTab.append(unicode(obj[key]).replace("'", "''"))
-                        
+
                         # if filter on this table
                         # apply a binary mask
                         # 1-faune, 2-mortality, 3-invertebrate, 4-flore
@@ -373,29 +613,33 @@ def export_sqlite(request):
                             if pg_table_name != settings.TABLE_FAUNA_TAXA:
                                 if mode == "fauna" :
                                     mask = int('11000000', 2)
-                                
+
                             if mode == "invertebrate":
                                 mask = int('00100000', 2)
-                     
+
+                            if mode == "flora":
+                                mask = int('00010000', 2)
+
                             colTab.append("filter")
                             valTab.append(mask)
-                        
+
                         insert_string = "INSERT INTO %s (%s) values (%s)" % \
                                             (li_table_name,
                                             ",".join(colTab),
                                             "'" + "','".join(map(unicode, valTab)) + "'"
                                             )
+
                         cur.execute(insert_string)
 
             con.commit()
             con.close()
-            
+
             wrapper = FileWrapper(file(output))
             response = HttpResponse(wrapper, content_type='application/x-sqlite3')
             response["Last-Modified"] = http_date()
             response['Content-Length'] = os.path.getsize(output)
             response['Content-Disposition'] = 'attachment; filename=data.db'
-            
+
             #header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($fn)).' GMT', true, 304);
     finally:
         pass
@@ -403,7 +647,6 @@ def export_sqlite(request):
         #    os.unlink(output)
 
     return response
-
 
 
 @csrf_exempt
@@ -421,10 +664,11 @@ def export_unity_polygons(request):
     # same table for fauna or invertebrate
     table_name = settings.TABLE_FAUNA_UNITY_GEOJSON
     table_infos_geojson = settings.FAUNE_TABLE_INFOS_GEOJSON
-    
+    database_id = settings.DB_FAUNA
+
     response_objects = []
 
-    get_data_object_txt(response_objects, table_name, table_infos_geojson)
+    get_data_object_txt(response_objects, table_name, table_infos_geojson, database_id)
 
     # Create the .txt file
     output = None
@@ -432,10 +676,10 @@ def export_unity_polygons(request):
     try:
         with tempfile.TemporaryFile('w', suffix='.wkt') as f:
             output = f.name
-            
+
             for polygon in response_objects:
                 export = "%s%s\n" % (export, polygon)
-                
+
             wrapper = FileWrapper(f)
             response = HttpResponse(export, content_type='application/txt')
             response['Last-Modified'] = http_date()
@@ -445,11 +689,11 @@ def export_unity_polygons(request):
         pass
         #if output:
         #    os.unlink(output)
-    
-    return response
-    
 
-def get_data(request, table_name, where_string, complement_string, table_infos, testing):
+    return response
+
+
+def get_data(request, table_name, where_string, complement_string, table_infos, testing, database_id):
     """
     Get table_name data from DataBase to object
     Param testing is for testing Data
@@ -458,13 +702,13 @@ def get_data(request, table_name, where_string, complement_string, table_infos, 
     res, response = check_token(request)
     if not res:
         return response
-    
+
     # Get infos
     response_objects = []
     json_table_name = table_infos.get(table_name).get('json_name')
     response_content = {json_table_name: []}
 
-    get_data_object(response_objects, table_name, where_string, complement_string, table_infos, testing)
+    get_data_object(response_objects, table_name, where_string, complement_string, table_infos, testing, database_id)
 
     response_content[json_table_name] = response_objects
 
@@ -480,7 +724,7 @@ def check_token(request):
         if request.POST['token']:
             if request.POST['token'] == settings.TOKEN:
                 return True, None
-    
+
     response_content = []
     response_content.append({
         'status': _("You're not allowed to retreive information from this webservice")
@@ -492,7 +736,7 @@ def check_token(request):
     return False, response
 
 
-def get_data_object(response_content, table_name, where_string, complement_string, table_infos, testing):
+def get_data_object(response_content, table_name, where_string, complement_string, table_infos, testing, database_id):
     """
     Perform a SELECT on the DB to retreive infos on associated object
     Param: table_name : name of the table
@@ -504,7 +748,7 @@ def get_data_object(response_content, table_name, where_string, complement_strin
     select_string = "SELECT %s FROM %s %s %s %s" \
                     % (select_columns, table_name, where_string, complement_string, test_string)
 
-    cursor = query_db(select_string)
+    cursor = query_db(select_string, database_id)
     for row in cursor.fetchall():
         data = zip([column[0] for column in cursor.description], row)
         feat_dict = SortedDict({})
@@ -520,8 +764,8 @@ def get_data_object(response_content, table_name, where_string, complement_strin
 
         response_content.append(feat_dict)
 
-        
-def get_data_object_txt(response_content, table_name, table_infos_geojson):
+
+def get_data_object_txt(response_content, table_name, table_infos_geojson, database_id):
     """
     Perform a SELECT on the DB to retreive infos on associated object, txt format
     Param: table_name : name of the table
@@ -531,7 +775,7 @@ def get_data_object_txt(response_content, table_name, table_infos_geojson):
     select_string = "SELECT %s FROM %s" \
                     % (select_columns, table_name)
 
-    cursor = query_db(select_string)
+    cursor = query_db(select_string, database_id)
     for row in cursor.fetchall():
         data = zip([column[0] for column in cursor.description], row)
         stringGeometry = ""
@@ -546,7 +790,8 @@ def get_data_object_txt(response_content, table_name, table_infos_geojson):
                 stringKey = val
 
         response_content.append("%s,%s" % (stringKey, stringGeometry))
-        
+
+
 @csrf_exempt
 def check_status(request):
     """
@@ -558,10 +803,12 @@ def check_status(request):
         return response
 
     # check DB connection
-    res_connection = check_connection();
-    
+    res_connection_fauna = check_connection(settings.DB_FAUNA);
+    res_connection_inv = check_connection(settings.DB_INV);
+    res_connection_flora = check_connection(settings.DB_FLORA);
+
     tables_infos = {'fauna': settings.FAUNE_TABLE_INFOS, 'invertebrate': settings.INV_TABLE_INFOS}
-    
+
     # check if views are availables
     res_views = True
     try:
@@ -573,29 +820,32 @@ def check_status(request):
                 tabTab.append(settings.TABLE_FAUNA_TAXA_UNITY)
                 tabTab.append(settings.TABLE_FAUNA_TAXA)
                 tabTab.append(settings.TABLE_FAUNA_CRITERION)
+                database_id = settings.DB_FAUNA
             if mode == "invertebrate":
                 tabTab.append(settings.TABLE_INV_USER)
                 tabTab.append(settings.TABLE_INV_TAXA_UNITY)
                 tabTab.append(settings.TABLE_INV_TAXA)
                 tabTab.append(settings.TABLE_INV_CRITERION)
-                
+                database_id = settings.DB_INV
+            if mode == "flora":
+                database_id = settings.DB_FLORA
+                #TODO
+
             for pg_table_name in tabTab:
                 li_table_name = table_infos.get(pg_table_name).get('sqlite_name')
-                test_return = get_data(request, pg_table_name, None, None, table_infos, True)
+                test_return = get_data(request, pg_table_name, None, None, table_infos, True, database_id)
     except:
         res_views = False
 
-
     response_content.update({
         'status_code': _("0"),
-        'status_message': "DB connection %d, Views available %d" % (res_connection, res_views)
-        #'DB connection': res_connection,
-        #'Views available': res_views
+        'status_message': "DB connection FAUNA %d, DB connection INVERTEBRATE %d, DB connection FLORA %d, Views available %d" % (res_connection_fauna, res_connection_inv, res_connection_flora, res_views)
     })
     response = HttpResponse()
     simplejson.dump(response_content, response,
                 ensure_ascii=False, separators=(',', ':'))
     return response
+
 
 @csrf_exempt
 def soft_version(request):
@@ -609,12 +859,12 @@ def soft_version(request):
 
     # read the version file
     version_file = "%sversion.json" % (settings.MOBILE_SOFT_PATH)
-    
+
     try:
-        json_data = open(version_file)   
+        json_data = open(version_file)
         version_data = simplejson.load(json_data)
         json_data.close()
-        
+
         for apps in version_data['apps']:
             response_content['apps'].append({
                 "package": apps["package"],
@@ -622,19 +872,19 @@ def soft_version(request):
                 "versionCode": apps["versionCode"],
                 "versionName": apps["versionName"],
                 "apkName": apps["apkName"],
-            })        
+            })
     except:
         response_content.update({
             'status_code': _("1"),
             'status_message': "Version file is not available"
         })
-    
+
     response = HttpResponse()
     simplejson.dump(response_content, response,
                 ensure_ascii=False, separators=(',', ':'))
     return response
 
-    
+
 @csrf_exempt
 def soft_download(request, apk_name):
     """
@@ -660,9 +910,10 @@ def soft_download(request, apk_name):
         simplejson.dump(response_content, response,
                     ensure_ascii=False, separators=(',', ':'))
         return response
-    
+
     return response
-            
+
+
 @csrf_exempt
 def data_download(request, mbtiles_name):
     """
@@ -689,10 +940,8 @@ def data_download(request, mbtiles_name):
         simplejson.dump(response_content, response,
                     ensure_ascii=False, separators=(',', ':'))
         return response
-    
+
     return response
-
-
 
 
 # NOT USED ANYMORE :
@@ -757,7 +1006,7 @@ def export_data(request, table_name):
                 ensure_ascii=False, separators=(',', ':'))
 
     return response
-    
+
 
 @csrf_exempt
 def export_unity_geojson(request):
@@ -802,7 +1051,7 @@ def export_unity_geojson(request):
     finally:
         if output:
             os.unlink(output)
-    
+
     return response
 
 
@@ -816,7 +1065,7 @@ def get_data_object_geojson(response_content, table_name):
     select_string = "SELECT %s FROM %s" \
                     % (select_columns, table_name)
 
-    cursor = query_db(select_string)
+    cursor = query_db(select_string, database_id)
     i = 0  # feature index
     for row in cursor.fetchall():
         data = zip([column[0] for column in cursor.description], row)

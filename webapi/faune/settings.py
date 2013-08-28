@@ -182,7 +182,18 @@ MORTALITY_ID_PROTOCOL = 142
 MORTALITY_ID_LOT = 15            
 INV_ID_LOT = 14
 INV_ID_PROTOCOL = 141
-            
+
+FLORA_ID_ORGANISM = 2
+FLORA_FREQUENCY_ESTIMATION = 'S'
+FLORA_FREQUENCY_TRANSECT = 'N'
+
+FLORA_COUNTING_NONE = 9
+FLORA_COUTING_SAMPLING = 2
+FLORA_COUTING_EXHAUSTIVE = 1
+
+DB_FAUNA = 'fauna'
+DB_INV = 'inv'
+DB_FLORA = 'flora'
             
 TABLE_FAUNA_TAXA = 'contactfaune.v_nomade_taxons_faune'
 TABLE_FAUNA_FAMILY = 'taxonomie.bib_familles'
@@ -213,10 +224,27 @@ TABLE_INV_ENVIRONEMENTS = 'contactinv.v_nomade_milieux_inv'
 TABLE_FAILED_JSON_INV = 'synchronomade.erreurs_inv'
 TABLE_INV_CLASSES = 'taxonomie.bib_classes'
 
+
+TABLE_FLORA_TAXA = 'florepatri.v_mobile_taxons_fp'
+TABLE_FLORA_FAMILY = 'taxonomie.bib_familles'
+TABLE_FLORA_USER = 'florepatri.v_mobile_observateurs_fp'
+TABLE_FLORA_COR_ZP_OBS = 'florepatri.cor_zp_obs'
+TABLE_FLORA_T_APRESENCE = 'florepatri.t_apresence'
+TABLE_FLORA_T_ZPROSPECTION = 'florepatri.t_zprospection'
+TABLE_FLORA_COR_AP_PERTURB = 'florepatri.cor_ap_perturb'
+TABLE_FLORA_COR_AP_PHYSIONOMIE = 'florepatri.cor_ap_physionomie'
+TABLE_FAILED_JSON_FLORA = 'synchronomade.erreurs_flora'
+TABLE_FLORA_CLASSES = 'taxonomie.bib_classes'
+TABLE_FLORA_INCLINES = 'florepatri.v_mobile_pentes'
+TABLE_FLORA_DISTURBANCES = 'florepatri.v_mobile_perturbations'
+TABLE_FLORA_PHENOLOGY = 'florepatri.v_mobile_phenologies'
+TABLE_FLORA_PHYSIOGNOMY = 'florepatri.v_mobile_physionomies'
+
 TABLE_USERS = 'utilisateurs.v_nomade_observateurs_all'
 
 # GLOBAL -------------------------------------------------------------------
 GLOBAL_TABLE_INFOS =  {
+    'database_id': 'fauna',
     TABLE_USERS: {
         'id_col': 'id_role',
         'json_name': 'user',
@@ -236,6 +264,7 @@ GLOBAL_TABLE_INFOS =  {
 
 # FAUNA -------------------------------------------------------------------
 FAUNE_TABLE_INFOS =  {
+    'database_id': 'fauna',
     TABLE_FAILED_JSON_FAUNA: {
         'id_col': 'id',
         'select_col': 'id,json_date_import'
@@ -379,6 +408,7 @@ FAUNE_TABLE_INFOS =  {
 
 # INV -------------------------------------------------------------------
 INV_TABLE_INFOS =  {
+    'database_id': 'inv',
     TABLE_FAILED_JSON_INV: {
         'id_col': 'id',
         'select_col': 'id,json_date_import'
@@ -525,6 +555,197 @@ INV_TABLE_INFOS =  {
     
 }
 
+# FLORA -------------------------------------------------------------------
+FLORA_TABLE_INFOS =  {
+    'database_id': 'flora',
+    TABLE_FAILED_JSON_FLORA: {
+        'id_col': 'id',
+        'select_col': 'id,json_date_import'
+    },
+    
+    TABLE_FLORA_T_APRESENCE: {
+        'id_col': 'indexap',
+        'json_name': 't_apresence',
+        'sqlite_name': 't_apresence',
+        'select_col': 'indexap',
+        'json_to_db_columns' : {
+            'id' : 'indexap',
+            'phenology' : 'codepheno',
+            'indexzp' : 'id',
+            'computed_area' : 'surfaceap',
+            'id_frequence_methodo_new' : 'id_frequence_methodo_new',
+            'frequenceap' : 'frequenceap',
+            'geometry' : 'the_geom',
+            'nb_transects_frequence' : 'nb_transects_frequence',
+            'nb_points_frequence' : 'nb_points_frequence',
+            'nb_contacts_frequence' : 'nb_contacts_frequence',
+            'id_comptage_methodo' : 'id_comptage_methodo',
+            'nb_placettes_comptage' : 'nb_placettes_comptage',
+            'surface_placette_comptage' : 'surface_placette_comptage',
+            'longueur_pas' : 'longueur_pas',
+            'comment' : 'remarques',
+            'supprime' : 'supprime',
+            'effectif_placettes_steriles' : 'effectif_placettes_steriles',
+            'effectif_placettes_fertiles' : 'effectif_placettes_fertiles',
+            'total_steriles' : 'total_steriles',
+            'total_fertiles' : 'total_fertiles'
+        },
+    },
+   
+    TABLE_FLORA_T_ZPROSPECTION: {
+        'id_col': 'indexzp',
+        'json_name': 't_zprospection',
+        'sqlite_name': 't_zprospection',
+        'select_col': '',
+        'json_to_db_columns' : {
+            'id' : 'indexzp',
+            'geometry' : 'the_geom',
+            'id_taxon' : 'cd_nom',
+            'initial_input' : 'saisie_initiale',
+            'name_entered' : 'taxon_saisi',
+            'id_organisme' : 'id_organisme',
+            'srid_dessin' : 'srid_dessin',
+            'supprime' : 'supprime',
+            'dateobs' : 'dateobs'
+        },
+    },
+
+    TABLE_FLORA_COR_ZP_OBS: {
+        'id_col': 'indexzp',
+        'json_name': 'cor_zp_obs',
+        'sqlite_name': 'cor_zp_obs',
+        'select_col': 'indexzp, codeobs',
+        'json_to_db_columns' : {
+            'id' : '_id',
+            'indexzp' : 'indexzp',
+            'codeobs' : 'codeobs'
+        },
+    },
+    
+    TABLE_FLORA_COR_AP_PERTURB: {
+        'id_col': 'indexap',
+        'json_name': 'cor_ap_perturb',
+        'sqlite_name': 'cor_ap_perturb',
+        'select_col': 'indexap, codeper',
+        'json_to_db_columns' : {
+            'id' : '_id',
+            'indexap' : 'indexap',
+            'codeper' : 'codeper'
+        },
+    },
+    
+    TABLE_FLORA_COR_AP_PHYSIONOMIE: {
+        'id_col': 'indexap',
+        'json_name': 'cor_zp_obs',
+        'sqlite_name': 'cor_zp_obs',
+        'select_col': 'indexap, id_physionomie',
+        'json_to_db_columns' : {
+            'id' : '_id',
+            'indexap' : 'indexap',
+            'id_physionomie' : 'id_physionomie'
+        },        
+    },
+    
+    TABLE_FLORA_TAXA: {
+        'id_col': 'num_nomenclatural',
+        'json_name': 'taxa',
+        'sqlite_name': 'taxa',
+        'select_col': 'cd_nom, nom_latin, nom_francais',
+        'db_to_json_columns' : {
+            'cd_nom' : '_id',
+            'nom_latin' : 'name',
+            'nom_francais' : 'name_fr'
+        },
+        #'where_string' : 'contactfaune = TRUE'
+    },
+    
+    TABLE_FLORA_FAMILY: {
+        'id_col': 'id_famille',
+        'json_name': 'family',
+        'sqlite_name': 'family',
+        'select_col': 'id_famille, nom_famille',
+        'db_to_json_columns' : {
+            'id_famille' : 'id',
+            'nom_famille' : 'name'
+        }
+    },
+    TABLE_FLORA_USER: {
+        'id_col': 'id_role',
+        'json_name': 'user',
+        'sqlite_name': 'observers',
+        'select_col': 'id_role, nom_role, prenom_role',
+        'db_to_json_columns' : {
+            'id_role' : '_id',
+            'identifiant' : 'ident',
+            'nom_role' : 'lastname',
+            'prenom_role' : 'firstname'
+        }        
+    },
+    
+    TABLE_FLORA_CLASSES: {
+        'id_col': 'id_classe',
+        'json_name': 'classes',
+        'sqlite_name': 'classes',
+        'select_col': 'id_classe, nom_classe, desc_classe',
+        'db_to_json_columns' : {
+            'id_classe' : '_id',
+            'nom_classe' : 'name',
+            'desc_classe' : 'description'
+        }        
+    },
+       
+    TABLE_FLORA_INCLINES: {
+        'id_col': 'id_pente',
+        'json_name': 'v_modile_pentes',
+        'sqlite_name': 'inclines',
+        'select_col': 'id_pente, val_pente, nom_pente',
+        'db_to_json_columns' : {
+            'id_pente' : '_id',
+            'val_pente' : 'value',
+            'nom_pente' : 'name'
+        }        
+    },
+
+    TABLE_FLORA_DISTURBANCES: {
+        'id_col': 'id',
+        'json_name': 'v_mobile_perturbations',
+        'sqlite_name': 'disturbances',
+        'select_col': 'codeper as id, codeper, classification, description',
+        'db_to_json_columns' : {
+            'id' : '_id',
+            'codeper' : 'code',
+            'classification' : 'classification',
+            'description' : 'description'
+        }        
+    },
+
+    TABLE_FLORA_PHENOLOGY: {
+        'id_col': 'id',
+        'json_name': 'v_mobile_phenologies',
+        'sqlite_name': 'phenology',
+        'select_col': 'codepheno as id, codepheno, pheno',
+        'db_to_json_columns' : {
+            'id' : '_id',
+            'codepheno' : 'code',
+            'pheno' : 'name'
+        }        
+    },
+
+    TABLE_FLORA_PHYSIOGNOMY: {
+        'id_col': 'id_physionomie',
+        'json_name': 'v_mobile_physionomies',
+        'sqlite_name': 'physiognomy',
+        'select_col': 'id_physionomie, groupe_physionomie, nom_physionomie',
+        'db_to_json_columns' : {
+            'id_physionomie' : '_id',
+            'groupe_physionomie' : 'group_name',
+            'nom_physionomie' : 'name'
+        }        
+    },
+    
+  
+    
+}
 
 FAUNE_TABLE_INFOS_GEOJSON =  {
     TABLE_FAUNA_UNITY_GEOJSON: {
@@ -554,6 +775,23 @@ INV_TABLE_INFOS_GEOJSON =  {
     }
 }
 
+#FLORA_TABLE_INFOS_GEOJSON =  {
+    #TABLE_FLORA_UNITY_GEOJSON: {
+        #'id_col': 'id_unite_geo',
+        #'json_name': 'unity_geojson',
+        #'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.00001)) as geom',
+        #'db_to_json_columns' : {
+            #'id_unite_geo' : 'id',
+            #'code_insee' : 'insee',
+            #'commune' : 'city',
+            #'geom': 'geometry'
+        #}        
+    #}
+#}
+
+
+
+
 MOBILE_SQLITE_SAMPLE = os.path.join(PROJECT_ROOT_PATH, "data.db.sample")
 
 MOBILE_SQLITE_CREATE_QUERY = (
@@ -562,8 +800,14 @@ MOBILE_SQLITE_CREATE_QUERY = (
     'CREATE TABLE IF NOT EXISTS taxa (_id INTEGER, name TEXT, name_fr TEXT, class_id INTEGER, number INTEGER, patrimonial INTEGER, message TEXT, filter INTEGER)',
     'CREATE TABLE IF NOT EXISTS criterion (_id INTEGER, name TEXT, sort INTEGER, class_id INTEGER)',
     'CREATE TABLE IF NOT EXISTS environments (_id INTEGER, name TEXT)',
+    'CREATE TABLE IF NOT EXISTS inclines (_id INTEGER NOT NULL , value DOUBLE NOT NULL , name TEXT NOT NULL )',
+    'CREATE TABLE IF NOT EXISTS phenology (_id INTEGER NOT NULL , code INTEGER NOT NULL , name TEXT NOT NULL )',
+    'CREATE TABLE IF NOT EXISTS physiognomy (_id INTEGER NOT NULL ,group_name TEXT NOT NULL ,name TEXT NOT NULL )',
+    'CREATE TABLE IF NOT EXISTS disturbances (_id INTEGER NOT NULL , code INTEGER NOT NULL , classification TEXT NOT NULL , description TEXT DEFAULT (null) )',
     'CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT DEFAULT "en_US")'
 )
+
+
 
 MOBILE_SQLITE_EXTRA_SQL = (
     'INSERT INTO android_metadata VALUES ("en_US")',

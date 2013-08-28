@@ -6,13 +6,31 @@ TEMPLATE_DEBUG = DEBUG
 DATABASE_ID = 'default'
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'dbname',                      # Or path to database file if using sqlite3.
-        'USER': 'dbuser',                      # Not used with sqlite3.
-        'PASSWORD': 'userpassword',                  # Not used with sqlite3.
-        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
-    }
+    },
+    'fauna': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dbname',
+        'USER': 'dbuser',
+        'PASSWORD': 'userpassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    },
+    'inv': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dbname',
+        'USER': 'dbuser',
+        'PASSWORD': 'userpassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    },
+    'flora': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dbname',
+        'USER': 'dbuser',
+        'PASSWORD': 'userpassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }   
 }
 
 LOGGING = {
