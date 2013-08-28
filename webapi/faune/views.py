@@ -321,8 +321,8 @@ def import_data_flora(json_data, data):
                     if area.frequency.type == "transect":
                         new_feature[json_to_db.get('frequenceap')] = area.frequency.value
                         new_feature[json_to_db.get('nb_transects_frequence')] = area.frequency.transects
-                        new_feature[json_to_db.get('nb_points_frequence')] = area.frequency.transect_no # TODO check
-                        new_feature[json_to_db.get('nb_contacts_frequence')] = area.frequency.transect_yes # TODO check
+                        new_feature[json_to_db.get('nb_points_frequence')] = area.frequency.transect_no  # TODO check
+                        new_feature[json_to_db.get('nb_contacts_frequence')] = area.frequency.transect_yes  # TODO check
                         new_feature[json_to_db.get('longueur_pas')] = area.frequency.computed_recommended_step
                         new_feature[json_to_db.get('id_frequence_methodo_new')] = settings.FLORA_FREQUENCY_TRANSECT
 
@@ -343,7 +343,7 @@ def import_data_flora(json_data, data):
                         new_feature[json_to_db.get('effectif_placettes_steriles')] = area.counting.sterile
                         new_feature[json_to_db.get('effectif_placettes_fertiles')] = area.counting.fertile
                         new_feature[json_to_db.get('id_comptage_methodo')] = settings.FLORA_COUTING_SAMPLING
-                        
+
                     new_feature[json_to_db.get('comment')] = area.comment
 
                     objects.append(new_feature)
@@ -434,7 +434,7 @@ def get_geometry_string_from_coords(coords_list, type):
         for coord in coords_list:
             coords.append("%s %s" % (coord[0], coord[1]))
             break
-        
+
     string_geom = "%s%s)%s', 4326),27572)" % (string_geom, ",".join(coords), extra_parenthesis)
 
     return string_geom
@@ -565,20 +565,20 @@ def export_sqlite(request):
                 tabTab = []
                 if mode == "fauna":
                     # filter : tells if we have calculate a filter
-                    tabTab.append({'table_name': settings.TABLE_FAUNA_TAXA_UNITY, 'filter' : False})
-                    tabTab.append({'table_name': settings.TABLE_FAUNA_TAXA, 'filter' : True})
-                    tabTab.append({'table_name': settings.TABLE_FAUNA_CRITERION, 'filter' : False})
+                    tabTab.append({'table_name': settings.TABLE_FAUNA_TAXA_UNITY, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_FAUNA_TAXA, 'filter': True})
+                    tabTab.append({'table_name': settings.TABLE_FAUNA_CRITERION, 'filter': False})
                 if mode == "invertebrate":
-                    tabTab.append({'table_name': settings.TABLE_INV_TAXA_UNITY, 'filter' : False})
-                    tabTab.append({'table_name': settings.TABLE_INV_TAXA, 'filter' : True})
-                    tabTab.append({'table_name': settings.TABLE_INV_CRITERION, 'filter' : False})
-                    tabTab.append({'table_name': settings.TABLE_INV_ENVIRONEMENTS, 'filter' : False})
+                    tabTab.append({'table_name': settings.TABLE_INV_TAXA_UNITY, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_INV_TAXA, 'filter': True})
+                    tabTab.append({'table_name': settings.TABLE_INV_CRITERION, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_INV_ENVIRONEMENTS, 'filter': False})
                 if mode == "flora":
-                    tabTab.append({'table_name': settings.TABLE_FLORA_TAXA, 'filter' : True})
-                    tabTab.append({'table_name': settings.TABLE_FLORA_INCLINES, 'filter' : False})
-                    tabTab.append({'table_name': settings.TABLE_FLORA_DISTURBANCES, 'filter' : False})
-                    tabTab.append({'table_name': settings.TABLE_FLORA_PHENOLOGY, 'filter' : False})
-                    tabTab.append({'table_name': settings.TABLE_FLORA_PHYSIOGNOMY, 'filter' : False})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_TAXA, 'filter': True})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_INCLINES, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_DISTURBANCES, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_PHENOLOGY, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_PHYSIOGNOMY, 'filter': False})
 
                 for current_tab in tabTab:
                     pg_table_name = current_tab['table_name']
@@ -609,9 +609,9 @@ def export_sqlite(request):
                         # if filter on this table
                         # apply a binary mask
                         # 1-faune, 2-mortality, 3-invertebrate, 4-flore
-                        if apply_filter :
+                        if apply_filter:
                             if pg_table_name != settings.TABLE_FAUNA_TAXA:
-                                if mode == "fauna" :
+                                if mode == "fauna":
                                     mask = int('11000000', 2)
 
                             if mode == "invertebrate":
@@ -803,16 +803,16 @@ def check_status(request):
         return response
 
     # check DB connection
-    res_connection_fauna = check_connection(settings.DB_FAUNA);
-    res_connection_inv = check_connection(settings.DB_INV);
-    res_connection_flora = check_connection(settings.DB_FLORA);
+    res_connection_fauna = check_connection(settings.DB_FAUNA)
+    res_connection_inv = check_connection(settings.DB_INV)
+    res_connection_flora = check_connection(settings.DB_FLORA)
 
     tables_infos = {'fauna': settings.FAUNE_TABLE_INFOS, 'invertebrate': settings.INV_TABLE_INFOS}
 
     # check if views are availables
     res_views = True
     try:
-        for mode in tables_infos :
+        for mode in tables_infos:
             table_infos = tables_infos[mode]
             tabTab = []
             if mode == "fauna":
@@ -895,13 +895,13 @@ def soft_download(request, apk_name):
     if not res:
         return response
 
-    file_path = "%s%s" %  (settings.MOBILE_SOFT_PATH, apk_name)
+    file_path = "%s%s" % (settings.MOBILE_SOFT_PATH, apk_name)
     try:
         wrapper = FileWrapper(file(file_path))
         response = HttpResponse(wrapper, content_type='text/plain')
         response['Content-Length'] = os.path.getsize(file_path)
         response['Content-Disposition'] = 'attachment; filename=%s' % (apk_name)
-    except :
+    except:
         response_content.update({
             'status_code': _("1"),
             'status_message': "APK file is not available (%s)" % (apk_name)
@@ -924,14 +924,14 @@ def data_download(request, mbtiles_name):
     if not res:
         return response
 
-    file_path = "%s%s" %  (settings.MOBILE_MBTILES_PATH, mbtiles_name)
+    file_path = "%s%s" % (settings.MOBILE_MBTILES_PATH, mbtiles_name)
     try:
         wrapper = FileWrapper(file(file_path))
         response = HttpResponse(wrapper, content_type='text/plain')
         response["Last-Modified"] = http_date(os.stat(file_path).st_mtime)
         response['Content-Length'] = os.path.getsize(file_path)
         response['Content-Disposition'] = 'attachment; filename=%s' % (mbtiles_name)
-    except :
+    except:
         response_content.update({
             'status_code': _("1"),
             'status_message': "File is not available (%s)" % (mbtiles_name)
@@ -994,6 +994,7 @@ def export_classes(request):
     Export classes table from DataBase to mobile
     """
     return export_data(request, settings.TABLE_FAUNA_CLASSES)
+
 
 def export_data(request, table_name):
     """
