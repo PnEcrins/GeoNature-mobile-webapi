@@ -277,130 +277,130 @@ def import_data_flora(json_data, data):
         break
 
     if not bad_id:
-        #try: # TODO reactivate
-        objects = []
-        new_feature = {}
-        json_to_db = table_infos.get(table_zprospection).get('json_to_db_columns')
-        areas_ids = []
-        for taxon in d.taxons:
-            # Insert into ZPROSPECTION
-            new_feature[table_infos.get(table_zprospection).get('id_col')] = d.id
-            new_feature['table_name'] = table_zprospection
-            date_obs = d.dateobs.split(" ")
-            new_feature[json_to_db.get('dateobs')] = date_obs[0]
-            new_feature[json_to_db.get('initial_input')] = d.initial_input
-            new_feature['supprime'] = 'False'
-            new_feature[json_to_db.get('name_entered')] = taxon.name_entered
-            new_feature[json_to_db.get('id_taxon')] = taxon.id_taxon
-            new_feature['id_organisme'] = settings.FLORA_ID_ORGANISM
-
-            # we need to transform geometry into 2154
-            string_geom = get_geometry_string_from_coords(taxon.prospecting_area.feature.geometry.coordinates, taxon.prospecting_area.feature.geometry.type)
-            new_feature[json_to_db.get('geometry')] = string_geom
-
-            objects.append(new_feature)
-            cursor = sync_db(objects, table_infos, database_id)
-
-            # Insert into APRESENCE
-            for area in taxon.areas:
-                areas_ids.append(area.id)
-                objects = []
-                new_feature = {}
-                json_to_db = table_infos.get(table_apresence).get('json_to_db_columns')
-                new_feature['table_name'] = table_apresence
-                new_feature['supprime'] = 'False'
-                new_feature[table_infos.get(table_apresence).get('id_col')] = area.id
+        try:
+            objects = []
+            new_feature = {}
+            json_to_db = table_infos.get(table_zprospection).get('json_to_db_columns')
+            areas_ids = []
+            for taxon in d.taxons:
+                # Insert into ZPROSPECTION
                 new_feature[table_infos.get(table_zprospection).get('id_col')] = d.id
-                new_feature[json_to_db.get('id')] = area.id
-                new_feature[json_to_db.get('phenology')] = area.phenology
-                new_feature[json_to_db.get('computed_area')] = area.computed_area
+                new_feature['table_name'] = table_zprospection
+                date_obs = d.dateobs.split(" ")
+                new_feature[json_to_db.get('dateobs')] = date_obs[0]
+                new_feature[json_to_db.get('initial_input')] = d.initial_input
+                new_feature['supprime'] = 'False'
+                new_feature[json_to_db.get('name_entered')] = taxon.name_entered
+                new_feature[json_to_db.get('id_taxon')] = taxon.id_taxon
+                new_feature['id_organisme'] = settings.FLORA_ID_ORGANISM
 
-                if area.frequency.type == "estimation":
-                    new_feature[json_to_db.get('frequenceap')] = area.frequency.value
-                    new_feature[json_to_db.get('id_frequence_methodo_new')] = settings.FLORA_FREQUENCY_ESTIMATION
-                if area.frequency.type == "transect":
-                    new_feature[json_to_db.get('frequenceap')] = area.frequency.value
-                    new_feature[json_to_db.get('nb_transects_frequence')] = area.frequency.transects
-                    new_feature[json_to_db.get('nb_points_frequence')] = area.frequency.transect_no # TODO check
-                    new_feature[json_to_db.get('nb_contacts_frequence')] = area.frequency.transect_yes # TODO check
-                    new_feature[json_to_db.get('longueur_pas')] = area.frequency.computed_recommended_step
-                    new_feature[json_to_db.get('id_frequence_methodo_new')] = settings.FLORA_FREQUENCY_TRANSECT
-
-                string_geom = get_geometry_string_from_coords(area.feature.geometry.coordinates, area.feature.geometry.type)
+                # we need to transform geometry into 2154
+                string_geom = get_geometry_string_from_coords(taxon.prospecting_area.feature.geometry.coordinates, taxon.prospecting_area.feature.geometry.type)
                 new_feature[json_to_db.get('geometry')] = string_geom
-
-                if area.counting.type == "none":
-                    new_feature[json_to_db.get('id_comptage_methodo')] = settings.FLORA_COUNTING_NONE
-                if area.counting.type == "exhaustive":
-                    new_feature[json_to_db.get('total_steriles')] = area.counting.total_sterile
-                    new_feature[json_to_db.get('total_fertiles')] = area.counting.total_fertile
-                    new_feature[json_to_db.get('id_comptage_methodo')] = settings.FLORA_COUTING_EXHAUSTIVE
-                if area.counting.type == "sampling":
-                    new_feature[json_to_db.get('total_steriles')] = area.counting.total_sterile
-                    new_feature[json_to_db.get('total_fertiles')] = area.counting.total_fertile
-                    new_feature[json_to_db.get('nb_placettes_comptage')] = area.counting.plots
-                    new_feature[json_to_db.get('surface_placette_comptage')] = area.counting.plot_surface
-                    new_feature[json_to_db.get('effectif_placettes_steriles')] = area.counting.sterile
-                    new_feature[json_to_db.get('effectif_placettes_fertiles')] = area.counting.fertile
-                    new_feature[json_to_db.get('id_comptage_methodo')] = settings.FLORA_COUTING_SAMPLING
-                    
-                new_feature[json_to_db.get('comment')] = area.comment
 
                 objects.append(new_feature)
                 cursor = sync_db(objects, table_infos, database_id)
 
-                # Physiognomies
-                for physiognomy in area.physiognomy:
+                # Insert into APRESENCE
+                for area in taxon.areas:
+                    areas_ids.append(area.id)
                     objects = []
                     new_feature = {}
+                    json_to_db = table_infos.get(table_apresence).get('json_to_db_columns')
+                    new_feature['table_name'] = table_apresence
+                    new_feature['supprime'] = 'False'
+                    new_feature[table_infos.get(table_apresence).get('id_col')] = area.id
+                    new_feature[table_infos.get(table_zprospection).get('id_col')] = d.id
+                    new_feature[json_to_db.get('id')] = area.id
+                    new_feature[json_to_db.get('phenology')] = area.phenology
+                    new_feature[json_to_db.get('computed_area')] = area.computed_area
 
-                    new_feature['table_name'] = settings.TABLE_FLORA_COR_AP_PHYSIONOMIE
-                    new_feature['indexap'] = area.id
-                    new_feature['id_physionomie'] = physiognomy
+                    if area.frequency.type == "estimation":
+                        new_feature[json_to_db.get('frequenceap')] = area.frequency.value
+                        new_feature[json_to_db.get('id_frequence_methodo_new')] = settings.FLORA_FREQUENCY_ESTIMATION
+                    if area.frequency.type == "transect":
+                        new_feature[json_to_db.get('frequenceap')] = area.frequency.value
+                        new_feature[json_to_db.get('nb_transects_frequence')] = area.frequency.transects
+                        new_feature[json_to_db.get('nb_points_frequence')] = area.frequency.transect_no # TODO check
+                        new_feature[json_to_db.get('nb_contacts_frequence')] = area.frequency.transect_yes # TODO check
+                        new_feature[json_to_db.get('longueur_pas')] = area.frequency.computed_recommended_step
+                        new_feature[json_to_db.get('id_frequence_methodo_new')] = settings.FLORA_FREQUENCY_TRANSECT
+
+                    string_geom = get_geometry_string_from_coords(area.feature.geometry.coordinates, area.feature.geometry.type)
+                    new_feature[json_to_db.get('geometry')] = string_geom
+
+                    if area.counting.type == "none":
+                        new_feature[json_to_db.get('id_comptage_methodo')] = settings.FLORA_COUNTING_NONE
+                    if area.counting.type == "exhaustive":
+                        new_feature[json_to_db.get('total_steriles')] = area.counting.total_sterile
+                        new_feature[json_to_db.get('total_fertiles')] = area.counting.total_fertile
+                        new_feature[json_to_db.get('id_comptage_methodo')] = settings.FLORA_COUTING_EXHAUSTIVE
+                    if area.counting.type == "sampling":
+                        new_feature[json_to_db.get('total_steriles')] = area.counting.total_sterile
+                        new_feature[json_to_db.get('total_fertiles')] = area.counting.total_fertile
+                        new_feature[json_to_db.get('nb_placettes_comptage')] = area.counting.plots
+                        new_feature[json_to_db.get('surface_placette_comptage')] = area.counting.plot_surface
+                        new_feature[json_to_db.get('effectif_placettes_steriles')] = area.counting.sterile
+                        new_feature[json_to_db.get('effectif_placettes_fertiles')] = area.counting.fertile
+                        new_feature[json_to_db.get('id_comptage_methodo')] = settings.FLORA_COUTING_SAMPLING
+                        
+                    new_feature[json_to_db.get('comment')] = area.comment
+
                     objects.append(new_feature)
-                    sync_db(objects, table_infos, database_id)
+                    cursor = sync_db(objects, table_infos, database_id)
 
-                # Disturbances
-                for disturbance in area.disturbances:
-                    objects = []
-                    new_feature = {}
+                    # Physiognomies
+                    for physiognomy in area.physiognomy:
+                        objects = []
+                        new_feature = {}
 
-                    new_feature['table_name'] = settings.TABLE_FLORA_COR_AP_PERTURB
-                    new_feature['indexap'] = area.id
-                    new_feature['codeper'] = disturbance
-                    objects.append(new_feature)
-                    sync_db(objects, table_infos, database_id)
+                        new_feature['table_name'] = settings.TABLE_FLORA_COR_AP_PHYSIONOMIE
+                        new_feature['indexap'] = area.id
+                        new_feature['id_physionomie'] = physiognomy
+                        objects.append(new_feature)
+                        sync_db(objects, table_infos, database_id)
 
-            break  # even the json offers a list, there's only one taxa
+                    # Disturbances
+                    for disturbance in area.disturbances:
+                        objects = []
+                        new_feature = {}
 
-        # Insert into TABLE_SHEET_ROLE (multiple observers enable)
-        for observer in d.observers_id:
-            objects = []
-            new_feature = {}
+                        new_feature['table_name'] = settings.TABLE_FLORA_COR_AP_PERTURB
+                        new_feature['indexap'] = area.id
+                        new_feature['codeper'] = disturbance
+                        objects.append(new_feature)
+                        sync_db(objects, table_infos, database_id)
 
-            new_feature['table_name'] = settings.TABLE_FLORA_COR_ZP_OBS
-            new_feature['indexzp'] = d.id
+                break  # even the json offers a list, there's only one taxa
 
-            new_feature['codeobs'] = observer
-            objects.append(new_feature)
-            sync_db(objects, table_infos, database_id)
+            # Insert into TABLE_SHEET_ROLE (multiple observers enable)
+            for observer in d.observers_id:
+                objects = []
+                new_feature = {}
 
-        # Commit transaction
-        commit_transaction(database_id)
+                new_feature['table_name'] = settings.TABLE_FLORA_COR_ZP_OBS
+                new_feature['indexzp'] = d.id
 
-        response_content.update({
-            'status_code': _("0"),
-            'status_message': "id_prospection: %s, ids_areass: %s" % (d.id, ','.join(map(str, areas_ids)))
-        })
-        #except Exception, e:
+                new_feature['codeobs'] = observer
+                objects.append(new_feature)
+                sync_db(objects, table_infos, database_id)
+
+            # Commit transaction
+            commit_transaction(database_id)
+
+            response_content.update({
+                'status_code': _("0"),
+                'status_message': "id_prospection: %s, ids_areass: %s" % (d.id, ','.join(map(str, areas_ids)))
+            })
+        except Exception, e:
             ##  Insert rejected JSON into synchro_table (text format)
-            #print e
-            #id_failed = archive_bad_data(data, json_data)
+            print e
+            id_failed = archive_bad_data(data, json_data)
 
-            #response_content.update({
-                #'status_code': _("1"),
-                #'status_message': _("Bad json or data (%d)") % id_failed
-            #})
+            response_content.update({
+                'status_code': _("1"),
+                'status_message': _("Bad json or data (%d)") % id_failed
+            })
     else:
         archive_bad_data(data, json_data)
 
