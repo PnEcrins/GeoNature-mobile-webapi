@@ -430,7 +430,7 @@ def get_geometry_string_from_coords(coords_list, type):
             coords.append("%s %s" % (coord[0], coord[1]))
     if type == "Polygon":
         # Maybe in the future we will manage polygon with hole
-        # In that case coords_list[0] will be the main shape, and coords_list[1], coords_list[2]... the wholes
+        # In that case coords_list[0] will be the main shape, and coords_list[1], coords_list[2]... the holes
         for coord in coords_list[0]:
             coords.append("%s %s" % (coord[0], coord[1]))
         # close the shape
