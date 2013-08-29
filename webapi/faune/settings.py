@@ -239,6 +239,8 @@ TABLE_FLORA_INCLINES = 'florepatri.v_mobile_pentes'
 TABLE_FLORA_DISTURBANCES = 'florepatri.v_mobile_perturbations'
 TABLE_FLORA_PHENOLOGY = 'florepatri.v_mobile_phenologies'
 TABLE_FLORA_PHYSIOGNOMY = 'florepatri.v_mobile_physionomies'
+TABLE_FLORA_VISU_FP = 'florepatri.v_mobile_visu_zp'
+
 
 TABLE_USERS = 'utilisateurs.v_nomade_observateurs_all'
 
@@ -743,7 +745,17 @@ FLORA_TABLE_INFOS =  {
         }        
     },
     
-  
+    TABLE_FLORA_VISU_FP: {
+        'id_col': 'indexzp',
+        'json_name': 'v_mobile_visu_zp',
+        'sqlite_name': 'prospecting_areas',
+        'select_col': 'indexzp, cd_nom, st_asgeojson(the_geom_2154) as geometry',
+        'db_to_json_columns' : {
+            'indexzp' : '_id',
+            'cd_nom' : 'taxon_id',
+            'geometry' : 'geometry'
+        }        
+    },
     
 }
 
@@ -804,6 +816,7 @@ MOBILE_SQLITE_CREATE_QUERY = (
     'CREATE TABLE IF NOT EXISTS phenology (_id INTEGER NOT NULL , code INTEGER NOT NULL , name TEXT NOT NULL )',
     'CREATE TABLE IF NOT EXISTS physiognomy (_id INTEGER NOT NULL ,group_name TEXT NOT NULL ,name TEXT NOT NULL )',
     'CREATE TABLE IF NOT EXISTS disturbances (_id INTEGER NOT NULL , code INTEGER NOT NULL , classification TEXT NOT NULL , description TEXT DEFAULT (null) )',
+    'CREATE TABLE IF NOT EXISTS prospecting_areas (_id INTEGER NOT NULL , taxon_id INTEGER, geometry TEXT NOT NULL )',
     'CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT DEFAULT "en_US")'
 )
 

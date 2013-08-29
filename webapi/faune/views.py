@@ -579,6 +579,7 @@ def export_sqlite(request):
                     tabTab.append({'table_name': settings.TABLE_FLORA_DISTURBANCES, 'filter': False})
                     tabTab.append({'table_name': settings.TABLE_FLORA_PHENOLOGY, 'filter': False})
                     tabTab.append({'table_name': settings.TABLE_FLORA_PHYSIOGNOMY, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_VISU_FP, 'filter': False})
 
                 for current_tab in tabTab:
                     pg_table_name = current_tab['table_name']
