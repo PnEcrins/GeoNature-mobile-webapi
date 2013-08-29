@@ -425,15 +425,19 @@ def get_geometry_string_from_coords(coords_list, type):
 
     if type == "Point":
         coords.append("%s %s" % (coords_list[0], coords_list[1]))
-    else:
+    if type == "LineString":
         for coord in coords_list:
             coords.append("%s %s" % (coord[0], coord[1]))
-
-    # close the shape for polygons
     if type == "Polygon":
-        for coord in coords_list:
+        # Maybe in the future we will manage polygon with hole
+        # In that case coords_list[0] will be the main shape, and coords_list[1], coords_list[2]... the wholes
+        for coord in coords_list[0]:
+            coords.append("%s %s" % (coord[0], coord[1]))
+        # close the shape
+        for coord in coords_list[0]:
             coords.append("%s %s" % (coord[0], coord[1]))
             break
+
 
     string_geom = "%s%s)%s', 4326),27572)" % (string_geom, ",".join(coords), extra_parenthesis)
 
