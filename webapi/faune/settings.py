@@ -749,7 +749,7 @@ FLORA_TABLE_INFOS =  {
         'id_col': 'indexzp',
         'json_name': 'v_mobile_visu_zp',
         'sqlite_name': 'prospecting_areas',
-        'select_col': 'indexzp, cd_nom, st_asgeojson(the_geom_2154) as geometry',
+        'select_col': 'indexzp, cd_nom, st_asgeojson(transform(the_geom_2154,4326)) as geometry',
         'db_to_json_columns' : {
             'indexzp' : '_id',
             'cd_nom' : 'taxon_id',
