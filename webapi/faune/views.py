@@ -439,7 +439,8 @@ def get_geometry_string_from_coords(coords_list, type):
             break
 
 
-    string_geom = "%s%s)%s', 4326),27572)" % (string_geom, ",".join(coords), extra_parenthesis)
+    #string_geom = "%s%s)%s', 4326),27572)" % (string_geom, ",".join(coords), extra_parenthesis)
+    string_geom = "%s%s)%s', 4326),2154)" % (string_geom, ",".join(coords), extra_parenthesis)
 
     return string_geom
 
