@@ -761,13 +761,12 @@ FLORA_TABLE_INFOS =  {
         'id_col': 'gid',
         'json_name': 'v_mobile_recherche',
         'sqlite_name': 'search',
-        'select_col': 'gid, dateobs, taxon, observateurs, etiquette, geom_4326, centroid_x, centroid_y',
+        'select_col': 'gid, dateobs, taxon, observateurs, geom_4326, centroid_x, centroid_y',
         'db_to_json_columns' : {
             'gid' : '_id',
             'dateobs' : 'dateobs',
             'taxon' : 'taxon',
             'observateurs' : 'observer',
-            'etiquette' : 'label',
             'geom_4326' : 'geometry',
             'centroid_x' : 'longitude',
             'centroid_y' : 'latitude'
@@ -833,7 +832,7 @@ MOBILE_SQLITE_CREATE_QUERY = (
     'CREATE TABLE IF NOT EXISTS physiognomy (_id INTEGER NOT NULL ,group_name TEXT NOT NULL ,name TEXT NOT NULL )',
     'CREATE TABLE IF NOT EXISTS disturbances (_id INTEGER NOT NULL , code INTEGER NOT NULL , classification TEXT NOT NULL , description TEXT DEFAULT (null) )',
     'CREATE TABLE IF NOT EXISTS prospecting_areas (_id INTEGER NOT NULL , taxon_id INTEGER, geometry TEXT NOT NULL )',
-    'CREATE TABLE IF NOT EXISTS search (_id INTEGER NOT NULL, dateobs TEXT, taxon TEXT NOT NULL, observer TEXT, label TEXT, geometry TEXT NOT NULL, longitude DOUBLE NOT NULL, latitude DOUBLE NOT NULL)',
+    'CREATE TABLE IF NOT EXISTS search (_id INTEGER NOT NULL, dateobs TEXT, taxon TEXT NOT NULL, observer TEXT, geometry TEXT NOT NULL, longitude DOUBLE NOT NULL, latitude DOUBLE NOT NULL)',
     'CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT DEFAULT "en_US")'
 )
 
