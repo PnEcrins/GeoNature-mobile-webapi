@@ -14,7 +14,7 @@ Configuration
 
 Copy and extract the source archive.
 
-Copy settings_local.py.sample to settings_local.py and modify informations in settings.py
+Copy settings_local.py.sample to settings_local.py and modify informations :
 
 ::
 
