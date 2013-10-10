@@ -761,7 +761,7 @@ FLORA_TABLE_INFOS =  {
         'id_col': 'gid',
         'json_name': 'v_mobile_recherche',
         'sqlite_name': 'search',
-        'select_col': 'gid, dateobs, taxon, observateurs, geom_4326, centroid_x, centroid_y',
+        'select_col': 'gid, to_char(dateobs,\'YYYY/MM/dd\') as dateobs, taxon, observateurs, geom_4326, centroid_x, centroid_y',
         'db_to_json_columns' : {
             'gid' : '_id',
             'dateobs' : 'dateobs',
