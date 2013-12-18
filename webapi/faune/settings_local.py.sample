@@ -76,3 +76,4 @@ TOKEN = "666"
 MOBILE_SOFT_PATH = "/tmp/"
 MOBILE_MBTILES_PATH = "/tmp/"
 
+SYNC_DB_CMD = "/usr/local/bin/talend/ecrins2rezo/ecrins2rezo/ecrins2rezo_run.sh --context_param mes_zp="

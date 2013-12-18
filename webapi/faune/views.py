@@ -387,6 +387,10 @@ def import_data_flora(json_data, data):
 
             # Commit transaction
             commit_transaction(database_id)
+            
+            # Sync external DB
+            cmd = "%s%s" % (settings.SYNC_DB_CMD, d.id)
+            os.system(cmd)
 
             response_content.update({
                 'status_code': _("0"),

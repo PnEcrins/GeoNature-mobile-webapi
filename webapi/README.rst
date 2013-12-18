@@ -29,6 +29,7 @@ Copy settings_local.py.sample to settings_local.py and modify informations :
         MOBILE_SOFT_PATH = "/full_path_to_mobile_soft_apk_and_version_file/"
         MOBILE_MBTILES_PATH = "/full_path_to_mbtiles/"
 
+        SYNC_DB_CMD = "/usr/local/bin/talend/ecrins2rezo/ecrins2rezo/ecrins2rezo_run.sh --context_param mes_zp="
 
 You need to fill the correct database connections for the 3 applications, and leave the default empty.
 
