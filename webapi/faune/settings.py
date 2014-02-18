@@ -749,7 +749,7 @@ FLORA_TABLE_INFOS =  {
         'id_col': 'indexzp',
         'json_name': 'v_mobile_visu_zp',
         'sqlite_name': 'prospecting_areas',
-        'select_col': 'indexzp, cd_nom, st_asgeojson(transform(the_geom_2154,4326)) as geometry',
+        'select_col': 'indexzp, cd_nom, st_asgeojson(st_transform(the_geom_2154,4326)) as geometry',
         'db_to_json_columns' : {
             'indexzp' : '_id',
             'cd_nom' : 'taxon_id',
@@ -778,7 +778,7 @@ FAUNE_TABLE_INFOS_GEOJSON =  {
     TABLE_FAUNA_UNITY_GEOJSON: {
         'id_col': 'id_unite_geo',
         'json_name': 'unity_geojson',
-        'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.00001)) as geom',
+        'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(st_transform(the_geom,4326),0.00001)) as geom',
         'db_to_json_columns' : {
             'id_unite_geo' : 'id',
             'code_insee' : 'insee',
@@ -792,7 +792,7 @@ INV_TABLE_INFOS_GEOJSON =  {
     TABLE_INV_UNITY_GEOJSON: {
         'id_col': 'id_unite_geo',
         'json_name': 'unity_geojson',
-        'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.00001)) as geom',
+        'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(st_transform(the_geom,4326),0.00001)) as geom',
         'db_to_json_columns' : {
             'id_unite_geo' : 'id',
             'code_insee' : 'insee',
@@ -806,7 +806,7 @@ INV_TABLE_INFOS_GEOJSON =  {
     #TABLE_FLORA_UNITY_GEOJSON: {
         #'id_col': 'id_unite_geo',
         #'json_name': 'unity_geojson',
-        #'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(transform(the_geom,4326),0.00001)) as geom',
+        #'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(st_transform(the_geom,4326),0.00001)) as geom',
         #'db_to_json_columns' : {
             #'id_unite_geo' : 'id',
             #'code_insee' : 'insee',
