@@ -213,7 +213,6 @@ def import_data_fmi(json_data, data):
             })
         except Exception, e:
             #  Insert rejected JSON into synchro_table (text format)
-            print e
             id_failed = archive_bad_data(data, json_data)
 
             response_content.update({
@@ -398,7 +397,6 @@ def import_data_flora(json_data, data):
             })
         except Exception, e:
             ##  Insert rejected JSON into synchro_table (text format)
-            print e
             id_failed = archive_bad_data(data, json_data)
 
             response_content.update({
