@@ -97,6 +97,7 @@ def build_sync_query(datafields, table_infos, table_name=None):
             value = unicode(value).replace("`", "'")   # Single quotes
             if "ST_" not in value:  # Do not escape PostGIS functions
                 value = unicode(value).replace("'", "''")  # Double quotes
+                value = unicode(value).replace("%", "%%")  # Double %
                 value = "'%s'" % value
         else:
             value = "NULL_VALUE"

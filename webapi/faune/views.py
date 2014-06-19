@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import with_statement
 
 from django.views.decorators.csrf import csrf_exempt
@@ -138,7 +139,7 @@ def import_data_fmi(json_data, data):
                 new_feature['id_lot'] = settings.INV_ID_LOT
 
             # we need to transform into 2154
-            new_feature[json_to_db.get('geometry')] = "transform(ST_GeomFromText('POINT(%s %s)', 4326),2154)" % (d.geolocation.longitude, d.geolocation.latitude)
+            new_feature[json_to_db.get('geometry')] = "st_transform(ST_GeomFromText('POINT(%s %s)', 4326),2154)" % (d.geolocation.longitude, d.geolocation.latitude)
             new_feature[json_to_db.get('accuracy')] = d.geolocation.accuracy
             objects.append(new_feature)
             cursor = sync_db(objects, table_infos, database_id)
@@ -396,7 +397,7 @@ def import_data_flora(json_data, data):
                 'status_message': "id_prospection: %s, ids_areass: %s" % (d.id, ','.join(map(str, areas_ids)))
             })
         except Exception, e:
-            ##  Insert rejected JSON into synchro_table (text format)
+            ###  Insert rejected JSON into synchro_table (text format)
             id_failed = archive_bad_data(data, json_data)
 
             response_content.update({
@@ -418,11 +419,11 @@ def get_geometry_string_from_coords(coords_list, type):
     coords = []
     extra_parenthesis = ""
     if type == "Point":
-        string_geom = "transform(ST_GeomFromText('POINT("
+        string_geom = "st_transform(ST_GeomFromText('POINT("
     if type == "LineString":
-        string_geom = "transform(ST_GeomFromText('LINESTRING("
+        string_geom = "st_transform(ST_GeomFromText('LINESTRING("
     if type == "Polygon":
-        string_geom = "transform(ST_GeomFromText('POLYGON(("
+        string_geom = "st_transform(ST_GeomFromText('POLYGON(("
         extra_parenthesis = ")"
 
     if type == "Point":
