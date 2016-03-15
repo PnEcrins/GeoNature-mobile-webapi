@@ -42,11 +42,18 @@ Once the OS is installed (basic installation, with OpenSSH server), with the fol
 
     sudo apt-get install -y python-virtualenv libapache2-mod-wsgi python-dev build-essentials
 
+Warning: the package build-essentials has been renamed build-essential in the latest debian versions
+
+Warning Debian 8 : in order to properly compile, 2 other packages need to be installed
+    
+    sudo apt-get install libpq-dev postgresql-server-dev-9.4
+
+
 Install the webapi :
 
 ::
 
-    cd /path_to_webapi/faune/
+    cd /path_to_webapi/
     
     make install
 
