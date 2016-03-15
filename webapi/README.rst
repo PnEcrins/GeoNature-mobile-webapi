@@ -71,7 +71,8 @@ Copy the virtual host example :
 ::
 
     sudo cp faune/apache.vhost.sample /etc/apache2/sites-available/faune
-
+    
+Warning : starting with apache 2.4 the virtual host file need to have a .conf extension
 
 Edit it and replace /path_to_webapi/faune/ by the correct path.
 
