@@ -293,6 +293,9 @@ def import_data_flora(json_data, data):
                 new_feature[json_to_db.get('name_entered')] = taxon.name_entered
                 new_feature[json_to_db.get('id_taxon')] = taxon.id_taxon
                 new_feature['id_organisme'] = settings.FLORA_ID_ORGANISM
+                # ajout Gil
+                new_feature['id_protocole'] = settings.FLORA_ID_PROTOCOL
+                new_feature['id_lot'] = settings.FLORA_ID_LOT
 
                 # we need to transform geometry into 2154
                 string_geom = get_geometry_string_from_coords(taxon.prospecting_area.feature.geometry.coordinates, taxon.prospecting_area.feature.geometry.type)
@@ -964,11 +967,11 @@ def export_taxon(request):
     return export_data(request, settings.TABLE_FAUNA_TAXA)
 
 
-def export_family(request):
-    """
-    Export family table from DataBase to mobile
-    """
-    return export_data(request, settings.TABLE_FAUNA_FAMILY)
+#def export_family(request):
+    #"""
+    #Export family table from DataBase to mobile
+    #"""
+    #return export_data(request, settings.TABLE_FAUNA_FAMILY)
 
 
 def export_unity(request):
