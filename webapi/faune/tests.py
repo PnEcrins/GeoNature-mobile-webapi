@@ -52,11 +52,11 @@ class FauneViewsTestCase(TestCase):
 
             ids_statements = d.ids_statements.split(',')
             # statement 1
-            selectString = "SELECT id_releve_cf, id_taxon, id_critere_cf, am, af, ai, na, sai, jeune, yearling, cd_ref_origine, nom_taxon_saisi, commentaire, supprime, prelevement FROM contactfaune.t_releves_cf WHERE id_cf = %s and id_releve_cf = %s" % (d.id_sheet, ids_statements[0])
+            selectString = "SELECT id_releve_cf, id_nom, id_critere_cf, am, af, ai, na, sai, jeune, yearling, cd_ref_origine, nom_taxon_saisi, commentaire, supprime, prelevement FROM contactfaune.t_releves_cf WHERE id_cf = %s and id_releve_cf = %s" % (d.id_sheet, ids_statements[0])
             cursor = query_db(selectString)
             assertDict = {
                 'id_releve_cf': lambda val: self.assertEqual(val,401382208),
-                'id_taxon': lambda val: self.assertEqual(val,1),
+                'id_nom': lambda val: self.assertEqual(val,1),
                 'id_critere_cf': lambda val: self.assertEqual(val,1),
                 'am': lambda val: self.assertEqual(val,1),
                 'af': lambda val: self.assertEqual(val,0),
@@ -77,11 +77,11 @@ class FauneViewsTestCase(TestCase):
                     assertDict[key](val)
 
             # statement 2
-            selectString = "SELECT id_releve_cf, id_taxon, id_critere_cf, am, af, ai, na, sai, jeune, yearling, cd_ref_origine, nom_taxon_saisi, commentaire, supprime, prelevement FROM contactfaune.t_releves_cf WHERE id_cf = %s and id_releve_cf = %s" % (d.id_sheet, ids_statements[1])
+            selectString = "SELECT id_releve_cf, id_nom, id_critere_cf, am, af, ai, na, sai, jeune, yearling, cd_ref_origine, nom_taxon_saisi, commentaire, supprime, prelevement FROM contactfaune.t_releves_cf WHERE id_cf = %s and id_releve_cf = %s" % (d.id_sheet, ids_statements[1])
             cursor = query_db(selectString)
             assertDict = {
                 'id_releve_cf': lambda val: self.assertEqual(val,401382405),
-                'id_taxon': lambda val: self.assertEqual(val,2),
+                'id_nom': lambda val: self.assertEqual(val,2),
                 'id_critere_cf': lambda val: self.assertEqual(val,2),
                 'am': lambda val: self.assertEqual(val,0),
                 'af': lambda val: self.assertEqual(val,2),
