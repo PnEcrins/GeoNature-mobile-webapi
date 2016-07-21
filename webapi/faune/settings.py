@@ -177,16 +177,19 @@ LOGGING = {
 TOKEN = "666"
 
 FAUNA_ID_ORGANISM = 2
-FAUNA_ID_PROTOCOL = 140
-FAUNA_ID_LOT = 4
-MORTALITY_ID_PROTOCOL = 142
-MORTALITY_ID_LOT = 15            
-INV_ID_LOT = 14
-INV_ID_PROTOCOL = 141
+FAUNA_ID_PROTOCOL = 1
+FAUNA_ID_LOT = 1
+MORTALITY_ID_PROTOCOL = 3
+MORTALITY_ID_LOT = 2            
+INV_ID_LOT = 3
+INV_ID_PROTOCOL = 2
 
 FLORA_ID_ORGANISM = 2
 FLORA_FREQUENCY_ESTIMATION = 'S'
 FLORA_FREQUENCY_TRANSECT = 'N'
+# ajout Gil
+FLORA_ID_PROTOCOL = 4
+FLORA_ID_LOT = 4
 
 FLORA_COUNTING_NONE = 9
 FLORA_COUTING_SAMPLING = 2
@@ -197,7 +200,7 @@ DB_INV = 'inv'
 DB_FLORA = 'flora'
             
 TABLE_FAUNA_TAXA = 'contactfaune.v_nomade_taxons_faune'
-TABLE_FAUNA_FAMILY = 'taxonomie.bib_familles'
+#TABLE_FAUNA_FAMILY = 'taxonomie.bib_familles'
 TABLE_FAUNA_UNITY = 'contactfaune.v_nomade_unites_geo_cf'
 TABLE_FAUNA_UNITY_GEOJSON = 'contactfaune.v_nomade_unites_geo_cf'
 TABLE_FAUNA_TAXA_UNITY = 'contactfaune.cor_unite_taxon'
@@ -208,11 +211,11 @@ TABLE_FAUNA_SHEET = 'contactfaune.t_fiches_cf'
 TABLE_FAUNA_SHEET_ROLE = 'contactfaune.cor_role_fiche_cf'
 TABLE_FAILED_JSON_FAUNA = 'synchronomade.erreurs_cf'
 TABLE_FAILED_JSON_MORTALITY = 'synchronomade.erreurs_mortalite'
-TABLE_FAUNA_CLASSES = 'taxonomie.bib_classes'
+TABLE_FAUNA_CLASSES = 'taxonomie.v_nomade_classes'
 
 
 TABLE_INV_TAXA = 'contactinv.v_nomade_taxons_inv'
-TABLE_INV_FAMILY = 'taxonomie.bib_familles'
+#TABLE_INV_FAMILY = 'taxonomie.bib_familles'
 TABLE_INV_UNITY = 'contactinv.v_nomade_unites_geo_inv'
 TABLE_INV_UNITY_GEOJSON = 'contactinv.v_nomade_unites_geo_inv'
 TABLE_INV_TAXA_UNITY = 'contactinv.cor_unite_taxon_inv'
@@ -223,11 +226,11 @@ TABLE_INV_SHEET = 'contactinv.t_fiches_inv'
 TABLE_INV_SHEET_ROLE = 'contactinv.cor_role_fiche_inv'
 TABLE_INV_ENVIRONEMENTS = 'contactinv.v_nomade_milieux_inv'
 TABLE_FAILED_JSON_INV = 'synchronomade.erreurs_inv'
-TABLE_INV_CLASSES = 'taxonomie.bib_classes'
+TABLE_INV_CLASSES = 'taxonomie.v_nomade_classes'
 
 
 TABLE_FLORA_TAXA = 'florepatri.v_mobile_taxons_fp'
-TABLE_FLORA_FAMILY = 'taxonomie.bib_familles'
+#TABLE_FLORA_FAMILY = 'taxonomie.bib_familles'
 TABLE_FLORA_USER = 'florepatri.v_mobile_observateurs_fp'
 TABLE_FLORA_COR_ZP_OBS = 'florepatri.cor_zp_obs'
 TABLE_FLORA_T_APRESENCE = 'florepatri.t_apresence'
@@ -235,7 +238,7 @@ TABLE_FLORA_T_ZPROSPECTION = 'florepatri.t_zprospection'
 TABLE_FLORA_COR_AP_PERTURB = 'florepatri.cor_ap_perturb'
 TABLE_FLORA_COR_AP_PHYSIONOMIE = 'florepatri.cor_ap_physionomie'
 TABLE_FAILED_JSON_FLORA = 'synchronomade.erreurs_flora'
-TABLE_FLORA_CLASSES = 'taxonomie.bib_classes'
+TABLE_FLORA_CLASSES = 'taxonomie.v_nomade_classes'
 TABLE_FLORA_INCLINES = 'florepatri.v_mobile_pentes'
 TABLE_FLORA_DISTURBANCES = 'florepatri.v_mobile_perturbations'
 TABLE_FLORA_PHENOLOGY = 'florepatri.v_mobile_phenologies'
@@ -286,10 +289,10 @@ FAUNE_TABLE_INFOS =  {
     },    
     TABLE_FAUNA_STATEMENT: {
         'id_col': 'id_releve_cf',
-        'select_col': 'id_releve_cf, id_cf, id_taxon, id_critere_cf, am, af, ai, na, sai, jeune, yearling, nom_taxon_saisi, commentaire, supprime, prelevement',
+        'select_col': 'id_releve_cf, id_cf, id_nom, id_critere_cf, am, af, ai, na, sai, jeune, yearling, nom_taxon_saisi, commentaire, supprime, prelevement',
         'json_to_db_columns' : {
             'id_cf' : 'id_cf', 
-            'id' : 'id_taxon',
+            'id' : 'id_nom',
             'criterion' : 'id_critere_cf',
             'adult_male' : 'am',
             'adult_female' : 'af',
@@ -317,12 +320,12 @@ FAUNE_TABLE_INFOS =  {
         }        
     },
     TABLE_FAUNA_TAXA: {
-        'id_col': 'id_taxon',
+        'id_col': 'id_nom',
         'json_name': 'taxa',
         'sqlite_name': 'taxa',
-        'select_col': 'id_taxon, nom_latin, nom_francais, id_classe, denombrement, patrimonial, message, contactfaune',
+        'select_col': 'id_nom, nom_latin, nom_francais, id_classe, denombrement, patrimonial, message, contactfaune',
         'db_to_json_columns' : {
-            'id_taxon' : '_id',
+            'id_nom' : '_id',
             'cd_ref' : 'cd_ref',
             'nom_latin' : 'name',
             'nom_francais' : 'name_fr',
@@ -335,16 +338,16 @@ FAUNE_TABLE_INFOS =  {
         #'where_string' : 'contactfaune = TRUE'
     },
     
-    TABLE_FAUNA_FAMILY: {
-        'id_col': 'id_famille',
-        'json_name': 'family',
-        'sqlite_name': 'family',
-        'select_col': 'id_famille, nom_famille',
-        'db_to_json_columns' : {
-            'id_famille' : 'id',
-            'nom_famille' : 'name'
-        }
-    },
+    #TABLE_FAUNA_FAMILY: {
+        #'id_col': 'id_famille',
+        #'json_name': 'family',
+        #'sqlite_name': 'family',
+        #'select_col': 'id_famille, nom_famille',
+        #'db_to_json_columns' : {
+            #'id_famille' : 'id',
+            #'nom_famille' : 'name'
+        #}
+    #},
     TABLE_FAUNA_UNITY: {
         'id_col': 'id_unite_geo',
         'json_name': 'unity',
@@ -361,10 +364,10 @@ FAUNE_TABLE_INFOS =  {
         'id_col': 'id_unite_geo',
         'json_name': 'taxa_unity',
         'sqlite_name': 'taxa_unities',
-        'select_col': 'id_unite_geo, id_taxon, to_char(derniere_date,\'YYYY/MM/dd\') as derniere_date, couleur, nb_obs',
+        'select_col': 'id_unite_geo, id_nom, to_char(derniere_date,\'YYYY/MM/dd\') as derniere_date, couleur, nb_obs',
         'db_to_json_columns' : {
             'id_unite_geo' : 'unity_id',
-            'id_taxon' : 'taxon_id',
+            'id_nom' : 'taxon_id',
             'derniere_date' : 'date',
             'couleur' : 'color',
             'nb_obs' : 'nb_obs'
@@ -399,7 +402,7 @@ FAUNE_TABLE_INFOS =  {
         'id_col': 'id_classe',
         'json_name': 'classes',
         'sqlite_name': 'classes',
-        'select_col': 'id_classe, nom_classe, desc_classe',
+        'select_col': 'id_classe, nom_classe_fr, desc_classe',
         'db_to_json_columns' : {
             'id_classe' : '_id',
             'nom_classe' : 'name',
@@ -425,10 +428,10 @@ INV_TABLE_INFOS =  {
     },    
     TABLE_INV_STATEMENT: {
         'id_col': 'id_releve_inv',
-        'select_col': 'id_releve_inv, id_inv, id_taxon, id_critere_inv, am, af, ai, na, nom_taxon_saisi, commentaire, supprime, prelevement',
+        'select_col': 'id_releve_inv, id_inv, id_nom, id_critere_inv, am, af, ai, na, nom_taxon_saisi, commentaire, supprime, prelevement',
         'json_to_db_columns' : {
             'id_inv' : 'id_inv', 
-            'id' : 'id_taxon',
+            'id' : 'id_nom',
             'criterion' : 'id_critere_inv',
             'adult_male' : 'am',
             'adult_female' : 'af',
@@ -458,12 +461,12 @@ INV_TABLE_INFOS =  {
         }        
     },
     TABLE_INV_TAXA: {
-        'id_col': 'id_taxon',
+        'id_col': 'id_nom',
         'json_name': 'taxa',
         'sqlite_name': 'taxa',
-        'select_col': 'id_taxon, nom_latin, nom_francais, id_classe, patrimonial, message',
+        'select_col': 'id_nom, nom_latin, nom_francais, id_classe, patrimonial, message',
         'db_to_json_columns' : {
-            'id_taxon' : '_id',
+            'id_nom' : '_id',
             'cd_ref' : 'cd_ref',
             'nom_latin' : 'name',
             'nom_francais' : 'name_fr',
@@ -474,16 +477,16 @@ INV_TABLE_INFOS =  {
         #'where_string' : 'contactfaune = TRUE'
     },
     
-    TABLE_INV_FAMILY: {
-        'id_col': 'id_famille',
-        'json_name': 'family',
-        'sqlite_name': 'family',
-        'select_col': 'id_famille, nom_famille',
-        'db_to_json_columns' : {
-            'id_famille' : 'id',
-            'nom_famille' : 'name'
-        }
-    },
+    #TABLE_INV_FAMILY: {
+        #'id_col': 'id_famille',
+        #'json_name': 'family',
+        #'sqlite_name': 'family',
+        #'select_col': 'id_famille, nom_famille',
+        #'db_to_json_columns' : {
+            #'id_famille' : 'id',
+            #'nom_famille' : 'name'
+        #}
+    #},
     TABLE_INV_UNITY: {
         'id_col': 'id_unite_geo',
         'json_name': 'unity',
@@ -500,10 +503,10 @@ INV_TABLE_INFOS =  {
         'id_col': 'id_unite_geo',
         'json_name': 'taxa_unity',
         'sqlite_name': 'taxa_unities',
-        'select_col': 'id_unite_geo, id_taxon, to_char(derniere_date,\'YYYY/MM/dd\') as derniere_date, couleur, nb_obs',
+        'select_col': 'id_unite_geo, id_nom, to_char(derniere_date,\'YYYY/MM/dd\') as derniere_date, couleur, nb_obs',
         'db_to_json_columns' : {
             'id_unite_geo' : 'unity_id',
-            'id_taxon' : 'taxon_id',
+            'id_nom' : 'taxon_id',
             'derniere_date' : 'date',
             'couleur' : 'color',
             'nb_obs' : 'nb_obs'
@@ -537,7 +540,7 @@ INV_TABLE_INFOS =  {
         'id_col': 'id_classe',
         'json_name': 'classes',
         'sqlite_name': 'classes',
-        'select_col': 'id_classe, nom_classe, desc_classe',
+        'select_col': 'id_classe, nom_classe_fr, desc_classe',
         'db_to_json_columns' : {
             'id_classe' : '_id',
             'nom_classe' : 'name',
@@ -662,16 +665,16 @@ FLORA_TABLE_INFOS =  {
         #'where_string' : 'contactfaune = TRUE'
     },
     
-    TABLE_FLORA_FAMILY: {
-        'id_col': 'id_famille',
-        'json_name': 'family',
-        'sqlite_name': 'family',
-        'select_col': 'id_famille, nom_famille',
-        'db_to_json_columns' : {
-            'id_famille' : 'id',
-            'nom_famille' : 'name'
-        }
-    },
+    #TABLE_FLORA_FAMILY: {
+        #'id_col': 'id_famille',
+        #'json_name': 'family',
+        #'sqlite_name': 'family',
+        #'select_col': 'id_famille, nom_famille',
+        #'db_to_json_columns' : {
+            #'id_famille' : 'id',
+            #'nom_famille' : 'name'
+        #}
+    #},
     TABLE_FLORA_USER: {
         'id_col': 'id_role',
         'json_name': 'user',
@@ -689,7 +692,7 @@ FLORA_TABLE_INFOS =  {
         'id_col': 'id_classe',
         'json_name': 'classes',
         'sqlite_name': 'classes',
-        'select_col': 'id_classe, nom_classe, desc_classe',
+        'select_col': 'id_classe, nom_classe_fr, desc_classe',
         'db_to_json_columns' : {
             'id_classe' : '_id',
             'nom_classe' : 'name',
