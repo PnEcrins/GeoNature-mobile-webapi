@@ -581,7 +581,7 @@ FLORA_TABLE_INFOS =  {
             'computed_area' : 'surfaceap',
             'id_frequence_methodo_new' : 'id_frequence_methodo_new',
             'frequenceap' : 'frequenceap',
-            'geometry' : 'the_geom_2154',
+            'geometry' : 'the_geom_local',
             'nb_transects_frequence' : 'nb_transects_frequence',
             'nb_points_frequence' : 'nb_points_frequence',
             'nb_contacts_frequence' : 'nb_contacts_frequence',
@@ -605,7 +605,7 @@ FLORA_TABLE_INFOS =  {
         'select_col': '',
         'json_to_db_columns' : {
             'id' : 'indexzp',
-            'geometry' : 'the_geom_2154',
+            'geometry' : 'the_geom_local',
             'id_taxon' : 'cd_nom',
             'initial_input' : 'saisie_initiale',
             'name_entered' : 'taxon_saisi',
@@ -753,7 +753,7 @@ FLORA_TABLE_INFOS =  {
         'id_col': 'indexzp',
         'json_name': 'v_mobile_visu_zp',
         'sqlite_name': 'prospecting_areas',
-        'select_col': 'indexzp, cd_nom, st_asgeojson(st_transform(the_geom_2154,4326)) as geometry',
+        'select_col': 'indexzp, cd_nom, st_asgeojson(st_transform(the_geom_local,4326)) as geometry',
         'db_to_json_columns' : {
             'indexzp' : '_id',
             'cd_nom' : 'taxon_id',
