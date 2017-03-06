@@ -14,16 +14,6 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ID = 'default'
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'dbname',                      # Or path to database file if using sqlite3.
-        'USER': 'dbuser',                      # Not used with sqlite3.
-        'PASSWORD': 'userpassword',                  # Not used with sqlite3.
-        'HOST': 'url',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
-    }
-}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -174,23 +164,11 @@ LOGGING = {
 }
 
 
-TOKEN = "666"
-
-FAUNA_ID_ORGANISM = 2
-FAUNA_ID_PROTOCOL = 1
-FAUNA_ID_LOT = 1
-MORTALITY_ID_PROTOCOL = 3
-MORTALITY_ID_LOT = 2            
-INV_ID_LOT = 3
-INV_ID_PROTOCOL = 2
-
-FLORA_ID_ORGANISM = 2
+#flora frequency ids values
 FLORA_FREQUENCY_ESTIMATION = 'S'
 FLORA_FREQUENCY_TRANSECT = 'N'
-# ajout Gil
-FLORA_ID_PROTOCOL = 4
-FLORA_ID_LOT = 4
 
+#flora counting ids values
 FLORA_COUNTING_NONE = 9
 FLORA_COUTING_SAMPLING = 2
 FLORA_COUTING_EXHAUSTIVE = 1
@@ -200,7 +178,6 @@ DB_INV = 'inv'
 DB_FLORA = 'flora'
             
 TABLE_FAUNA_TAXA = 'contactfaune.v_nomade_taxons_faune'
-#TABLE_FAUNA_FAMILY = 'taxonomie.bib_familles'
 TABLE_FAUNA_UNITY = 'contactfaune.v_nomade_unites_geo_cf'
 TABLE_FAUNA_UNITY_GEOJSON = 'contactfaune.v_nomade_unites_geo_cf'
 TABLE_FAUNA_TAXA_UNITY = 'contactfaune.cor_unite_taxon'
@@ -215,7 +192,6 @@ TABLE_FAUNA_CLASSES = 'taxonomie.v_nomade_classes'
 
 
 TABLE_INV_TAXA = 'contactinv.v_nomade_taxons_inv'
-#TABLE_INV_FAMILY = 'taxonomie.bib_familles'
 TABLE_INV_UNITY = 'contactinv.v_nomade_unites_geo_inv'
 TABLE_INV_UNITY_GEOJSON = 'contactinv.v_nomade_unites_geo_inv'
 TABLE_INV_TAXA_UNITY = 'contactinv.cor_unite_taxon_inv'
@@ -230,7 +206,6 @@ TABLE_INV_CLASSES = 'taxonomie.v_nomade_classes'
 
 
 TABLE_FLORA_TAXA = 'florepatri.v_mobile_taxons_fp'
-#TABLE_FLORA_FAMILY = 'taxonomie.bib_familles'
 TABLE_FLORA_USER = 'florepatri.v_mobile_observateurs_fp'
 TABLE_FLORA_COR_ZP_OBS = 'florepatri.cor_zp_obs'
 TABLE_FLORA_T_APRESENCE = 'florepatri.t_apresence'
