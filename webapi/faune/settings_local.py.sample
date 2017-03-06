@@ -72,7 +72,7 @@ LOGGING = {
 
 
 TOKEN = "666"
-
+LOCAL_SRID = 2154
 MOBILE_SOFT_PATH = "/tmp/"
 MOBILE_MBTILES_PATH = "/tmp/"
 
