@@ -309,13 +309,13 @@ FAUNE_TABLE_INFOS =  {
     },
     TABLE_FAUNA_SHEET: {
         'id_col': 'id_cf',
-        'select_col': 'id_cf, dateobs, altitude_saisie, supprime, pdop, the_geom_2154, saisie_initiale, id_organisme, id_protocole, id_lot',
+        'select_col': 'id_cf, dateobs, altitude_saisie, supprime, pdop, the_geom_local, saisie_initiale, id_organisme, id_protocole, id_lot',
         'json_to_db_columns' : {
             'dateobs' : 'dateobs',
             'altitude' : 'altitude_saisie',
             'supprime' : 'supprime',
             'accuracy' : 'pdop',
-            'geometry' : 'the_geom_2154',
+            'geometry' : 'the_geom_local',
             'initial_input' : 'saisie_initiale'
         }        
     },
@@ -448,13 +448,13 @@ INV_TABLE_INFOS =  {
     },
     TABLE_INV_SHEET: {
         'id_col': 'id_inv',
-        'select_col': 'id_inv, dateobs, heure, altitude_saisie, supprime, pdop, the_geom_2154, saisie_initiale, id_organisme, id_protocole, id_lot, id_milieu_inv',
+        'select_col': 'id_inv, dateobs, heure, altitude_saisie, supprime, pdop, the_geom_local, saisie_initiale, id_organisme, id_protocole, id_lot, id_milieu_inv',
         'json_to_db_columns' : {
             'dateobs' : 'dateobs',
             'altitude' : 'altitude_saisie',
             'supprime' : 'supprime',
             'accuracy' : 'pdop',
-            'geometry' : 'the_geom_2154',
+            'geometry' : 'the_geom_local',
             'initial_input' : 'saisie_initiale',
             'environment' : 'id_milieu_inv',
             'heure' : 'heure'
