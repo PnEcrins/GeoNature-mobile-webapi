@@ -37,7 +37,7 @@ class FauneViewsTestCase(TestCase):
                 'supprime': lambda val: self.assertEqual(val, False),
                 'pdop': lambda val: self.assertEqual(val, 22),
                 'the_geom_27572': lambda val: self.assertEqual(val, '0101000020B46B000096855BCD99DA1241B26AFE7355364141'),
-                'the_geom_2154': lambda val: self.assertEqual(val, '01010000206A080000A0C81FCB83E915418E90CC4D16875941'),
+                'the_geom_local': lambda val: self.assertEqual(val, '01010000206A080000A0C81FCB83E915418E90CC4D16875941'),
                 'saisie_initiale': lambda val: self.assertEqual(val, 'pda'),
                 'id_organisme': lambda val: self.assertEqual(val, 2),
                 'srid_dessin': lambda val: self.assertEqual(val, 2154),

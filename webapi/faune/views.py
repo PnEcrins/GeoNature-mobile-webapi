@@ -138,8 +138,8 @@ def import_data_fmi(json_data, data):
                 new_feature['id_protocole'] = settings.INV_ID_PROTOCOL
                 new_feature['id_lot'] = settings.INV_ID_LOT
 
-            # we need to transform into 2154
-            new_feature[json_to_db.get('geometry')] = "st_transform(ST_GeomFromText('POINT(%s %s)', 4326),2154)" % (d.geolocation.longitude, d.geolocation.latitude)
+            # we need to transform into local srid
+            new_feature[json_to_db.get('geometry')] = "st_transform(ST_GeomFromText('POINT(%s %s)', 4326),settings.LOCAL_SRID)" % (d.geolocation.longitude, d.geolocation.latitude)
             new_feature[json_to_db.get('accuracy')] = d.geolocation.accuracy
             objects.append(new_feature)
             cursor = sync_db(objects, table_infos, database_id)
@@ -297,7 +297,7 @@ def import_data_flora(json_data, data):
                 new_feature['id_protocole'] = settings.FLORA_ID_PROTOCOL
                 new_feature['id_lot'] = settings.FLORA_ID_LOT
 
-                # we need to transform geometry into 2154
+                # we need to transform geometry into local srid
                 string_geom = get_geometry_string_from_coords(taxon.prospecting_area.feature.geometry.coordinates, taxon.prospecting_area.feature.geometry.type)
                 new_feature[json_to_db.get('geometry')] = string_geom
 
@@ -446,7 +446,7 @@ def get_geometry_string_from_coords(coords_list, type):
 
 
     #string_geom = "%s%s)%s', 4326),27572)" % (string_geom, ",".join(coords), extra_parenthesis)
-    string_geom = "%s%s)%s', 4326),2154)" % (string_geom, ",".join(coords), extra_parenthesis)
+    string_geom = "%s%s)%s', 4326),settings.LOCAL_SRID)" % (string_geom, ",".join(coords), extra_parenthesis)
 
     return string_geom
 
