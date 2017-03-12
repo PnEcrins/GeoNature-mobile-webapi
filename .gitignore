@@ -3,3 +3,11 @@
 .project
 gen
 bin
+build
+dist
+local
+lib
+include
+*.egg-info
+*.pyc
+settings_local.py

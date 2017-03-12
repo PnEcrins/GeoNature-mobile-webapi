@@ -12,6 +12,7 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.core.servers.basehttp import FileWrapper
 
+import logging
 from easydict import EasyDict
 from shapely.wkt import loads
 from geojson import dumps
@@ -25,6 +26,7 @@ import tempfile
 
 from faune.utils import sync_db, query_db, commit_transaction, check_connection
 
+logger = logging.getLogger(__name__)
 
 @csrf_exempt
 def import_data(request):
@@ -110,6 +112,8 @@ def import_data_fmi(json_data, data):
                 })
 
     if not bad_id:
+        protocol = get_protocol(json_data)
+
         try:
             objects = []
             new_feature = {}
@@ -126,17 +130,10 @@ def import_data_fmi(json_data, data):
 
             new_feature[json_to_db.get('initial_input')] = d.initial_input
             new_feature['supprime'] = 'False'
-            new_feature['id_organisme'] = settings.FAUNA_ID_ORGANISM
 
-            if json_data['input_type'] == 'fauna':
-                new_feature['id_protocole'] = settings.FAUNA_ID_PROTOCOL
-                new_feature['id_lot'] = settings.FAUNA_ID_LOT
-            if json_data['input_type'] == 'mortality':
-                new_feature['id_protocole'] = settings.MORTALITY_ID_PROTOCOL
-                new_feature['id_lot'] = settings.MORTALITY_ID_LOT
-            if json_data['input_type'] == 'invertebrate':
-                new_feature['id_protocole'] = settings.INV_ID_PROTOCOL
-                new_feature['id_lot'] = settings.INV_ID_LOT
+            new_feature['id_protocole'] = protocol['protocol']
+            new_feature['id_organisme'] = protocol['organism']
+            new_feature['id_lot'] = protocol['lot']
 
             # we need to transform into local srid
             new_feature[json_to_db.get('geometry')] = "st_transform(ST_GeomFromText('POINT(%s %s)', 4326),settings.LOCAL_SRID)" % (d.geolocation.longitude, d.geolocation.latitude)
@@ -277,6 +274,8 @@ def import_data_flora(json_data, data):
         break
 
     if not bad_id:
+        protocol = get_protocol(json_data)
+
         try:
             objects = []
             new_feature = {}
@@ -292,10 +291,10 @@ def import_data_flora(json_data, data):
                 new_feature['supprime'] = 'False'
                 new_feature[json_to_db.get('name_entered')] = taxon.name_entered
                 new_feature[json_to_db.get('id_taxon')] = taxon.id_taxon
-                new_feature['id_organisme'] = settings.FLORA_ID_ORGANISM
-                # ajout Gil
-                new_feature['id_protocole'] = settings.FLORA_ID_PROTOCOL
-                new_feature['id_lot'] = settings.FLORA_ID_LOT
+
+                new_feature['id_protocole'] = protocol['protocol']
+                new_feature['id_organisme'] = protocol['organism']
+                new_feature['id_lot'] = protocol['lot']
 
                 # we need to transform geometry into local srid
                 string_geom = get_geometry_string_from_coords(taxon.prospecting_area.feature.geometry.coordinates, taxon.prospecting_area.feature.geometry.type)
@@ -390,7 +389,7 @@ def import_data_flora(json_data, data):
 
             # Commit transaction
             commit_transaction(database_id)
-            
+
             # Sync external DB
             cmd = "%s%s" % (settings.SYNC_DB_CMD, d.id)
             os.system(cmd)
@@ -705,6 +704,42 @@ def export_unity_polygons(request):
 
     return response
 
+def get_protocol(json_data):
+    """
+    Build the corresponding protocol from given JSON input or build the default
+    one from settings
+    """
+
+    protocol = {}
+    input_type = json_data['input_type']
+
+    logger.debug(_("input type: %s") % input_type)
+
+    try:
+        protocol['organism'] = json_data['protocol']['organism']
+    except KeyError as ke:
+        protocol['organism'] = getattr(settings, input_type.upper() + '_ID_ORGANISM', 0)
+        logger.debug(_("No organism ID found, use default: %s") % protocol['organism'])
+
+        pass
+
+    try:
+        protocol['protocol'] = json_data['protocol']['protocol']
+    except KeyError as ke:
+        protocol['protocol'] = getattr(settings, input_type.upper() + '_ID_PROTOCOL', 0)
+        logger.debug(_("No protocol ID found, use default: %s") % protocol['protocol'])
+
+        pass
+
+    try:
+        protocol['lot'] = json_data['protocol']['lot']
+    except KeyError as ke:
+        protocol['lot'] = getattr(settings, input_type.upper() + '_ID_LOT', 0)
+        logger.debug(_("No lot ID found, use default: %s") % protocol['lot'])
+
+        pass
+
+    return protocol
 
 def get_data(request, table_name, where_string, complement_string, table_infos, testing, database_id):
     """

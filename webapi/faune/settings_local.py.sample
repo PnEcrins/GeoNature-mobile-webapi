@@ -29,25 +29,30 @@ DATABASES = {
         'PASSWORD': 'userpassword',
         'HOST': 'localhost',
         'PORT': '5432',
-    }   
+    }
 }
 
 TOKEN = "666"
-#local projection
+
+# local projection
 LOCAL_SRID = 2154
 
-#Fauna meta values
+# Fauna meta values
 FAUNA_ID_ORGANISM = 2
 FAUNA_ID_PROTOCOL = 1
 FAUNA_ID_LOT = 1
+
+# Mortality meta values
+MORTALITY_ID_ORGANISM = 2
 MORTALITY_ID_PROTOCOL = 3
-MORTALITY_ID_LOT = 2 
+MORTALITY_ID_LOT = 2
 
-#Invertebrate meta values
-INV_ID_LOT = 3
-INV_ID_PROTOCOL = 2
+# Invertebrate meta values
+INVERTEBRATE_ID_ORGANISM = 2
+INVERTEBRATE_ID_PROTOCOL = 2
+INVERTEBRATE_ID_LOT = 3
 
-#Flora meta values
+# Flora meta values
 FLORA_ID_ORGANISM = 2
 FLORA_ID_PROTOCOL = 4
 FLORA_ID_LOT = 4
