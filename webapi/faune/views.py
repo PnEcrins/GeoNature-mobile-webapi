@@ -80,6 +80,7 @@ def import_data_fmi(json_data, data):
         table_sheet = settings.TABLE_INV_SHEET
         table_statement = settings.TABLE_INV_STATEMENT
         database_id = settings.DB_INV
+        local_srid = settings.LOCAL_SRID
 
     d = EasyDict(json_data)
 
@@ -136,7 +137,7 @@ def import_data_fmi(json_data, data):
             new_feature['id_lot'] = protocol['lot']
 
             # we need to transform into local srid
-            new_feature[json_to_db.get('geometry')] = "st_transform(ST_GeomFromText('POINT(%s %s)', 4326),settings.LOCAL_SRID)" % (d.geolocation.longitude, d.geolocation.latitude)
+            new_feature[json_to_db.get('geometry')] = "st_transform(ST_GeomFromText('POINT(%s %s)', 4326)," +local_srid+ ")" % (d.geolocation.longitude, d.geolocation.latitude)
             new_feature[json_to_db.get('accuracy')] = d.geolocation.accuracy
             objects.append(new_feature)
             cursor = sync_db(objects, table_infos, database_id)
@@ -239,6 +240,7 @@ def import_data_flora(json_data, data):
     table_apresence = settings.TABLE_FLORA_T_APRESENCE
     table_zprospection = settings.TABLE_FLORA_T_ZPROSPECTION
     database_id = settings.DB_FLORA
+    local_srid = settings.LOCAL_SRID
 
     d = EasyDict(json_data)
 
@@ -445,7 +447,7 @@ def get_geometry_string_from_coords(coords_list, type):
 
 
     #string_geom = "%s%s)%s', 4326),27572)" % (string_geom, ",".join(coords), extra_parenthesis)
-    string_geom = "%s%s)%s', 4326),settings.LOCAL_SRID)" % (string_geom, ",".join(coords), extra_parenthesis)
+    string_geom = "%s%s)%s', 4326)," +local_srid+ ")" % (string_geom, ",".join(coords), extra_parenthesis)
 
     return string_geom
 
