@@ -137,7 +137,7 @@ def import_data_fmi(json_data, data):
             new_feature['id_lot'] = protocol['lot']
 
             # we need to transform into local srid
-            new_feature[json_to_db.get('geometry')] = "st_transform(ST_GeomFromText('POINT(%s %s)', 4326)," +local_srid+ ")" % (d.geolocation.longitude, d.geolocation.latitude)
+            new_feature[json_to_db.get('geometry')] = "st_transform(ST_GeomFromText('POINT(%s %s)', 4326),%d)" % (d.geolocation.longitude, d.geolocation.latitude,local_srid)
             new_feature[json_to_db.get('accuracy')] = d.geolocation.accuracy
             objects.append(new_feature)
             cursor = sync_db(objects, table_infos, database_id)
@@ -240,7 +240,6 @@ def import_data_flora(json_data, data):
     table_apresence = settings.TABLE_FLORA_T_APRESENCE
     table_zprospection = settings.TABLE_FLORA_T_ZPROSPECTION
     database_id = settings.DB_FLORA
-    local_srid = settings.LOCAL_SRID
 
     d = EasyDict(json_data)
 
@@ -393,8 +392,8 @@ def import_data_flora(json_data, data):
             commit_transaction(database_id)
 
             # Sync external DB
-            cmd = "%s%s" % (settings.SYNC_DB_CMD, d.id)
-            os.system(cmd)
+            #cmd = "%s%s" % (settings.SYNC_DB_CMD, d.id)
+            #os.system(cmd)
 
             response_content.update({
                 'status_code': _("0"),
@@ -406,7 +405,8 @@ def import_data_flora(json_data, data):
 
             response_content.update({
                 'status_code': _("1"),
-                'status_message': _("Bad json or data (%d)") % id_failed
+                # 'status_message': _("Bad json or data (%d)") % id_failed
+                'status_message': _("Bad json or data (%s)") % e
             })
     else:
         archive_bad_data(data, json_data)
@@ -422,6 +422,8 @@ def get_geometry_string_from_coords(coords_list, type):
 
     coords = []
     extra_parenthesis = ""
+    local_srid = settings.LOCAL_SRID
+
     if type == "Point":
         string_geom = "st_transform(ST_GeomFromText('POINT("
     if type == "LineString":
@@ -447,7 +449,7 @@ def get_geometry_string_from_coords(coords_list, type):
 
 
     #string_geom = "%s%s)%s', 4326),27572)" % (string_geom, ",".join(coords), extra_parenthesis)
-    string_geom = "%s%s)%s', 4326)," +local_srid+ ")" % (string_geom, ",".join(coords), extra_parenthesis)
+    string_geom = "%s%s)%s', 4326),%d)" % (string_geom, ",".join(coords), extra_parenthesis, local_srid)
 
     return string_geom
 
