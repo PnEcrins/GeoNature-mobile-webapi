@@ -40,7 +40,8 @@ Installation
 
 * Copier et renommer le contenu du fichier settings_local.py.sample en ``settings_local.py``
 
-        cp synchronomade/webapi/faune/settings_local.py.sample synchronomade/webapi/faune/settings.ini
+        cd synchronomade
+        cp webapi/faune/settings_local.py.sample webapi/faune/settings_local.py
 		
 * Adapter le contenu du fichier ``settings_local.py`` à votre contexte en modifiant les informations :
 [https://github.com/PnEcrins/GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync)
@@ -68,7 +69,7 @@ Les valeurs de ``MOBILE_SOFT_PATH`` et ``MOBILE_MBTILES_PATH`` doivent être ren
   (`X.Y.Z à remplacer par le numéro de version souhaitée <https://github.com/PnEcrins/GeoNature-mobile/releases>)
   
         cd /home/synthese
-        wget https://github.com/PnEcrins/GeoNature-mobile-webapi/archive/X.Y.Z.zip
+        wget https://github.com/PnEcrins/GeoNature-cdmobile-webapi/archive/X.Y.Z.zip
         unzip X.Y.Z.zip
 
 * Copier les dossiers suivants (et leurs contenus) vers le répertoire de la webapi :
@@ -105,7 +106,7 @@ Configuration d'Apache vhost
 
 Copier l'exemple de virtual-host Apache
 
-    sudo cp faune/apache.vhost.sample /etc/apache2/sites-available/faune
+    sudo cp faune/apache.vhost.sample /etc/apache2/sites-available/synchronomade.conf
     
 ATTENTION : Depuis la version 2.4 d'Apache, le fichier du virtual-host doit avoir une extension ``.conf``
 
