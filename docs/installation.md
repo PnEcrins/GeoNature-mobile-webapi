@@ -65,37 +65,39 @@ Pour le Token : Renseigner une valeur (devra être identique à celle qui sera r
 
 Les valeurs de ``MOBILE_SOFT_PATH`` et ``MOBILE_MBTILES_PATH`` doivent être renseignés selon les chemins défini dans les étapes suivantes :
 
-* Récupérer les fichiers .apk  et .json des applications depuis le Github de GeoNature-mobile : https://github.com/PnEcrins/GeoNature-mobile/archive/X.Y.Z.zip
+* Créer les répertoires ``apk`` et ``datas`` puis récupérer les fichiers d'installation (apk) et de settintgs (json) des applications depuis le Github de GeoNature-mobile : https://github.com/PnEcrins/GeoNature-mobile
   (`X.Y.Z à remplacer par le numéro de version souhaitée <https://github.com/PnEcrins/GeoNature-mobile/releases>)
   
-        cd /home/synthese
-        wget https://github.com/PnEcrins/GeoNature-cdmobile-webapi/archive/X.Y.Z.zip
-        unzip X.Y.Z.zip
+        cd synchronomade/webapi
+        mkdir apk
+        cd apk
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/apk/fauna-release-1.1.0.apk
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/apk/flora-release-1.1.0.apk
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/apk/invertebrate-release-1.1.0.apk
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/apk/mortality-release-1.1.0.apk
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/apk/search-release-1.1.0.apk
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/apk/version.json
+        cd ..
+        mkdir datas
+        cd datas
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/internal%20memory/settings_fauna.json
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/internal%20memory/settings_flora.json
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/internal%20memory/settings_invertebrate.json
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/internal%20memory/settings_mortality.json
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/internal%20memory/settings_search.json
+        cd ..
 
-* Copier les dossiers suivants (et leurs contenus) vers le répertoire de la webapi :
-
-        cp GeoNature-mobile/docs/install/vX.Y.Z/apk/ /synchronomade/webapi
-        cp GeoNature-mobile/docs/install/vX.Y.Z/internal memory/ /synchronomade/webapi
-		mv /synchronomade/webapi/internal memory/ /synchronomade/webapi/datas
-
-* Modifier les fichiers de configuration .json copiés dans /synchronomade/webapi/datas pour chacune des applications en adaptant les paramètres des objets ``"sync"`` et ``"map"`` à votre conexte.
+* Modifier les fichiers de configuration .json copiés dans /synchronomade/webapi/datas pour chacune des applications en adaptant les paramètres des objets ``"sync"`` et ``"map"`` à votre contexte.
 
 
 * Installer la webapi :
   
-		cd /home/synthese/synchronomade/webapi
    		make install
 
 	
 Adaptation de la BDD
 ---
 Exécuter le script sql/reject_tables.sql sur votre BDD GeoNature (``geonaturedb``) avec l'utilisateur ``geonatuser``.
-Cela ajoutera un schéma ``synchronomade`` et 4 tables (une par application mobile) pour les données rejetées lors de la synchronisation.
-* Se rendre dans le répertoire de la webapi :
-
-	cd /home/synthese/synchronomade/webapi
-
-
 * Executer le script SQL suivant :
      
 		export PGPASSWORD=monpassachanger; sudo psql -h geonatdbhost -U geonatuser -d geonaturedb -f sql/reject_tables.sql
@@ -108,7 +110,7 @@ Copier l'exemple de virtual-host Apache
 
     sudo cp faune/apache.vhost.sample /etc/apache2/sites-available/synchronomade.conf
     
-ATTENTION : Depuis la version 2.4 d'Apache, le fichier du virtual-host doit avoir une extension ``.conf``
+ATTENTION : Depuis la version 2.4 d'Apache, le fichier du virtual-host doit avoir une extension ``.conf`` ainsi que la clause ``Require all granted``
 
 Editer-le en adaptant les chemins à votre contexte et avec les paramètres suivants :
 
@@ -124,7 +126,7 @@ Editer-le en adaptant les chemins à votre contexte et avec les paramètres suiv
 
 Activer-le et redémarrer Apache :
 
-    sudo a2ensite faune
+    sudo a2ensite synchronomade
     sudo apache2ctl restart
 
 
