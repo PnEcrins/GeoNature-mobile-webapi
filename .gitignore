@@ -2,12 +2,16 @@
 .classpath
 .project
 gen
+apk
 bin
 build
+datas
 dist
 local
 lib
 include
+share
 *.egg-info
 *.pyc
 settings_local.py
+webapi/pip-selfcheck.json
