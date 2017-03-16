@@ -12,7 +12,7 @@ DATABASES = {
         'USER': 'dbuser',
         'PASSWORD': 'userpassword',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '5432'
     },
     'inv': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -20,7 +20,7 @@ DATABASES = {
         'USER': 'dbuser',
         'PASSWORD': 'userpassword',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '5432'
     },
     'flora': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -28,7 +28,7 @@ DATABASES = {
         'USER': 'dbuser',
         'PASSWORD': 'userpassword',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '5432'
     }
 }
 
@@ -37,7 +37,7 @@ TOKEN = "666"
 # local projection
 LOCAL_SRID = 2154
 
-# Fauna meta values
+# Fauna meta default values
 FAUNA_ID_ORGANISM = 2
 FAUNA_ID_PROTOCOL = 1
 FAUNA_ID_LOT = 1
@@ -47,12 +47,12 @@ MORTALITY_ID_ORGANISM = 2
 MORTALITY_ID_PROTOCOL = 3
 MORTALITY_ID_LOT = 2
 
-# Invertebrate meta values
+# Invertebrate meta default values
 INVERTEBRATE_ID_ORGANISM = 2
 INVERTEBRATE_ID_PROTOCOL = 2
 INVERTEBRATE_ID_LOT = 3
 
-# Flora meta values
+# Flora meta default values
 FLORA_ID_ORGANISM = 2
 FLORA_ID_PROTOCOL = 4
 FLORA_ID_LOT = 4
@@ -60,4 +60,5 @@ FLORA_ID_LOT = 4
 MOBILE_SOFT_PATH = "/tmp/"
 MOBILE_MBTILES_PATH = "/tmp/"
 
-SYNC_DB_CMD = "/usr/local/bin/talend/ecrins2rezo/ecrins2rezo/ecrins2rezo_run.sh --context_param mes_zp="
+#use to synchronize flora data with a other db via a sript (Talend job for exemple) - Optionnal
+#SYNC_DB_CMD = "/path/to/script"
