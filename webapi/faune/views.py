@@ -113,7 +113,7 @@ def import_data_fmi(json_data, data):
                 })
 
     if not bad_id:
-        protocol = get_protocol(json_data)
+        qualification = get_qualification(json_data)
 
         try:
             objects = []
@@ -132,9 +132,9 @@ def import_data_fmi(json_data, data):
             new_feature[json_to_db.get('initial_input')] = d.initial_input
             new_feature['supprime'] = 'False'
 
-            new_feature['id_protocole'] = protocol['protocol']
-            new_feature['id_organisme'] = protocol['organism']
-            new_feature['id_lot'] = protocol['lot']
+            new_feature['id_protocole'] = qualification['protocol']
+            new_feature['id_organisme'] = qualification['organism']
+            new_feature['id_lot'] = qualification['lot']
 
             # we need to transform into local srid
             new_feature[json_to_db.get('geometry')] = "st_transform(ST_GeomFromText('POINT(%s %s)', 4326),%d)" % (d.geolocation.longitude, d.geolocation.latitude,local_srid)
@@ -275,7 +275,7 @@ def import_data_flora(json_data, data):
         break
 
     if not bad_id:
-        protocol = get_protocol(json_data)
+        qualification = get_qualification(json_data)
 
         try:
             objects = []
@@ -293,9 +293,9 @@ def import_data_flora(json_data, data):
                 new_feature[json_to_db.get('name_entered')] = taxon.name_entered
                 new_feature[json_to_db.get('id_taxon')] = taxon.id_taxon
 
-                new_feature['id_protocole'] = protocol['protocol']
-                new_feature['id_organisme'] = protocol['organism']
-                new_feature['id_lot'] = protocol['lot']
+                new_feature['id_protocole'] = qualification['protocol']
+                new_feature['id_organisme'] = qualification['organism']
+                new_feature['id_lot'] = qualification['lot']
 
                 # we need to transform geometry into local srid
                 string_geom = get_geometry_string_from_coords(taxon.prospecting_area.feature.geometry.coordinates, taxon.prospecting_area.feature.geometry.type)
@@ -316,7 +316,8 @@ def import_data_flora(json_data, data):
                     new_feature[table_infos.get(table_zprospection).get('id_col')] = d.id
                     new_feature[json_to_db.get('id')] = area.id
                     new_feature[json_to_db.get('phenology')] = area.phenology
-                    new_feature[json_to_db.get('computed_area')] = area.computed_area
+                    # round 'computed_area' value
+                    new_feature[json_to_db.get('computed_area')] = int(round(area.computed_area))
 
                     if area.frequency.type == "estimation":
                         new_feature[json_to_db.get('frequenceap')] = area.frequency.value
@@ -709,42 +710,42 @@ def export_unity_polygons(request):
 
     return response
 
-def get_protocol(json_data):
+def get_qualification(json_data):
     """
-    Build the corresponding protocol from given JSON input or build the default
-    one from settings
+    Build the corresponding qualification metadata from given JSON input or
+    build the default one from settings
     """
 
-    protocol = {}
+    qualification = {}
     input_type = json_data['input_type']
 
     logger.debug(_("input type: %s") % input_type)
 
     try:
-        protocol['organism'] = json_data['protocol']['organism']
+        qualification['organism'] = json_data['qualification']['organism']
     except KeyError as ke:
-        protocol['organism'] = getattr(settings, input_type.upper() + '_ID_ORGANISM', 0)
-        logger.debug(_("No organism ID found, use default: %s") % protocol['organism'])
+        qualification['organism'] = getattr(settings, input_type.upper() + '_ID_ORGANISM', 0)
+        logger.debug(_("No organism ID found, use default: %s") % qualification['organism'])
 
         pass
 
     try:
-        protocol['protocol'] = json_data['protocol']['protocol']
+        qualification['protocol'] = json_data['qualification']['protocol']
     except KeyError as ke:
-        protocol['protocol'] = getattr(settings, input_type.upper() + '_ID_PROTOCOL', 0)
-        logger.debug(_("No protocol ID found, use default: %s") % protocol['protocol'])
+        qualification['protocol'] = getattr(settings, input_type.upper() + '_ID_PROTOCOL', 0)
+        logger.debug(_("No protocol ID found, use default: %s") % qualification['protocol'])
 
         pass
 
     try:
-        protocol['lot'] = json_data['protocol']['lot']
+        qualification['lot'] = json_data['qualification']['lot']
     except KeyError as ke:
-        protocol['lot'] = getattr(settings, input_type.upper() + '_ID_LOT', 0)
-        logger.debug(_("No lot ID found, use default: %s") % protocol['lot'])
+        qualification['lot'] = getattr(settings, input_type.upper() + '_ID_LOT', 0)
+        logger.debug(_("No lot ID found, use default: %s") % qualification['lot'])
 
         pass
 
-    return protocol
+    return qualification
 
 def get_data(request, table_name, where_string, complement_string, table_infos, testing, database_id):
     """
