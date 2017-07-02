@@ -792,7 +792,7 @@ def check_token(request):
 
 def get_data_object(response_content, table_name, where_string, complement_string, table_infos, testing, database_id):
     """
-    Perform a SELECT on the DB to retreive infos on associated object
+    Perform a SELECT on the DB to retrieve infos on associated object
     Param: table_name : name of the table
     """
     test_string = ""
@@ -904,15 +904,18 @@ def check_status(request):
 @csrf_exempt
 def soft_version(request):
     """
-    Return the version of the mobile soft (JSON)  by reading a json config file
+    Return the version of the mobile soft (JSON) by reading a json config file
     """
     response_content = {'apps': []}
     res, response = check_token(request)
+
     if not res:
         return response
 
     # read the version file
-    version_file = "%sversion.json" % (settings.MOBILE_SOFT_PATH)
+    version_file = os.path.join(
+        os.path.normpath(settings.MOBILE_SOFT_PATH),
+        'version.json')
 
     try:
         json_data = open(version_file)
@@ -930,13 +933,12 @@ def soft_version(request):
     except:
         response_content.update({
             'status_code': _("1"),
-            'status_message': "Version file is not available"
+            'status_message': "Version file is not available ('%s')" % (version_file)
         })
 
-    response = HttpResponse()
-    simplejson.dump(response_content, response,
-                ensure_ascii=False, separators=(',', ':'))
-    return response
+    return HttpResponse(
+        simplejson.dumps(response_content),
+        content_type="application/json")
 
 
 @csrf_exempt
