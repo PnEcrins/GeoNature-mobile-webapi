@@ -80,7 +80,8 @@ def import_data_fmi(json_data, data):
         table_sheet = settings.TABLE_INV_SHEET
         table_statement = settings.TABLE_INV_STATEMENT
         database_id = settings.DB_INV
-        local_srid = settings.LOCAL_SRID
+        
+    local_srid = settings.LOCAL_SRID
 
     d = EasyDict(json_data)
 
