@@ -6,7 +6,7 @@ Copier et renommer le contenu du fichier `settings_local.py.sample` en
 `settings_local.py`.
 
 Par défaut, le fichier de paramétrage `settings_local.py` contient les
-paramètres suivants ainso que leurs valeurs par défaut pour la gestion
+paramètres suivants ainsi que leurs valeurs par défaut pour la gestion
 multi-organismes :
 
 ```python
@@ -17,12 +17,12 @@ FAUNA_ID_LOT = 1
 
 # Mortality meta values
 MORTALITY_ID_ORGANISM = 2
-MORTALITY_ID_PROTOCOL = 3
+MORTALITY_ID_PROTOCOL = 2
 MORTALITY_ID_LOT = 2
 
 # Invertebrate meta values
 INVERTEBRATE_ID_ORGANISM = 2
-INVERTEBRATE_ID_PROTOCOL = 2
+INVERTEBRATE_ID_PROTOCOL = 3
 INVERTEBRATE_ID_LOT = 3
 
 # Flora meta values
