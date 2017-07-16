@@ -6,7 +6,7 @@ Copier et renommer le contenu du fichier `settings_local.py.sample` en
 `settings_local.py`.
 
 Par défaut, le fichier de paramétrage `settings_local.py` contient les
-paramètres suivants ainso que leurs valeurs par défaut pour la gestion
+paramètres suivants ainsi que leurs valeurs par défaut pour la gestion
 multi-organismes :
 
 ```python
@@ -35,7 +35,7 @@ Le fichier de paramétrage `settings_local.py` contient notamment le paramètre
 `MOBILE_MBTILES_PATH` pour configurer le chemin absolu de base vers les
 différents fichiers à synchroniser sur les terminaux mobiles.
 
-Ce paramètre est utilisé par l'URL `data_download/` du module WebAPI pour
+Ce paramètre est utilisé par l'URL `data_download/` du module *WebAPI* pour
 pouvoir synchroniser n'importe quel fichier à travers l'application de
 synchronisation.
 
@@ -57,12 +57,46 @@ synchronisation :
   {
     "sync":
     {
+      "url": "http://mondomaine.fr/urlsynchro/",
+      "token": "mon!token#complexe",
+      "timeout": 10000,
+	    "status_url": "status/",
       "settings_url": "data_download/",
+      "import_url": "import/",
+      "app_update":
+  		{
+  			"version_url": "soft_version/",
+  			"download_url": "soft_download/"
+  		},
       "exports":
       [
         {
+  				"url": "export/sqlite/",
+  				"file": "databases/data.db"
+  			},
+  			{
+  				"url": "export/unity_polygons/",
+  				"file": "unities.wkt"
+  			},
+        {
           "url": "data_download/settings_fauna.json/",
           "file": "settings_fauna.json"
+        },
+        {
+          "url": "data_download/settings_mortality.json/",
+          "file": "settings_mortality.json"
+        },
+        {
+          "url": "data_download/settings_invertebrate.json/",
+          "file": "settings_invertebrate.json"
+        },
+        {
+          "url": "data_download/settings_flora.json/",
+          "file": "settings_flora.json"
+        },
+        {
+          "url": "data_download/settings_search.json/",
+          "file": "settings_search.json"
         }
       ]
     }
@@ -72,9 +106,9 @@ synchronisation :
 * `settings_*.json` : fichiers de configuration par application de saisie
 
 L'application de synchronisation utilisera le fichier `settings.json` venant du
-module WebAPI dans lequel on trouvera les différentes URLs pour synchroniser les
-fichiers utilisés pour les applications de saisies, notamment les fichiers de
-configuration.
+module *WebAPI* dans lequel on trouvera les différentes URLs pour synchroniser
+les fichiers utilisés pour les applications de saisies, notamment les fichiers
+de configuration.
 
 #### Configuration multi-organismes
 
@@ -94,12 +128,46 @@ synchronisation
   {
     "sync":
     {
+      "url": "http://mondomaine.fr/urlsynchro/",
+      "token": "mon!token#complexe",
+      "timeout": 10000,
+	    "status_url": "status/",
       "settings_url": "data_download/organisme_01",
+      "import_url": "import/",
+      "app_update":
+  		{
+  			"version_url": "soft_version/",
+  			"download_url": "soft_download/"
+  		},
       "exports":
       [
         {
+  				"url": "export/sqlite/",
+  				"file": "databases/data.db"
+  			},
+  			{
+  				"url": "export/unity_polygons/",
+  				"file": "unities.wkt"
+  			},
+        {
           "url": "data_download/organisme_01/settings_fauna.json/",
           "file": "settings_fauna.json"
+        },
+        {
+          "url": "data_download/organisme_01/settings_mortality.json/",
+          "file": "settings_mortality.json"
+        },
+        {
+          "url": "data_download/organisme_01/settings_invertebrate.json/",
+          "file": "settings_invertebrate.json"
+        },
+        {
+          "url": "data_download/organisme_01/settings_flora.json/",
+          "file": "settings_flora.json"
+        },
+        {
+          "url": "data_download/organisme_01/settings_search.json/",
+          "file": "settings_search.json"
         }
       ]
     }
@@ -129,12 +197,46 @@ synchronisation
   {
     "sync":
     {
+      "url": "http://mondomaine.fr/urlsynchro/",
+      "token": "mon!token#complexe",
+      "timeout": 10000,
+	    "status_url": "status/",
       "settings_url": "data_download/organisme_02",
+      "import_url": "import/",
+      "app_update":
+  		{
+  			"version_url": "soft_version/",
+  			"download_url": "soft_download/"
+  		},
       "exports":
       [
         {
+  				"url": "export/sqlite/",
+  				"file": "databases/data.db"
+  			},
+  			{
+  				"url": "export/unity_polygons/",
+  				"file": "unities.wkt"
+  			},
+        {
           "url": "data_download/organisme_02/settings_fauna.json/",
           "file": "settings_fauna.json"
+        },
+        {
+          "url": "data_download/organisme_02/settings_mortality.json/",
+          "file": "settings_mortality.json"
+        },
+        {
+          "url": "data_download/organisme_02/settings_invertebrate.json/",
+          "file": "settings_invertebrate.json"
+        },
+        {
+          "url": "data_download/organisme_02/settings_flora.json/",
+          "file": "settings_flora.json"
+        },
+        {
+          "url": "data_download/organisme_02/settings_search.json/",
+          "file": "settings_search.json"
         }
       ]
     }
@@ -155,7 +257,7 @@ synchronisation
 
 ### Principe de fonctionnement
 
-Une fois le module WebAPI et l'application de synchronisation correctement
+Une fois le module *WebAPI* et l'application de synchronisation correctement
 paramétrés, l'application de synchronisation va mettre à jour les fichiers de
 configuration des différentes applications de saisie qui contiendra le
 paramétrage pour la gestion multi-organismes.
@@ -180,6 +282,6 @@ question à utiliser par le module WebAPI. Si cette configuration n'est pas
 présente, le module WebAPI utilise sa configuration par défaut issue de
 `settings_local.py`.
 
-A noter qu'il faut lancer au moins une première fois la synchronisation via
+**Note :** Il faut lancer au moins une première fois la synchronisation via
 l'application de synchronisation pour que le paramétrage concernant l'organisme
 soit bien présent coté application de saisie.
