@@ -20,12 +20,15 @@ Voir le chapitre sur l'installation du serveur de l'application web GeoNature ([
 
 * Installer les paquets suivants :
   
-        sudo apt-get install -y python-virtualenv
-		libapache2-mod-wsgi python-dev build-essential
-		
-	Attention sur Debian 8 : 2 autres paquets sont nécessaire pour compiler correctement :   
+        sudo apt-get install -y python-virtualenv libapache2-mod-wsgi python-dev build-essential
+        
+    Attention sur Debian 8, 2 autres paquets sont nécessaires pour compiler correctement :   
     
         sudo apt-get install libpq-dev postgresql-server-dev-9.4
+
+    Sur debian 9 un autre paquet est nécessaire pour compiler correctement :
+
+        sudo apt-get install libgeos-dev
 
 
 Installation
