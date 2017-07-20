@@ -58,7 +58,7 @@ Installation
         TOKEN = "666"
 
         MOBILE_SOFT_PATH = "/full_path_to_mobile_soft_apk_and_version_file/"
-        MOBILE_FILE_PATH = "/full_path_to_mbtiles_settings_json_files/"
+        MOBILE_FILE_PATH = "/full_path_to_synchronized_files/"
 
         SYNC_DB_CMD = ""
 
@@ -174,7 +174,7 @@ ATTENTION sur Android 5 : Il est nécessaire de redémarer le terminal pour que 
 * Y copier depuis l'ordinateur les 3 fichiers .mbtiles nécessaire au fonctionnement des applications (les rasters : scan, ortho et unities).
 
 ATTENTION sur Android 5 : Sur Android 4 le dossier ``com.makina.ecrins`` est installé aussi sur la mémoire interne de l'appareil. Il faut donc le créer à nouveau sur la carte SD comme expliqué ci-dessus.
-Sur Android 5, la méthode de virtualisation de la mémoire ayant changée, il est possible que le dossier soit déjà crée sur la carte SD. Dans ce cas il faut y ajouter le répertoire 'databases' et les .mbtiles directement dansce dernier.
+Sur Android 5, la méthode de virtualisation de la mémoire ayant changée, il est possible que le dossier soit déjà crée sur la carte SD. Dans ce cas il faut y ajouter le répertoire 'databases' et les .mbtiles directement dans ce dernier.
 
 Lancer les applications pour vérifier leur bon fonctionnement et le bon chargement des fonds rasters dans la carte.
 
