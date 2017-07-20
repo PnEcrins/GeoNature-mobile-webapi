@@ -1,5 +1,5 @@
 """
-WSGI config for faune project.
+WSGI config for Webapi project.
 
 This module contains the WSGI application used by Django's development server
 and any production WSGI deployments. It should expose a module-level variable
@@ -16,9 +16,9 @@ framework.
 import os
 import sys
 
-sys.path.append('/home/sbe/projects/geobi-ecrins-faune/faune/')
+#sys.path.append('/home/sbe/projects/geobi-ecrins-faune/faune/')
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "faune.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 
 
 from django.core.wsgi import get_wsgi_application

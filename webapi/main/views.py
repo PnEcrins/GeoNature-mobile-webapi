@@ -24,7 +24,7 @@ import datetime
 import os
 import tempfile
 
-from faune.utils import sync_db, query_db, commit_transaction, check_connection
+from main.utils import sync_db, query_db, commit_transaction, check_connection
 
 logger = logging.getLogger(__name__)
 

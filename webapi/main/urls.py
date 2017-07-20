@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 
-from faune.views import import_data, export_sqlite, export_taxon, export_unity, export_taxon_unity, export_criterion, export_user, export_classes, export_unity_geojson, export_unity_polygons, check_status, soft_version, soft_download, data_download
+from main.views import import_data, export_sqlite, export_taxon, export_unity, export_taxon_unity, export_criterion, export_user, export_classes, export_unity_geojson, export_unity_polygons, check_status, soft_version, soft_download, data_download
 
 urlpatterns = patterns('',
     (r'^status/$', check_status),

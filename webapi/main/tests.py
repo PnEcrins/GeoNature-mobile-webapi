@@ -2,19 +2,19 @@ import django
 from django.test import TestCase
 from django.utils import simplejson
 from easydict import EasyDict
-from faune.utils import query_db, commit_transaction
+from main.utils import query_db, commit_transaction
 import datetime
 
-class FauneViewsTestCase(TestCase):
+class MainViewsTestCase(TestCase):
     def test_import(self):
         
         old_db = django.db.connections['default']
         django.db.connections['default'].settings_dict['NAME']
         try:
             django.db.connections['default'] = old_db.__class__(old_db.settings_dict)
-            django.db.connections['default'].settings_dict['NAME'] = 'appli_faune'
+            django.db.connections['default'].settings_dict['NAME'] = 'geonaturedb'
             
-            data = open('faune/data.json').read()
+            data = open('main/data.json').read()
             json_data = simplejson.loads(data)
             inputData = EasyDict(json_data)
             

@@ -6,12 +6,12 @@ from setuptools import setup, find_packages
 here = os.path.abspath(os.path.dirname(__file__))
 
 setup(
-    name='faune',
+    name='main',
     version='0.1',
     author='Makina Corpus',
     author_email='geobi@makina-corpus.com',
     url='http://makina-corpus.com',
-    description="Faune",
+    description="Webapi GeoNature",
     long_description=open(os.path.join(here, 'README.rst')).read(),
     zip_safe=False,
     install_requires = [
@@ -22,7 +22,7 @@ setup(
         'geojson == 1.0.1',
         'simplejson == 2.6.2',        
     ],
-    data_files=[('faune', ['faune/data.db.sample'])],
+    data_files=[('main', ['main/data.db.sample'])],
     tests_requires = [],
     packages=find_packages(),
     classifiers  = ['Natural Language :: English',
