@@ -7,9 +7,10 @@ webapi/bin/*
 webapi/build/*
 webapi/datas/*
 webapi/dist/*
-webapi/faune.egg-info/*
+webapi/main.egg-info/*
 webapi/include/*
 webapi/lib/*
 webapi/local/*
 webapi/share/*
-webapi/faune/settings_local.py
+webapi/main/settings_local.py
+webapi/pip-selfcheck.json
