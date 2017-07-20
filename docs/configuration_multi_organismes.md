@@ -32,7 +32,7 @@ FLORA_ID_LOT = 4
 ```
 
 Le fichier de paramétrage `settings_local.py` contient notamment le paramètre
-`MOBILE_MBTILES_PATH` pour configurer le chemin absolu de base vers les
+`MOBILE_FILE_PATH` pour configurer le chemin absolu de base vers les
 différents fichiers à synchroniser sur les terminaux mobiles.
 
 Ce paramètre est utilisé par l'URL `data_download/` du module *WebAPI* pour
@@ -46,7 +46,7 @@ y a de configuration pour les applications de saisies.
 
 #### Configuration simple
 
-`MOBILE_MBTILES_PATH` : `/chemin/absolu/vers/le/répertoire/de/base`
+`MOBILE_FILE_PATH` : `/chemin/absolu/vers/le/répertoire/de/base`
 
 Dans ce répertoire, on trouvera :
 
@@ -112,7 +112,7 @@ de configuration.
 
 #### Configuration multi-organismes
 
-`MOBILE_MBTILES_PATH` : `/chemin/absolu/vers/le/répertoire/de/base`
+`MOBILE_FILE_PATH` : `/chemin/absolu/vers/le/répertoire/de/base`
 
 Dans ce répertoire, on trouvera autant de sous-répertoires qu'il y a
 d'organismes:

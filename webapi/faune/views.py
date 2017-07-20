@@ -972,26 +972,30 @@ def soft_download(request, apk_name):
 
 
 @csrf_exempt
-def data_download(request, mbtiles_name):
+def data_download(request, file_name, organisme_name=None,):
     """
-    Return the required mbtiles file
+    Return the required file
     """
     response_content = {}
     res, response = check_token(request)
     if not res:
         return response
 
-    file_path = "%s%s" % (settings.MOBILE_MBTILES_PATH, mbtiles_name)
+    if organisme_name:
+        file_path = "%s%s/%s" % (settings.MOBILE_FILE_PATH, organisme_name, file_name)
+    else:
+        file_path = "%s%s" % (settings.MOBILE_FILE_PATH, file_name)
+
     try:
         wrapper = FileWrapper(file(file_path))
         response = HttpResponse(wrapper, content_type='text/plain')
         response["Last-Modified"] = http_date(os.stat(file_path).st_mtime)
         response['Content-Length'] = os.path.getsize(file_path)
-        response['Content-Disposition'] = 'attachment; filename=%s' % (mbtiles_name)
+        response['Content-Disposition'] = 'attachment; filename=%s' % (file_name)
     except:
         response_content.update({
             'status_code': _("1"),
-            'status_message': "File is not available (%s)" % (mbtiles_name)
+            'status_message': "File is not available (%s)" % (file_name)
         })
         response = HttpResponse(status=404)
         simplejson.dump(response_content, response,

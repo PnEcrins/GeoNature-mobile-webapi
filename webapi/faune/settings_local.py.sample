@@ -58,7 +58,7 @@ FLORA_ID_PROTOCOL = 4
 FLORA_ID_LOT = 4
 
 MOBILE_SOFT_PATH = "/tmp/"
-MOBILE_MBTILES_PATH = "/tmp/"
+MOBILE_FILE_PATH = "/tmp/"
 
 #use to synchronize flora data with a other db via a sript (Talend job for exemple) - Optionnal
-#SYNC_DB_CMD = "/path/to/script"
+SYNC_DB_CMD = "/path/to/script"

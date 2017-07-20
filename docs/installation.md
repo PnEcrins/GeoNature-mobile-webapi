@@ -58,7 +58,7 @@ Installation
         TOKEN = "666"
 
         MOBILE_SOFT_PATH = "/full_path_to_mobile_soft_apk_and_version_file/"
-        MOBILE_MBTILES_PATH = "/full_path_to_mbtiles_settings_json_files/"
+        MOBILE_FILE_PATH = "/full_path_to_mbtiles_settings_json_files/"
 
         SYNC_DB_CMD = ""
 
@@ -66,7 +66,7 @@ Vous devez renseigner correctement la connection à la base de données pour les
 
 Pour le Token : Renseigner une valeur (devra être identique à celle qui sera renseignée dans le fichier de server.conf  de l'application desktop de synchronisation : https://github.com/PnEcrins/GeoNature-mobile-sync)
 
-Les valeurs de ``MOBILE_SOFT_PATH`` et ``MOBILE_MBTILES_PATH`` doivent être renseignés selon les chemins défini dans les étapes suivantes :
+Les valeurs de ``MOBILE_SOFT_PATH`` et ``MOBILE_FILE_PATH`` doivent être renseignés selon les chemins défini dans les étapes suivantes :
 
 * Créer les répertoires ``apk`` et ``datas`` puis récupérer les fichiers d'installation (apk) et de settintgs (json) des applications depuis le Github de GeoNature-mobile : https://github.com/PnEcrins/GeoNature-mobile
   (`X.Y.Z à remplacer par le numéro de version souhaitée <https://github.com/PnEcrins/GeoNature-mobile/releases>)
