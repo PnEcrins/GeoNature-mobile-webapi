@@ -80,7 +80,7 @@ def import_data_fmi(json_data, data):
         table_sheet = settings.TABLE_INV_SHEET
         table_statement = settings.TABLE_INV_STATEMENT
         database_id = settings.DB_INV
-        
+
     local_srid = settings.LOCAL_SRID
 
     d = EasyDict(json_data)
@@ -972,7 +972,7 @@ def soft_download(request, apk_name):
 
 
 @csrf_exempt
-def data_download(request, file_name, organisme_name=None,):
+def data_download(request, file_name, organism_name=None,):
     """
     Return the required file
     """
@@ -981,8 +981,8 @@ def data_download(request, file_name, organisme_name=None,):
     if not res:
         return response
 
-    if organisme_name:
-        file_path = "%s%s/%s" % (settings.MOBILE_FILE_PATH, organisme_name, file_name)
+    if organism_name:
+        file_path = "%s%s/%s" % (settings.MOBILE_FILE_PATH, organism_name, file_name)
     else:
         file_path = "%s%s" % (settings.MOBILE_FILE_PATH, file_name)
 
