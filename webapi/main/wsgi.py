@@ -16,8 +16,6 @@ framework.
 import os
 import sys
 
-#sys.path.append('/home/sbe/projects/geobi-ecrins-faune/faune/')
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 
 
@@ -27,5 +25,3 @@ application = get_wsgi_application()
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
-
-

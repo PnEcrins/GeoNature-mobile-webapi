@@ -1,6 +1,6 @@
 *Faune Webapi*
 
-Initial documentation to install GeoNature-mobile-webapi (2013). 
+Initial documentation to install GeoNature-mobile-webapi (2013).
 
 =====
 SETUP
@@ -20,8 +20,8 @@ Copy settings_local.py.sample to settings_local.py and modify informations :
 
 ::
 
-        'NAME': 'appli_faune',
-        'USER': 'dbuser',    
+        'NAME': 'db_name',
+        'USER': 'db_user',    
         'PASSWORD': 'xxxx',   
         'HOST': 'localhost',  
         'PORT': '5432',       
@@ -47,7 +47,7 @@ Once the OS is installed (basic installation, with OpenSSH server), with the fol
 Warning: the package build-essentials has been renamed build-essential in the latest debian versions
 
 Warning Debian 8 : in order to properly compile, 2 other packages need to be installed
-    
+
     sudo apt-get install libpq-dev postgresql-server-dev-9.4
 
 
@@ -56,7 +56,7 @@ Install the webapi :
 ::
 
     cd /path_to_webapi/
-    
+
     make install
 
 BDD
@@ -72,20 +72,20 @@ Copy the virtual host example :
 
 ::
 
-    sudo cp faune/apache.vhost.sample /etc/apache2/sites-available/faune
-    
+    sudo cp main/apache.vhost.sample /etc/apache2/sites-available/synchronomade.conf
+
 Warning : starting with apache 2.4 the virtual host file need to have a .conf extension
 
-Edit it and replace /path_to_webapi/faune/ by the correct path.
+Edit it and replace /path_to_webapi/main/ by the correct path.
 
 
 Activate it and restart apache :
 
-    sudo a2ensite faune
+    sudo a2ensite synchronomade
     sudo apache2ctl restart
 
 
-Web API is now available on http://server/faune/.
+Web API is now available on http://server/synchronomade/.
 
 
 =====
@@ -94,17 +94,17 @@ USAGE
 
 Export data:
 
-    http://server/faune/export/sqlite
-    http://server/faune/export/unity_geojson
+    http://server/synchronomade/export/sqlite
+    http://server/synchronomade/export/unity_geojson
     or
-    http://server/faune/export/unity_polygons
+    http://server/synchronomade/export/unity_polygons
 
 POST parameter (defined in settings.py) :
     token
 
 Import data:
 
-    http://localhost/faune/import_data
+    http://localhost/synchronomade/import_data
 
 POST parameter:
     token
