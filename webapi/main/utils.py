@@ -22,7 +22,7 @@ def commit_transaction(database_id):
     Commit the transaction
     """
     transaction.commit_unless_managed(using=database_id)
-    logger.debug(_("Faune SQL: COMMIT"))
+    logger.debug(_("GeoNature SQL: COMMIT"))
 
 
 def check_connection(database_id):
@@ -37,7 +37,7 @@ def check_connection(database_id):
     
 def query_db(sqlquery, database_id):
     """
-    Executes a single query on the Faune database defined in project settings.
+    Executes a single query on the GeoNature database defined in project settings.
     Returns a `cursor`
 
     sqlquery -- a SQL statement
@@ -45,7 +45,7 @@ def query_db(sqlquery, database_id):
     # Connect to correct DB
     cursor = connections[database_id].cursor()
     # Execute SQL
-    logger.debug(_("Faune SQL: %s") % sqlquery)
+    logger.debug(_("GeoNature SQL: %s") % sqlquery)
     cursor.execute(sqlquery)
     return cursor
 

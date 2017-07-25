@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Django settings for faune project.
+# Django settings for webapi project.
 import os
 
 PROJECT_ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -92,10 +92,10 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'faune.urls'
+ROOT_URLCONF = 'main.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'faune.wsgi.application'
+WSGI_APPLICATION = 'main.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -114,10 +114,10 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'faune',
+    'main',
 )
 
-TEST_RUNNER = 'faune.faune_tests.DjangoTestSuiteRunner'
+TEST_RUNNER = 'main.main_tests.DjangoTestSuiteRunner'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -149,7 +149,7 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False, # this tells logger to send logging message
                                 # to its parent (will send if set to True)
-        },        
+        },
         'django.request': {
             'handlers': ['console', 'mail_admins'],
             'level': 'ERROR',
@@ -159,10 +159,9 @@ LOGGING = {
             'handlers': ['console', 'mail_admins'],
             'level': 'ERROR',
             'propagate': True,
-        }        
+        }
     }
 }
-
 
 #flora frequency ids values
 FLORA_FREQUENCY_ESTIMATION = 'S'
@@ -176,7 +175,7 @@ FLORA_COUTING_EXHAUSTIVE = 1
 DB_FAUNA = 'fauna'
 DB_INV = 'inv'
 DB_FLORA = 'flora'
-            
+
 TABLE_FAUNA_TAXA = 'contactfaune.v_nomade_taxons_faune'
 TABLE_FAUNA_UNITY = 'contactfaune.v_nomade_unites_geo_cf'
 TABLE_FAUNA_UNITY_GEOJSON = 'contactfaune.v_nomade_unites_geo_cf'
@@ -258,15 +257,15 @@ FAUNE_TABLE_INFOS =  {
         #'id_col': 'id_role',
         'select_col': 'id_cf,id_role',
         'json_to_db_columns' : {
-            'id_cf' : 'id_cf', 
-            'observer_id' : 'id_role'    
-        }        
-    },    
+            'id_cf' : 'id_cf',
+            'observer_id' : 'id_role'
+        }
+    },
     TABLE_FAUNA_STATEMENT: {
         'id_col': 'id_releve_cf',
         'select_col': 'id_releve_cf, id_cf, id_nom, id_critere_cf, am, af, ai, na, sai, jeune, yearling, nom_taxon_saisi, commentaire, supprime, prelevement',
         'json_to_db_columns' : {
-            'id_cf' : 'id_cf', 
+            'id_cf' : 'id_cf',
             'id' : 'id_nom',
             'criterion' : 'id_critere_cf',
             'adult_male' : 'am',
@@ -279,8 +278,8 @@ FAUNE_TABLE_INFOS =  {
             'name_entered' : 'nom_taxon_saisi',
             'comment' : 'commentaire',
             'supprime' : 'supprime',
-            'sample' : 'prelevement'    
-        }        
+            'sample' : 'prelevement'
+        }
     },
     TABLE_FAUNA_SHEET: {
         'id_col': 'id_cf',
@@ -292,7 +291,7 @@ FAUNE_TABLE_INFOS =  {
             'accuracy' : 'pdop',
             'geometry' : 'the_geom_local',
             'initial_input' : 'saisie_initiale'
-        }        
+        }
     },
     TABLE_FAUNA_TAXA: {
         'id_col': 'id_nom',
@@ -312,7 +311,7 @@ FAUNE_TABLE_INFOS =  {
         },
         #'where_string' : 'contactfaune = TRUE'
     },
-    
+
     #TABLE_FAUNA_FAMILY: {
         #'id_col': 'id_famille',
         #'json_name': 'family',
@@ -333,7 +332,7 @@ FAUNE_TABLE_INFOS =  {
             'id_unite_geo' : '_id',
             'code_insee' : 'insee',
             'commune' : 'city'
-        }        
+        }
     },
     TABLE_FAUNA_TAXA_UNITY: {
         'id_col': 'id_unite_geo',
@@ -346,7 +345,7 @@ FAUNE_TABLE_INFOS =  {
             'derniere_date' : 'date',
             'couleur' : 'color',
             'nb_obs' : 'nb_obs'
-        }        
+        }
     },
     TABLE_FAUNA_CRITERION: {
         'id_col': 'id_critere_cf',
@@ -358,7 +357,7 @@ FAUNE_TABLE_INFOS =  {
             'nom_critere_cf' : 'name',
             'tri_cf' : 'sort',
             'id_classe' : 'class_id'
-        }        
+        }
     },
     TABLE_FAUNA_USER: {
         'id_col': 'id_role',
@@ -370,9 +369,9 @@ FAUNE_TABLE_INFOS =  {
             'identifiant' : 'ident',
             'nom_role' : 'lastname',
             'prenom_role' : 'firstname'
-        }        
+        }
     },
-    
+
     TABLE_FAUNA_CLASSES: {
         'id_col': 'id_classe',
         'json_name': 'classes',
@@ -382,7 +381,7 @@ FAUNE_TABLE_INFOS =  {
             'id_classe' : '_id',
             'nom_classe' : 'name',
             'desc_classe' : 'description'
-        }        
+        }
     }
 }
 
@@ -397,15 +396,15 @@ INV_TABLE_INFOS =  {
     TABLE_INV_SHEET_ROLE: {
         'select_col': 'id_inv,id_role',
         'json_to_db_columns' : {
-            'id_inv' : 'id_inv', 
-            'observer_id' : 'id_role'    
-        }        
-    },    
+            'id_inv' : 'id_inv',
+            'observer_id' : 'id_role'
+        }
+    },
     TABLE_INV_STATEMENT: {
         'id_col': 'id_releve_inv',
         'select_col': 'id_releve_inv, id_inv, id_nom, id_critere_inv, am, af, ai, na, nom_taxon_saisi, commentaire, supprime, prelevement',
         'json_to_db_columns' : {
-            'id_inv' : 'id_inv', 
+            'id_inv' : 'id_inv',
             'id' : 'id_nom',
             'criterion' : 'id_critere_inv',
             'adult_male' : 'am',
@@ -418,8 +417,8 @@ INV_TABLE_INFOS =  {
             'name_entered' : 'nom_taxon_saisi',
             'comment' : 'commentaire',
             'supprime' : 'supprime',
-            'sample' : 'prelevement'    
-        }        
+            'sample' : 'prelevement'
+        }
     },
     TABLE_INV_SHEET: {
         'id_col': 'id_inv',
@@ -433,7 +432,7 @@ INV_TABLE_INFOS =  {
             'initial_input' : 'saisie_initiale',
             'environment' : 'id_milieu_inv',
             'heure' : 'heure'
-        }        
+        }
     },
     TABLE_INV_TAXA: {
         'id_col': 'id_nom',
@@ -451,7 +450,7 @@ INV_TABLE_INFOS =  {
         },
         #'where_string' : 'contactfaune = TRUE'
     },
-    
+
     #TABLE_INV_FAMILY: {
         #'id_col': 'id_famille',
         #'json_name': 'family',
@@ -472,7 +471,7 @@ INV_TABLE_INFOS =  {
             'id_unite_geo' : '_id',
             'code_insee' : 'insee',
             'commune' : 'city'
-        }        
+        }
     },
     TABLE_INV_TAXA_UNITY: {
         'id_col': 'id_unite_geo',
@@ -485,7 +484,7 @@ INV_TABLE_INFOS =  {
             'derniere_date' : 'date',
             'couleur' : 'color',
             'nb_obs' : 'nb_obs'
-        }        
+        }
     },
     TABLE_INV_CRITERION: {
         'id_col': 'id_critere_inv',
@@ -496,7 +495,7 @@ INV_TABLE_INFOS =  {
             'id_critere_inv' : '_id',
             'nom_critere_inv' : 'name',
             'tri_inv' : 'sort'
-        }        
+        }
     },
     TABLE_INV_USER: {
         'id_col': 'id_role',
@@ -508,9 +507,9 @@ INV_TABLE_INFOS =  {
             'identifiant' : 'ident',
             'nom_role' : 'lastname',
             'prenom_role' : 'firstname'
-        }        
+        }
     },
-    
+
     TABLE_INV_CLASSES: {
         'id_col': 'id_classe',
         'json_name': 'classes',
@@ -520,9 +519,9 @@ INV_TABLE_INFOS =  {
             'id_classe' : '_id',
             'nom_classe' : 'name',
             'desc_classe' : 'description'
-        }        
+        }
     },
-    
+
     TABLE_INV_ENVIRONEMENTS: {
         'id_col': 'id_milieu_inv',
         'json_name': 'environments',
@@ -531,9 +530,9 @@ INV_TABLE_INFOS =  {
         'db_to_json_columns' : {
             'id_milieu_inv' : '_id',
             'nom_milieu_inv' : 'name'
-        }        
+        }
     },
-    
+
 }
 
 # FLORA -------------------------------------------------------------------
@@ -543,7 +542,7 @@ FLORA_TABLE_INFOS =  {
         'id_col': 'id',
         'select_col': 'id,json_date_import'
     },
-    
+
     TABLE_FLORA_T_APRESENCE: {
         'id_col': 'indexap',
         'json_name': 't_apresence',
@@ -572,7 +571,7 @@ FLORA_TABLE_INFOS =  {
             'total_fertiles' : 'total_fertiles'
         },
     },
-   
+
     TABLE_FLORA_T_ZPROSPECTION: {
         'id_col': 'indexzp',
         'json_name': 't_zprospection',
@@ -602,7 +601,7 @@ FLORA_TABLE_INFOS =  {
             'codeobs' : 'codeobs'
         },
     },
-    
+
     TABLE_FLORA_COR_AP_PERTURB: {
         'id_col': 'indexap',
         'json_name': 'cor_ap_perturb',
@@ -614,7 +613,7 @@ FLORA_TABLE_INFOS =  {
             'codeper' : 'codeper'
         },
     },
-    
+
     TABLE_FLORA_COR_AP_PHYSIONOMIE: {
         'id_col': 'indexap',
         'json_name': 'cor_zp_obs',
@@ -624,9 +623,9 @@ FLORA_TABLE_INFOS =  {
             'id' : '_id',
             'indexap' : 'indexap',
             'id_physionomie' : 'id_physionomie'
-        },        
+        },
     },
-    
+
     TABLE_FLORA_TAXA: {
         'id_col': 'num_nomenclatural',
         'json_name': 'taxa',
@@ -639,7 +638,7 @@ FLORA_TABLE_INFOS =  {
         },
         #'where_string' : 'contactfaune = TRUE'
     },
-    
+
     #TABLE_FLORA_FAMILY: {
         #'id_col': 'id_famille',
         #'json_name': 'family',
@@ -660,9 +659,9 @@ FLORA_TABLE_INFOS =  {
             'identifiant' : 'ident',
             'nom_role' : 'lastname',
             'prenom_role' : 'firstname'
-        }        
+        }
     },
-    
+
     TABLE_FLORA_CLASSES: {
         'id_col': 'id_classe',
         'json_name': 'classes',
@@ -672,9 +671,9 @@ FLORA_TABLE_INFOS =  {
             'id_classe' : '_id',
             'nom_classe' : 'name',
             'desc_classe' : 'description'
-        }        
+        }
     },
-       
+
     TABLE_FLORA_INCLINES: {
         'id_col': 'id_pente',
         'json_name': 'v_modile_pentes',
@@ -684,7 +683,7 @@ FLORA_TABLE_INFOS =  {
             'id_pente' : '_id',
             'val_pente' : 'value',
             'nom_pente' : 'name'
-        }        
+        }
     },
 
     TABLE_FLORA_DISTURBANCES: {
@@ -697,7 +696,7 @@ FLORA_TABLE_INFOS =  {
             'codeper' : 'code',
             'classification' : 'classification',
             'description' : 'description'
-        }        
+        }
     },
 
     TABLE_FLORA_PHENOLOGY: {
@@ -709,7 +708,7 @@ FLORA_TABLE_INFOS =  {
             'id' : '_id',
             'codepheno' : 'code',
             'pheno' : 'name'
-        }        
+        }
     },
 
     TABLE_FLORA_PHYSIOGNOMY: {
@@ -721,9 +720,9 @@ FLORA_TABLE_INFOS =  {
             'id_physionomie' : '_id',
             'groupe_physionomie' : 'group_name',
             'nom_physionomie' : 'name'
-        }        
+        }
     },
-    
+
     TABLE_FLORA_VISU_FP: {
         'id_col': 'indexzp',
         'json_name': 'v_mobile_visu_zp',
@@ -733,7 +732,7 @@ FLORA_TABLE_INFOS =  {
             'indexzp' : '_id',
             'cd_nom' : 'taxon_id',
             'geometry' : 'geometry'
-        }        
+        }
     },
 
     TABLE_FLORA_SEARCH: {
@@ -749,8 +748,8 @@ FLORA_TABLE_INFOS =  {
             'geom_4326' : 'geometry',
             'centroid_x' : 'longitude',
             'centroid_y' : 'latitude'
-        }        
-    },    
+        }
+    },
 }
 
 FAUNE_TABLE_INFOS_GEOJSON =  {
@@ -763,7 +762,7 @@ FAUNE_TABLE_INFOS_GEOJSON =  {
             'code_insee' : 'insee',
             'commune' : 'city',
             'geom': 'geometry'
-        }        
+        }
     }
 }
 
@@ -777,7 +776,7 @@ INV_TABLE_INFOS_GEOJSON =  {
             'code_insee' : 'insee',
             'commune' : 'city',
             'geom': 'geometry'
-        }        
+        }
     }
 }
 
@@ -791,7 +790,7 @@ INV_TABLE_INFOS_GEOJSON =  {
             #'code_insee' : 'insee',
             #'commune' : 'city',
             #'geom': 'geometry'
-        #}        
+        #}
     #}
 #}
 

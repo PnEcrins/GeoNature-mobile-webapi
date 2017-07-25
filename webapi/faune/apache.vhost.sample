@@ -1,8 +1,0 @@
-WSGIScriptAlias /faune /path_to_webapi/faune/faune/wsgi.py
-WSGIPythonPath /path_to_webapi/faune/faune/lib/python2.7/site-packages
-<Directory /path_to_webapi/faune/>
-    <Files wsgi.py>
-        Order deny,allow
-        Allow from all
-    </Files>
-</Directory>

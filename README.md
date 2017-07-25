@@ -9,4 +9,4 @@ La synchronisation de ces données peut être faite par le réseau (wifi ou 3G) 
 ![GeoNature schema general](https://github.com/PnEcrins/GeoNature/raw/master/docs/images/schema-geonature-environnement.jpg)
 
 ## License
-&copy; Makina Corpus / Parc national des Ecrins 2012 - 2015
+&copy; Makina Corpus / Parc national des Ecrins 2012 - 2017
