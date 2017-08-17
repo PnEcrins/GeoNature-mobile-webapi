@@ -46,8 +46,7 @@ Installation
         cd synchronomade/webapi
         cp main/settings_local.py.sample main/settings_local.py
 
-* Créer les répertoires ``apk`` et ``datas`` puis récupérer les fichiers d'installation (apk) et de settintgs (json) des applications depuis le Github de GeoNature-mobile : https://github.com/PnEcrins/GeoNature-mobile
-  (`X.Y.Z à remplacer par le numéro de version souhaitée <https://github.com/PnEcrins/GeoNature-mobile/releases>)
+* Créer les répertoires ``apk`` et ``datas`` puis récupérer les fichiers d'installation (apk) et de settintgs (json) des applications depuis le Github de [GeoNature-mobile](https://github.com/PnEcrins/GeoNature-mobile). X.Y.Z à remplacer par le numéro de version souhaitée https://github.com/PnEcrins/GeoNature-mobile/releases)
 
         mkdir apk
         cd apk
@@ -69,8 +68,10 @@ Installation
         cd ..
 
 * Modifier les fichiers de configuration .json des applications Android copiés dans ``synchronomade/webapi/datas`` en adaptant les paramètres des objets ``sync``, ``qualification`` et ``map`` à votre contexte. [Voir la documentation](/docs/install/installation.rst); 
+
 Ces fichiers sont les fichiers de configuration des applications Android que l'application [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync), si elle est utilisée, pourra mettre à jour sur les terminaux Android lors de la synchronisation. Si le fichier présent sur le serveur (webapi) est plus récent que le fichier présent sur le terminal Android, celui du terminal est remplacé par celui du serveur; Ce mécanisme permet de s'assurer que la configuration des applications est toujours à jour et permmet de centraliser les modifications à opérer sur les terminaux à partir de la webapi. Il suffit donc de mettre à jour les fichiers de configuration sur la webapi pour mettre à jour tous les terminaux qui s'y connecteront par le biais de [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync). Si vous n'utilisez pas [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync) mais que vous synchronisez directement depuis les applications, cette mise à jour ne peut opérer ; elle devra être faite manuellement sur chacun des terminaux Android.
-de la même manière, si une mise à jour des applications doit être réalisée, l'application [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync) compare la version des applications installées sur le terminal avec le contenu du fichier apk/version.json. Si les applications GeoNature-mobile doivent être mise à jour sur le terminal Android, [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync) s'en occupera. Pour cela vous devez replacer les fichiers .apk dans le répertoire ``synchronomade/webapi/apk`` ainsi que le fichier version.json.
+
+De la même manière, si une mise à jour des applications doit être réalisée, l'application [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync) compare la version des applications installées sur le terminal avec le contenu du fichier apk/version.json. Si les applications GeoNature-mobile doivent être mise à jour sur le terminal Android, [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync) s'en occupera. Pour cela vous devez replacer les fichiers .apk dans le répertoire ``synchronomade/webapi/apk`` ainsi que le fichier version.json.
 
 * Modifier le fichier ``synchronomade/webapi/datas/settings.json``. Ce fichier est le fichier de configuration de l'application [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync). Il permet de déclarer l'url et le token de la webapi ainsi que les opérations de synchronisation que [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync) doit réaliser.
 Ce fichier est un exemple de configuration à adapter à votre contexte.
@@ -100,13 +101,13 @@ Les valeurs de ``MOBILE_SOFT_PATH`` et ``MOBILE_FILE_PATH`` doivent être rensei
 
 * Installer la webapi :
 
-   		cd /home/synthese/synchronomade/webapi
-        make install
+		cd /home/synthese/synchronomade/webapi
+   		make install
 
 
 Adaptation de la BDD
 --------------------
-Examiner la base de données GeoNature; Vous devez avoir un schéma ``synchronomade`` comportant 4 tables ``erreurs_xxx``. Ces tables ont vocation à recevoir les saisies des application Android tombées en erreur lors de la synchronisation.
+Examiner la base de données GeoNature; Vous devez avoir un schéma ``synchronomade`` comportant 4 tables ``erreurs_xxx``. Ces tables ont vocation à recevoir les saisies des applications Android tombées en erreur lors de la synchronisation.
 Si ce n'est pas le cas, exécuter le script sql/reject_tables.sql sur votre BDD GeoNature (``geonaturedb``) avec l'utilisateur ``geonatuser``.
 * Executer le script SQL suivant :
 
@@ -144,9 +145,8 @@ la Web API est maintenant disponible sur ``http://server/synchronomade/``. Elle 
 
 
 
-=================
 USAGE DEVELOPPEUR
-=================
+-----------------
 
 Export data:
 
