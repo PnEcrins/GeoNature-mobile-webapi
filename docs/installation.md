@@ -4,20 +4,17 @@ INSTALLATION DE L'APPLICATION
 
 Cette procédure décrit l'installation de l'application GeoNature-mobile-webapi couplée à l'utilisation de l'application web GeoNature : [https://github.com/PnEcrins/GeoNature](https://github.com/PnEcrins/GeoNature), des applications mobiles Android : [https://github.com/PnEcrins/GeoNature-mobile](https://github.com/PnEcrins/GeoNature-mobile) et de l'utilitaire de synchronisation desktop : [https://github.com/PnEcrins/GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync).
 
-Par Xavier Arbez (PnMercantour)
 
 Pré-requis
 =========
-* Pré-tuilage des fonds raster au format .mbtiles : [``tuilage_raster_mbtiles.pdf``](https://github.com/PnEcrins/GeoNature-mobile/blob/master/docs/tuilage_raster_mbtiles-2017-01.pdf)
 
-* Environnement serveur :
+Environnement serveur
+---------------------
 
 Voir le chapitre sur l'installation du serveur de l'application web GeoNature ([http://geonature.readthedocs.org/fr/latest/server.html](http://geonature.readthedocs.org/fr/latest/server.html))
 
 * Disposer d'un utilisateur linux nommé par exemple ``synthese``. Dans ce guide, le répertoire de cet utilisateur est dans ``/home/synthese``
-
 * Se loguer sur le serveur avec l'utilisateur ``synthese`` ou tout autre utilisateur linux faisant partie du groupe www-data.
-
 * Installer les paquets suivants :
 
         sudo apt-get install -y python-virtualenv libapache2-mod-wsgi python-dev build-essential
@@ -32,22 +29,54 @@ Voir le chapitre sur l'installation du serveur de l'application web GeoNature ([
 
 
 Installation
-------------
+============
 
-* Récupérer le zip de l’application sur le Github du projet (`X.Y.Z à remplacer par le numéro de version souhaitée` [https://github.com/PnEcrins/GeoNature-mobile-webapi/releases](https://github.com/PnEcrins/GeoNature-mobile-webapi/releases)), dézippez le dans le répertoire de l'utilisateur linux du serveur puis copiez le dans le répertoire de l’utilisateur linux :
+* Récupérer le zip de l’application [sur le Github du projet](https://github.com/PnEcrins/GeoNature-mobile-webapi/releases)
+    *X.Y.Z à remplacer par le numéro de version souhaitée
+* Dézipper l'archive dans le répertoire ``/home`` de l'utilisateur linux et le renommer :
 
         cd /home/synthese
         wget https://github.com/PnEcrins/GeoNature-mobile-webapi/archive/X.Y.Z.zip
         unzip X.Y.Z.zip
         mv GeoNature-mobile-webapi-X.Y.Z/ synchronomade/
+        rm X.Y.Z.zip
 
-* Copier et renommer le contenu du fichier settings_local.py.sample en ``settings_local.py``
+* Copier et renommer le contenu du fichier ``settings_local.py.sample`` en ``settings_local.py``
 
-        cd synchronomade
-        cp webapi/main/settings_local.py.sample webapi/main/settings_local.py
+        cd synchronomade/webapi
+        cp main/settings_local.py.sample main/settings_local.py
 
-* Adapter le contenu du fichier ``settings_local.py`` à votre contexte en modifiant les informations :
-[https://github.com/PnEcrins/GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync)
+* Créer les répertoires ``apk`` et ``datas`` puis récupérer les fichiers d'installation (apk) et de settintgs (json) des applications depuis le Github de GeoNature-mobile : https://github.com/PnEcrins/GeoNature-mobile
+  (`X.Y.Z à remplacer par le numéro de version souhaitée <https://github.com/PnEcrins/GeoNature-mobile/releases>)
+
+        mkdir apk
+        cd apk
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/apk/fauna-release-X.Y.Z.apk
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/apk/flora-release-X.Y.Z.apk
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/apk/invertebrate-release-X.Y.Z.apk
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/apk/mortality-release-X.Y.Z.apk
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/apk/search-release-X.Y.Z.apk
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/apk/version.json
+        cd ..
+        mkdir datas
+        cd datas
+        wget https://github.com/PnEcrins/GeoNature-mobile-sync/raw/master/docs/install/settings.json
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/internal_memory/Android/data/com.makina.ecrins/settings_fauna.json
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/internal_memory/Android/data/com.makina.ecrins/settings_flora.json
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/internal_memory/Android/data/com.makina.ecrins/settings_invertebrate.json
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/internal_memory/Android/data/com.makina.ecrins/settings_mortality.json
+        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/internal_memory/Android/data/com.makina.ecrins/settings_search.json
+        cd ..
+
+* Modifier les fichiers de configuration .json des applications Android copiés dans ``synchronomade/webapi/datas`` en adaptant les paramètres des objets ``sync``, ``qualification`` et ``map`` à votre contexte. [Voir la documentation](/docs/install/installation.rst); 
+Ces fichiers sont les fichiers de configuration des applications Android que l'application [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync), si elle est utilisée, pourra mettre à jour sur les terminaux Android lors de la synchronisation. Si le fichier présent sur le serveur (webapi) est plus récent que le fichier présent sur le terminal Android, celui du terminal est remplacé par celui du serveur; Ce mécanisme permet de s'assurer que la configuration des applications est toujours à jour et permmet de centraliser les modifications à opérer sur les terminaux à partir de la webapi. Il suffit donc de mettre à jour les fichiers de configuration sur la webapi pour mettre à jour tous les terminaux qui s'y connecteront par le biais de [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync). Si vous n'utilisez pas [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync) mais que vous synchronisez directement depuis les applications, cette mise à jour ne peut opérer ; elle devra être faite manuellement sur chacun des terminaux Android.
+de la même manière, si une mise à jour des applications doit être réalisée, l'application [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync) compare la version des applications installées sur le terminal avec le contenu du fichier apk/version.json. Si les applications GeoNature-mobile doivent être mise à jour sur le terminal Android, [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync) s'en occupera. Pour cela vous devez replacer les fichiers .apk dans le répertoire ``synchronomade/webapi/apk`` ainsi que le fichier version.json.
+
+* Modifier le fichier ``synchronomade/webapi/datas/settings.json``. Ce fichier est le fichier de configuration de l'application [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync). Il permet de déclarer l'url et le token de la webapi ainsi que les opérations de synchronisation que [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync) doit réaliser.
+Ce fichier est un exemple de configuration à adapter à votre contexte.
+Si votre contexte est multi-organismes, [voir la documentation](/home/gil/synchronomade/docs/configuration_multi_organismes.md)
+
+* Adapter le contenu du fichier ``synchronomade/webapi/main/settings_local.py`` à votre contexte en modifiant les informations :
 
         'NAME': 'db_name',
         'USER': 'db_user',    
@@ -64,50 +93,28 @@ Installation
 
 Vous devez renseigner correctement la connection à la base de données pour les 3 applications (and leave the default empty).
 
-Pour le Token : Renseigner une valeur (devra être identique à celle qui sera renseignée dans le fichier de server.conf  de l'application desktop de synchronisation : https://github.com/PnEcrins/GeoNature-mobile-sync)
+Pour le Token : Renseigner une valeur qui devra être identique dans le fichier de ``server.json`` de l'application [GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync) ainsi que dans le fichier ``synchronomade/webapi/datas/settings.json``
 
-Les valeurs de ``MOBILE_SOFT_PATH`` et ``MOBILE_FILE_PATH`` doivent être renseignés selon les chemins défini dans les étapes suivantes :
-
-* Créer les répertoires ``apk`` et ``datas`` puis récupérer les fichiers d'installation (apk) et de settintgs (json) des applications depuis le Github de GeoNature-mobile : https://github.com/PnEcrins/GeoNature-mobile
-  (`X.Y.Z à remplacer par le numéro de version souhaitée <https://github.com/PnEcrins/GeoNature-mobile/releases>)
-
-        cd synchronomade/webapi
-        mkdir apk
-        cd apk
-        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/apk/fauna-release-1.1.0.apk
-        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/apk/flora-release-1.1.0.apk
-        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/apk/invertebrate-release-1.1.0.apk
-        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/apk/mortality-release-1.1.0.apk
-        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/apk/search-release-1.1.0.apk
-        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/apk/version.json
-        cd ..
-        mkdir datas
-        cd datas
-        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/internal%20memory/settings_fauna.json
-        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/internal%20memory/settings_flora.json
-        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/internal%20memory/settings_invertebrate.json
-        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/internal%20memory/settings_mortality.json
-        wget https://github.com/PnEcrins/GeoNature-mobile/raw/master/docs/install/vX.Y.Z/internal%20memory/settings_search.json
-        cd ..
-
-* Modifier les fichiers de configuration .json copiés dans /synchronomade/webapi/datas pour chacune des applications en adaptant les paramètres des objets ``"sync"`` et ``"map"`` à votre contexte.
+Les valeurs de ``MOBILE_SOFT_PATH`` et ``MOBILE_FILE_PATH`` doivent être renseignés selon les chemins défini dans les étapes précédentes :
 
 
 * Installer la webapi :
 
-   		make install
+   		cd /home/synthese/synchronomade/webapi
+        make install
 
 
 Adaptation de la BDD
----
-Exécuter le script sql/reject_tables.sql sur votre BDD GeoNature (``geonaturedb``) avec l'utilisateur ``geonatuser``.
+--------------------
+Examiner la base de données GeoNature; Vous devez avoir un schéma ``synchronomade`` comportant 4 tables ``erreurs_xxx``. Ces tables ont vocation à recevoir les saisies des application Android tombées en erreur lors de la synchronisation.
+Si ce n'est pas le cas, exécuter le script sql/reject_tables.sql sur votre BDD GeoNature (``geonaturedb``) avec l'utilisateur ``geonatuser``.
 * Executer le script SQL suivant :
 
 		export PGPASSWORD=monpassachanger; sudo psql -h geonatdbhost -U geonatuser -d geonaturedb -f sql/reject_tables.sql
 
 
-Configuration d'Apache vhost
-------------
+Configuration Apache
+--------------------
 
 Copier l'exemple de virtual-host Apache
 
@@ -133,55 +140,13 @@ Activer-le et redémarrer Apache :
     sudo apache2ctl restart
 
 
-la Web API est maintenant disponible sur ``http://server/synchronomade/``.
-
-=================================================
-INSTALLER L'UTILITAIRE DESKTOP DE SYNCHRONISATION
-=================================================
-
-Prérequis
-=========
-* Système d'exploitation Windows uniquement en x32 ou x64.
-* Installer Java dans la version adapter à votre système (En x64 : Java soit être installé en x32 ET en x64)
+la Web API est maintenant disponible sur ``http://server/synchronomade/``. Elle est utilisable directement depuis les applications Android [GeoNature-mobile](https://github.com/PnEcrins/GeoNature-mobile) pour synchroniser les observations saisies. Pour cela, vous devez fournir l'url et le token de la webapi dans les fichiers de ces applications. [voir la partie "Mémoire interne du terminal de la documentation](https://github.com/PnEcrins/GeoNature-mobile/blob/develop/docs/install/installation.rst)
 
 
-* Installer les drivers USB des teminaux sur les ordinateurs concernés.
 
-*  Télécharger et installer l'utilitaire de synchronisation : [https://github.com/PnEcrins/GeoNature-mobile-sync](https://github.com/PnEcrins/GeoNature-mobile-sync) en suivant la documentation dédiée : [GeoNature-mobile-sync/docs/install_conf_sync.odt](GeoNature-mobile-sync/docs/install_conf_sync.odt)
-
-
-=================================================
-DEPLOYER ET CONFIGURER SUR LE(S) MOBILE(S)
-=================================================
-
-Prérequis
-=========
-* Disposer d'un terminal mobile sous Android (4.X ou 5.X).
-* Disposer de plus de 100 Mo d'espace de stockage sur la mémoire physique du terminal mobile.
-* Disposer d'une carte mémoire SD avec au moins 6go d'espace disponible.
-* Activer le mode développeur et le debogage USB :
-
-	    Paramètres -> A propos du téléphone : cliquer 6 ou 7 fois sur le numéro de build pour activer le mode développeur
-    	Paramètres -> Options pour les développeurs : Activer le debogage USB
-
-* Connecter le terminal à l'ordinateur en tant que périphérique multimédia (MTP).
-* Lancer la synchronistation à l'aide de l'utilitaire desktop installé précedemment.
-
-ATTENTION sur Android 5 : Il est nécessaire de redémarer le terminal pour que le contenu de la mémoire soit rafraîchi afin de voir le dossier ``com.makina.ecrins`` dans l'explorateur de fichier de l'ordinateur.
-
-* Une fois l'installation terminée se rendre dans la mémoire de la carte SD de l'appareil puis dans : ``Android/data`` et creer un nouveau répertoire ``com.makina.ecrins``
-* Ajouter dans ce dernier un nouveau dossier ``databases``
-* Y copier depuis l'ordinateur les 3 fichiers .mbtiles nécessaire au fonctionnement des applications (les rasters : scan, ortho et unities).
-
-ATTENTION sur Android 5 : Sur Android 4 le dossier ``com.makina.ecrins`` est installé aussi sur la mémoire interne de l'appareil. Il faut donc le créer à nouveau sur la carte SD comme expliqué ci-dessus.
-Sur Android 5, la méthode de virtualisation de la mémoire ayant changée, il est possible que le dossier soit déjà crée sur la carte SD. Dans ce cas il faut y ajouter le répertoire 'databases' et les .mbtiles directement dans ce dernier.
-
-Lancer les applications pour vérifier leur bon fonctionnement et le bon chargement des fonds rasters dans la carte.
-
-
-=====
-USAGE
-=====
+=================
+USAGE DEVELOPPEUR
+=================
 
 Export data:
 
@@ -205,23 +170,3 @@ POST parameter:
 Notes:
 unity_geojson produces a json file (geojson format) by reading the unities table in the database.
 unity_polygons produces a wkt file (geojson format) by reading the unities table in the database. Polygons are simply added to the text file (one polygon per line)
-
-
-=======
-AUTHORS
-=======
-
-    * Sylvain Beorchia
-    * Mathieu Leplatre
-
-|makinacom|_
-
-.. |makinacom| image:: http://depot.makina-corpus.org/public/logo.gif
-.. _makinacom:  http://www.makina-corpus.com
-
-
-=======
-LICENSE
-=======
-
-    * (c) Makina Corpus
