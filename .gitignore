@@ -2,4 +2,15 @@
 .classpath
 .project
 gen
-bin
+webapi/apk/*
+webapi/bin/*
+webapi/build/*
+webapi/datas/*
+webapi/dist/*
+webapi/main.egg-info/*
+webapi/include/*
+webapi/lib/*
+webapi/local/*
+webapi/share/*
+webapi/main/settings_local.py
+webapi/pip-selfcheck.json

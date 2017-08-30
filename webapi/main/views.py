@@ -12,6 +12,7 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.core.servers.basehttp import FileWrapper
 
+import logging
 from easydict import EasyDict
 from shapely.wkt import loads
 from geojson import dumps
@@ -23,8 +24,9 @@ import datetime
 import os
 import tempfile
 
-from faune.utils import sync_db, query_db, commit_transaction, check_connection
+from main.utils import sync_db, query_db, commit_transaction, check_connection
 
+logger = logging.getLogger(__name__)
 
 @csrf_exempt
 def import_data(request):
@@ -79,6 +81,8 @@ def import_data_fmi(json_data, data):
         table_statement = settings.TABLE_INV_STATEMENT
         database_id = settings.DB_INV
 
+    local_srid = settings.LOCAL_SRID
+
     d = EasyDict(json_data)
 
     bad_id = False
@@ -110,6 +114,8 @@ def import_data_fmi(json_data, data):
                 })
 
     if not bad_id:
+        qualification = get_qualification(json_data)
+
         try:
             objects = []
             new_feature = {}
@@ -126,20 +132,13 @@ def import_data_fmi(json_data, data):
 
             new_feature[json_to_db.get('initial_input')] = d.initial_input
             new_feature['supprime'] = 'False'
-            new_feature['id_organisme'] = settings.FAUNA_ID_ORGANISM
 
-            if json_data['input_type'] == 'fauna':
-                new_feature['id_protocole'] = settings.FAUNA_ID_PROTOCOL
-                new_feature['id_lot'] = settings.FAUNA_ID_LOT
-            if json_data['input_type'] == 'mortality':
-                new_feature['id_protocole'] = settings.MORTALITY_ID_PROTOCOL
-                new_feature['id_lot'] = settings.MORTALITY_ID_LOT
-            if json_data['input_type'] == 'invertebrate':
-                new_feature['id_protocole'] = settings.INV_ID_PROTOCOL
-                new_feature['id_lot'] = settings.INV_ID_LOT
+            new_feature['id_protocole'] = qualification['protocol']
+            new_feature['id_organisme'] = qualification['organism']
+            new_feature['id_lot'] = qualification['lot']
 
             # we need to transform into local srid
-            new_feature[json_to_db.get('geometry')] = "st_transform(ST_GeomFromText('POINT(%s %s)', 4326),settings.LOCAL_SRID)" % (d.geolocation.longitude, d.geolocation.latitude)
+            new_feature[json_to_db.get('geometry')] = "st_transform(ST_GeomFromText('POINT(%s %s)', 4326),%d)" % (d.geolocation.longitude, d.geolocation.latitude,local_srid)
             new_feature[json_to_db.get('accuracy')] = d.geolocation.accuracy
             objects.append(new_feature)
             cursor = sync_db(objects, table_infos, database_id)
@@ -277,6 +276,8 @@ def import_data_flora(json_data, data):
         break
 
     if not bad_id:
+        qualification = get_qualification(json_data)
+
         try:
             objects = []
             new_feature = {}
@@ -292,10 +293,10 @@ def import_data_flora(json_data, data):
                 new_feature['supprime'] = 'False'
                 new_feature[json_to_db.get('name_entered')] = taxon.name_entered
                 new_feature[json_to_db.get('id_taxon')] = taxon.id_taxon
-                new_feature['id_organisme'] = settings.FLORA_ID_ORGANISM
-                # ajout Gil
-                new_feature['id_protocole'] = settings.FLORA_ID_PROTOCOL
-                new_feature['id_lot'] = settings.FLORA_ID_LOT
+
+                new_feature['id_protocole'] = qualification['protocol']
+                new_feature['id_organisme'] = qualification['organism']
+                new_feature['id_lot'] = qualification['lot']
 
                 # we need to transform geometry into local srid
                 string_geom = get_geometry_string_from_coords(taxon.prospecting_area.feature.geometry.coordinates, taxon.prospecting_area.feature.geometry.type)
@@ -316,7 +317,8 @@ def import_data_flora(json_data, data):
                     new_feature[table_infos.get(table_zprospection).get('id_col')] = d.id
                     new_feature[json_to_db.get('id')] = area.id
                     new_feature[json_to_db.get('phenology')] = area.phenology
-                    new_feature[json_to_db.get('computed_area')] = area.computed_area
+                    # round 'computed_area' value
+                    new_feature[json_to_db.get('computed_area')] = int(round(area.computed_area))
 
                     if area.frequency.type == "estimation":
                         new_feature[json_to_db.get('frequenceap')] = area.frequency.value
@@ -390,10 +392,11 @@ def import_data_flora(json_data, data):
 
             # Commit transaction
             commit_transaction(database_id)
-            
+
             # Sync external DB
-            cmd = "%s%s" % (settings.SYNC_DB_CMD, d.id)
-            os.system(cmd)
+            if settings.SYNC_DB_CMD:
+                cmd = "%s%s" % (settings.SYNC_DB_CMD, d.id)
+                os.system(cmd)
 
             response_content.update({
                 'status_code': _("0"),
@@ -405,7 +408,8 @@ def import_data_flora(json_data, data):
 
             response_content.update({
                 'status_code': _("1"),
-                'status_message': _("Bad json or data (%d)") % id_failed
+                # 'status_message': _("Bad json or data (%d)") % id_failed
+                'status_message': _("Bad json or data (%s)") % e
             })
     else:
         archive_bad_data(data, json_data)
@@ -421,6 +425,8 @@ def get_geometry_string_from_coords(coords_list, type):
 
     coords = []
     extra_parenthesis = ""
+    local_srid = settings.LOCAL_SRID
+
     if type == "Point":
         string_geom = "st_transform(ST_GeomFromText('POINT("
     if type == "LineString":
@@ -446,7 +452,7 @@ def get_geometry_string_from_coords(coords_list, type):
 
 
     #string_geom = "%s%s)%s', 4326),27572)" % (string_geom, ",".join(coords), extra_parenthesis)
-    string_geom = "%s%s)%s', 4326),settings.LOCAL_SRID)" % (string_geom, ",".join(coords), extra_parenthesis)
+    string_geom = "%s%s)%s', 4326),%d)" % (string_geom, ",".join(coords), extra_parenthesis, local_srid)
 
     return string_geom
 
@@ -705,6 +711,42 @@ def export_unity_polygons(request):
 
     return response
 
+def get_qualification(json_data):
+    """
+    Build the corresponding qualification metadata from given JSON input or
+    build the default one from settings
+    """
+
+    qualification = {}
+    input_type = json_data['input_type']
+
+    logger.debug(_("input type: %s") % input_type)
+
+    try:
+        qualification['organism'] = json_data['qualification']['organism']
+    except KeyError as ke:
+        qualification['organism'] = getattr(settings, input_type.upper() + '_ID_ORGANISM', 0)
+        logger.debug(_("No organism ID found, use default: %s") % qualification['organism'])
+
+        pass
+
+    try:
+        qualification['protocol'] = json_data['qualification']['protocol']
+    except KeyError as ke:
+        qualification['protocol'] = getattr(settings, input_type.upper() + '_ID_PROTOCOL', 0)
+        logger.debug(_("No protocol ID found, use default: %s") % qualification['protocol'])
+
+        pass
+
+    try:
+        qualification['lot'] = json_data['qualification']['lot']
+    except KeyError as ke:
+        qualification['lot'] = getattr(settings, input_type.upper() + '_ID_LOT', 0)
+        logger.debug(_("No lot ID found, use default: %s") % qualification['lot'])
+
+        pass
+
+    return qualification
 
 def get_data(request, table_name, where_string, complement_string, table_infos, testing, database_id):
     """
@@ -751,7 +793,7 @@ def check_token(request):
 
 def get_data_object(response_content, table_name, where_string, complement_string, table_infos, testing, database_id):
     """
-    Perform a SELECT on the DB to retreive infos on associated object
+    Perform a SELECT on the DB to retrieve infos on associated object
     Param: table_name : name of the table
     """
     test_string = ""
@@ -863,15 +905,18 @@ def check_status(request):
 @csrf_exempt
 def soft_version(request):
     """
-    Return the version of the mobile soft (JSON)  by reading a json config file
+    Return the version of the mobile soft (JSON) by reading a json config file
     """
     response_content = {'apps': []}
     res, response = check_token(request)
+
     if not res:
         return response
 
     # read the version file
-    version_file = "%sversion.json" % (settings.MOBILE_SOFT_PATH)
+    version_file = os.path.join(
+        os.path.normpath(settings.MOBILE_SOFT_PATH),
+        'version.json')
 
     try:
         json_data = open(version_file)
@@ -889,13 +934,12 @@ def soft_version(request):
     except:
         response_content.update({
             'status_code': _("1"),
-            'status_message': "Version file is not available"
+            'status_message': "Version file is not available ('%s')" % (version_file)
         })
 
-    response = HttpResponse()
-    simplejson.dump(response_content, response,
-                ensure_ascii=False, separators=(',', ':'))
-    return response
+    return HttpResponse(
+        simplejson.dumps(response_content),
+        content_type="application/json")
 
 
 @csrf_exempt
@@ -928,26 +972,30 @@ def soft_download(request, apk_name):
 
 
 @csrf_exempt
-def data_download(request, mbtiles_name):
+def data_download(request, file_name, organism_name=None,):
     """
-    Return the required mbtiles file
+    Return the required file
     """
     response_content = {}
     res, response = check_token(request)
     if not res:
         return response
 
-    file_path = "%s%s" % (settings.MOBILE_MBTILES_PATH, mbtiles_name)
+    if organism_name:
+        file_path = "%s%s/%s" % (settings.MOBILE_FILE_PATH, organism_name, file_name)
+    else:
+        file_path = "%s%s" % (settings.MOBILE_FILE_PATH, file_name)
+
     try:
         wrapper = FileWrapper(file(file_path))
         response = HttpResponse(wrapper, content_type='text/plain')
         response["Last-Modified"] = http_date(os.stat(file_path).st_mtime)
         response['Content-Length'] = os.path.getsize(file_path)
-        response['Content-Disposition'] = 'attachment; filename=%s' % (mbtiles_name)
+        response['Content-Disposition'] = 'attachment; filename=%s' % (file_name)
     except:
         response_content.update({
             'status_code': _("1"),
-            'status_message': "File is not available (%s)" % (mbtiles_name)
+            'status_message': "File is not available (%s)" % (file_name)
         })
         response = HttpResponse(status=404)
         simplejson.dump(response_content, response,
