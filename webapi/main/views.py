@@ -24,9 +24,13 @@ import datetime
 import os
 import tempfile
 
-from main.utils import sync_db, query_db, commit_transaction, check_connection
+from main.utils import sync_db, query_db, commit_transaction, check_connection, get_default_nomenclatures
 
 logger = logging.getLogger(__name__)
+
+
+def machin(request):
+    return 'yolo'
 
 @csrf_exempt
 def import_data(request):
@@ -187,6 +191,253 @@ def import_data_fmi(json_data, data):
 
                 objects.append(new_feature)
                 cursor = sync_db(objects, table_infos, database_id)
+
+            # Insert into TABLE_SHEET_ROLE (multiple observers enable)
+            for observer in d.observers_id:
+                objects = []
+                new_feature = {}
+
+                if json_data['input_type'] == 'fauna' or json_data['input_type'] == 'mortality':
+                    new_feature['table_name'] = settings.TABLE_FAUNA_SHEET_ROLE
+                    new_feature['id_cf'] = d.id
+                if json_data['input_type'] == 'invertebrate':
+                    new_feature['table_name'] = settings.TABLE_INV_SHEET_ROLE
+                    new_feature['id_inv'] = d.id
+
+                new_feature['id_role'] = observer
+                objects.append(new_feature)
+                sync_db(objects, table_infos, database_id)
+
+            # Commit transaction
+            commit_transaction(database_id)
+
+            response_content.update({
+                'status_code': _("0"),
+                'status_message': "id_sheet: %s, ids_statements: %s" % (d.id, ','.join(map(str, statement_ids)))
+            })
+        except Exception, e:
+            #  Insert rejected JSON into synchro_table (text format)
+            id_failed = archive_bad_data(data, json_data)
+
+            response_content.update({
+                'status_code': _("1"),
+                'status_message': _("Bad json or data (%d)") % id_failed
+            })
+    else:
+        archive_bad_data(data, json_data)
+
+    response = HttpResponse()
+    simplejson.dump(response_content, response,
+                ensure_ascii=False, separators=(',', ':'))
+
+    return response
+
+
+@csrf_exempt
+def import_data_occtax_gn2(json_data, data):
+    """
+    Import data for GN2 occtax
+    """
+
+    response_content = {}
+
+    table_infos = settings.FAUNE_TABLE_INFOS
+    table_sheet = settings.TABLE_FAUNA_SHEET
+    table_statement = settings.TABLE_FAUNA_STATEMENT
+    database_id = settings.DB_FAUNA
+
+
+    local_srid = settings.LOCAL_SRID
+
+    d = EasyDict(json_data)
+
+    bad_id = False
+    # Check if ID are unique
+    count_string = "SELECT count(*) FROM %s WHERE %s='%s'" % (table_sheet, table_infos.get(table_sheet).get('id_col'), d.id)
+    cursor = query_db(count_string, database_id)
+    row = cursor.fetchone()
+    if row:
+        datarow = zip([column[0] for column in cursor.description], row)
+        val = datarow[0][1]
+        if val == 1:
+            bad_id = True
+            response_content.update({
+                'status_code': _("1"),
+                'status_message': _("Existing ID in database (%s) (%s)") % (table_sheet, d.id)
+            })
+    for taxon in d.taxons:
+        count_string = "SELECT count(*) FROM %s WHERE %s='%s'" % (table_statement, table_infos.get(table_statement).get('id_col'), taxon.id)
+        cursor = query_db(count_string, database_id)
+        row = cursor.fetchone()
+        if row:
+            datarow = zip([column[0] for column in cursor.description], row)
+            val = datarow[0][1]
+            if val == 1:
+                bad_id = True
+                response_content.update({
+                    'status_code': _("1"),
+                    'status_message': _("Existing ID in database (%s) (%s)") % (table_statement, taxon.id)
+                })
+
+    if not bad_id:
+        # get METADATA: ignore it for GN2
+        #qualification = get_qualification(json_data)
+
+        try:
+            objects = []
+            new_feature = {}
+            json_to_db = table_infos.get(table_sheet).get('json_to_db_columns')
+            # get default nomenclature 
+            default_nomenclatures = get_default_nomenclatures(database_id)
+            # Insert into TABLE_SHEET
+            new_feature[table_infos.get(table_sheet).get('id_col')] = d.id
+            new_feature['table_name'] = table_sheet
+            date_obs = d.dateobs.split(" ")
+            new_feature['date_min'] = date_obs[0]
+            new_feature['date_max'] = date_obs[0]
+            new_feature['id_nomenclature_obs_technique'] = default_nomenclatures.get('TECHNIQUE_OBS')
+            new_feature['id_nomenclature_grp_typ'] = default_nomenclatures.get('TYP_GRP')
+            id_nomenclature_obs_technique
+            if json_data['input_type'] == 'invertebrate':
+                new_feature[json_to_db.get('hour_min')] = date_obs[1].split(":")[0]
+                new_feature[json_to_db.get('hour_max')] = date_obs[1].split(":")[0]
+                # environnement ? = milieuu ? 
+                #new_feature[json_to_db.get('environment')] = d.environment
+
+            # TODO: Altitude ??
+            
+            new_feature[json_to_db.get('initial_input')] = d.initial_input
+            new_feature['supprime'] = 'False'
+
+            # new_feature['id_protocole'] = qualification['protocol']
+            # new_feature['id_organisme'] = qualification['organism']
+            #new_feature['id_lot'] = qualification['lot']
+            new_feature['id_dataset'] = settings.DEFAULT_ID_DATASET
+
+            # we need to transform into local srid
+            # write to the database in 4326 column -> the trigger write in geom_local
+            new_feature[json_to_db.get('geom_4326')] = "ST_GeomFromText('POINT(%s %s)', 4326))" % (d.geolocation.longitude, d.geolocation.latitude)
+            new_feature['precision'] = d.geolocation.accuracy
+            objects.append(new_feature)
+            cursor = sync_db(objects, table_infos, database_id)
+
+            # Insert into TABLE_STATEMENT
+            statement_ids = []
+            for taxon in d.taxons:
+                # TODO: c'est un id_nom ou un cd_nom qui est renvoyé ??
+                statement_ids.append(taxon.id)
+                objects = []
+                new_feature = {}
+                json_to_db = table_infos.get(table_statement).get('json_to_db_columns')
+                new_feature['table_name'] = table_statement
+                # FIXME: taxon.id ??
+                new_feature[table_infos.get(table_statement).get('id_col')] = taxon.id
+                new_feature[table_infos.get(table_sheet).get('id_col')] = d.id
+                new_feature[json_to_db.get('id')] = taxon.id_taxon
+                new_feature[json_to_db.get('name_entered')] = taxon.name_entered
+
+                new_feature['id_nomenclature_obs_meth'] = default_nomenclatures.get('METH_OBS')
+                new_feature['id_nomenclature_bio_condition'] = default_nomenclatures.get('ETA_BIO')
+                new_feature['id_nomenclature_bio_status'] = default_nomenclatures.get('STATUT_BIO')
+                new_feature['id_nomenclature_naturalness'] = default_nomenclatures.get('NATURALITE')
+                new_feature['id_nomenclature_exist_proof'] = default_nomenclatures.get('PREUVE_EXIST')
+                new_feature['id_nomenclature_observation_status'] = default_nomenclatures.get('STATUT_OBS')
+                new_feature['id_nomenclature_blurring'] = default_nomenclatures.get('DEE_FLOU')
+                new_feature['id_nomenclature_source_status'] = default_nomenclatures.get('STATUT_SOURCE')
+                new_feature['id_nomenclature_source_status'] = default_nomenclatures.get('METH_DETERMIN')
+
+                # set nomenclature from criterion
+                column, id_nomenclature = MAPPING_CRITERION_NOMENCLATURE_STATEMENT.get(taxon.observation.criterion, (None, None))
+                if column is not None:
+                    new_feature[column] = id_nomenclature
+
+                new_feature[json_to_db.get('comment')] = taxon.comment
+
+                objects.append(new_feature)
+                cursor = sync_db(objects, table_infos, database_id)
+
+
+                # Push in counting 
+                
+                if taxon.counting.adult_male > 0:
+                    count_feature = {}
+                    column, id_nomenclature = MAPPING_CRITERION_NOMENCLATURE_COUNTING.get(taxon.observation.criterion, (None, None))
+                    if column is not None:
+                        count_feature[column] = id_nomenclature
+                    # adulte
+                    count_feature['id_nomenclature_life_stage'] = 3
+                    # male
+                    count_feature['id_nomenclature_sex'] = 169
+                    # type de dénombrement = NSP
+                    count_feature['id_nomenclature_obj_count'] = 147
+                    # object denombrement = indivivu
+                    count_feature['id_nomenclature_type_count'] = 95
+                    count_feature['count_min'] = taxon.counting.adult_male
+                    count_feature['count_max'] = taxon.counting.adult_male
+                    
+                    count_feature['id_nomenclature_type_count'] = 95
+
+                if taxon.counting.adult_female > 0:
+                    count_feature = {}
+                    column, id_nomenclature = MAPPING_CRITERION_NOMENCLATURE_COUNTING.get(taxon.observation.criterion, (None, None))
+                    if column is not None:
+                        count_feature[column] = id_nomenclature
+                    # adulte
+                    count_feature['id_nomenclature_life_stage'] = 3
+                    # type de dénombrement = NSP
+                    count_feature['id_nomenclature_obj_count'] = 147
+                    # object denombrement = indivivu
+                    count_feature['id_nomenclature_type_count'] = 95
+
+                    count_feature['id_nomenclature_sex'] = 168
+                    count_feature['count_min'] = taxon.counting.adult_female
+                    count_feature['count_max'] = taxon.counting.adult_female
+
+                if taxon.counting.adult > 0:
+                    count_feature = {}
+                    column, id_nomenclature = MAPPING_CRITERION_NOMENCLATURE_COUNTING.get(taxon.observation.criterion, (None, None))
+                    if column is not None:
+                        count_feature[column] = id_nomenclature
+                    # adulte
+                    count_feature['id_nomenclature_life_stage'] = 3
+                    # type de dénombrement = NSP
+                    count_feature['id_nomenclature_obj_count'] = 147
+                    # object denombrement = indivivu
+                    count_feature['id_nomenclature_type_count'] = 95
+
+                    count_feature['count_min'] = taxon.counting.adult
+                    count_feature['count_max'] = taxon.counting.adult
+
+                if taxon.counting.not_adult > 0
+                    count_feature = {}
+                    column, id_nomenclature = MAPPING_CRITERION_NOMENCLATURE_COUNTING.get(taxon.observation.criterion, (None, None))
+                    if column is not None:
+                        count_feature[column] = id_nomenclature
+                    # stade devie = inconnu
+                    count_feature['id_nomenclature_life_stage'] = 1
+                    # type de dénombrement = NSP
+                    count_feature['id_nomenclature_obj_count'] = 147
+                    # object denombrement = indivivu
+                    count_feature['id_nomenclature_type_count'] = 95
+
+                    count_feature['count_min'] = taxon.counting.not_adult
+                    count_feature['count_max'] = taxon.counting.not_adult
+                if taxon.counting.sex_age_unspecified > 0:
+                    count_feature = {}
+                    column, id_nomenclature = MAPPING_CRITERION_NOMENCLATURE_COUNTING.get(taxon.observation.criterion, (None, None))
+                    if column is not None:
+                        count_feature[column] = id_nomenclature
+                    # stade devie = inconnu
+                    count_feature['id_nomenclature_life_stage'] = 1
+                    # type de dénombrement = NSP
+                    count_feature['id_nomenclature_obj_count'] = 147
+                    # object denombrement = indivivu
+                    count_feature['id_nomenclature_type_count'] = 95
+
+                    count_feature['count_min'] = taxon.counting.sex_age_unspecified
+                    count_feature['count_max'] = taxon.counting.sex_age_unspecified
+                
+
 
             # Insert into TABLE_SHEET_ROLE (multiple observers enable)
             for observer in d.observers_id:

@@ -118,3 +118,18 @@ def build_sync_query(datafields, table_infos, table_name=None):
     sql_string = sql_string.replace("'NULL_VALUE'", "Null")
     sql_string = sql_string.replace("NULL_VALUE", "Null")
     return sql_string
+
+
+def get_default_nomenclatures(database_id):
+    """
+    Return default nomenclature for occtax
+    """
+    query = """
+            SELECT * FROM pr_occtax.defaults_nomenclatures_value
+            """
+    # Connect to correct DB
+    cursor = connections[database_id].cursor()
+    # Execute SQL
+    cursor.execute(sqlquery)
+    res = cursor.fetchall()
+    return { r[0]: r[4] for r in res }
