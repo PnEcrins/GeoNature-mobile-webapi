@@ -2,6 +2,7 @@
 .classpath
 .project
 gen
+webapi/django/*
 webapi/apk/*
 webapi/bin/*
 webapi/build/*
@@ -14,3 +15,4 @@ webapi/local/*
 webapi/share/*
 webapi/main/settings_local.py
 webapi/pip-selfcheck.json
+*.pyc

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Django settings for webapi project.
+from settings_local import *
 import os
 
 PROJECT_ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -131,7 +132,7 @@ LOGGING = {
     "handlers": {
         "mail_admins": {
             "level": "ERROR",
-            #'filters': ['require_debug_false'],
+            # 'filters': ['require_debug_false'],
             "class": "django.utils.log.AdminEmailHandler",
         },
         "console": {"level": "DEBUG", "class": "logging.StreamHandler"},
@@ -165,22 +166,38 @@ FLORA_COUNTING_NONE = 9
 FLORA_COUTING_SAMPLING = 2
 FLORA_COUTING_EXHAUSTIVE = 1
 
-DB_FAUNA = "fauna"
+DB_OCCTAX_GN2 = "fauna"
 DB_INV = "inv"
 DB_FLORA = "flora"
 
-TABLE_FAUNA_TAXA = "contactfaune.v_nomade_taxons_faune"
-TABLE_FAUNA_UNITY = "contactfaune.v_nomade_unites_geo_cf"
-TABLE_FAUNA_UNITY_GEOJSON = "contactfaune.v_nomade_unites_geo_cf"
-TABLE_FAUNA_TAXA_UNITY = "contactfaune.cor_unite_taxon"
+# TABLE_GN2_TAXA = "contactfaune.v_nomade_taxons_faune"
+# TABLE_GN2_UNITY = "contactfaune.v_nomade_unites_geo_cf"
+# TABLE_GN2_UNITY_GEOJSON = "contactfaune.v_nomade_unites_geo_cf"
+# TABLE_GN2_TAXA_UNITY = "contactfaune.cor_unite_taxon"
+# TABLE_FAUNA_CRITERION = "contactfaune.v_nomade_criteres_cf"
+# TABLE_OCCTAX_SHEET_ROLE = "contactfaune.v_nomade_observateurs_faune"
+# TABLE_FAUNA_STATEMENT = "contactfaune.t_releves_cf"
+# TABLE_OCCTAX_SHEET = "contactfaune.t_fiches_cf"
+# TABLE_OCCTAX_SHEET_ROLE = "pr_occtax.cor_role_releves_occtax"
+# TABLE_FAILED_JSON_OCCTAX = "synchronomade.erreurs_cf"
+# TABLE_FAILED_JSON_MORTALITY = "synchronomade.erreurs_mortalite"
+# TABLE_OCCTAX_CLASSES = "taxonomie.v_nomade_classes"
+
+
+# Occtax v2
+TABLE_GN2_TAXA = "contactfaune.v_nomade_taxons_faune"
+TABLE_GN2_UNITY = "contactfaune.v_nomade_unites_geo_cf"
+TABLE_GN2_TAXA_UNITY = "contactfaune.cor_unite_taxon"
 TABLE_FAUNA_CRITERION = "contactfaune.v_nomade_criteres_cf"
-TABLE_FAUNA_USER = "contactfaune.v_nomade_observateurs_faune"
-TABLE_FAUNA_STATEMENT = "contactfaune.t_releves_cf"
-TABLE_FAUNA_SHEET = "contactfaune.t_fiches_cf"
-TABLE_FAUNA_SHEET_ROLE = "contactfaune.cor_role_fiche_cf"
-TABLE_FAILED_JSON_FAUNA = "synchronomade.erreurs_cf"
-TABLE_FAILED_JSON_MORTALITY = "synchronomade.erreurs_mortalite"
-TABLE_FAUNA_CLASSES = "taxonomie.v_nomade_classes"
+TABLE_OCCTAX_SHEET = "pr_occtax.t_releves_occtax"
+TABLE_OCCTAX_STATEMENT = "pr_occtax.t_occurrences_occtax"
+TABLE_OCCTAX_COUNTING = "pr_occtax.cor_counting_occtax"
+TABLE_OCCTAX_USER = "pr_occtax.cor_role_releves_occtax"
+TABLE_OCCTAX_SHEET_ROLE = "pr_occtax.cor_role_releves_occtax"
+TABLE_FAILED_JSON_OCCTAX = "synchronomade.erreurs_occtax"
+# TODO: c'est quoi
+TABLE_OCCTAX_CLASSES = "taxonomie.v_nomade_classes"
+TABLE_GN2_UNITY_GEOJSON = "contactfaune.v_nomade_unites_geo_cf"
 
 
 TABLE_INV_TAXA = "contactinv.v_nomade_taxons_inv"
@@ -239,27 +256,26 @@ GLOBAL_TABLE_INFOS = {
 
 
 # FAUNA -------------------------------------------------------------------
-FAUNE_TABLE_INFOS = {
+OCCTAX_TABLE_INFOS = {
     "database_id": "fauna",
-    TABLE_FAILED_JSON_FAUNA: {"id_col": "id", "select_col": "id,json_date_import"},
-    TABLE_FAILED_JSON_MORTALITY: {"id_col": "id", "select_col": "id,json_date_import"},
-    TABLE_FAUNA_SHEET_ROLE: {
-        #'id_col': 'id_role',
+    TABLE_FAILED_JSON_OCCTAX: {"id_col": "id", "select_col": "id,json_date_import"},
+    TABLE_OCCTAX_SHEET_ROLE: {
+        # 'id_col': 'id_role',
         "select_col": "id_releve_occtax, id_role",
         "json_to_db_columns": {"id_cf": "id_releve_occtax", "observer_id": "id_role"},
     },
-    TABLE_FAUNA_COUNTING : {
+    TABLE_OCCTAX_COUNTING: {
         "id_col": "id_counting_occtax",
         "select_col": "",
-        "json_to_db_columns" : {
+        "json_to_db_columns": {
             "id_occurrence_occtax": "id_occurrence_occtax",
             "id_nomenclature_life_stage": "id_nomenclature_life_stage",
             "id_nomenclature_sex": "id_nomenclature_sex",
             "id_nomenclature_obj_count": "id_nomenclature_obj_count",
             "id_nomenclature_type_count": "id_nomenclature_type_count",
         }
-    }
-    TABLE_FAUNA_STATEMENT: {
+    },
+    TABLE_OCCTAX_STATEMENT: {
         "id_col": "id_occurrence_occtax",
         "select_col": "id_occurrence_occtax, id_releve_occtax, unique_id_occurence_occtax, id_nomenclature_obs_meth, id_nomenclature_bio_condition, id_nomenclature_bio_status, id_nomenclature_naturalness, id_nomenclature_exist_proof, id_nomenclature_diffusion_level, id_nomenclature_observation_status, id_nomenclature_blurring, id_nomenclature_source_status, determiner, id_nomenclature_determination_method, cd_nom, nom_cite, meta_v_taxref, sample_number_proof, digital_proof, non_digital_proof, comment",
         "json_to_db_columns": {
@@ -280,8 +296,8 @@ FAUNE_TABLE_INFOS = {
             # "sample": "prelevement",
         },
     },
-    TABLE_FAUNA_SHEET: {
-        "id_col": "t_releves_occtax",
+    TABLE_OCCTAX_SHEET: {
+        "id_col": "id_releve_occtax",
         "select_col": "id_releve_occtax, unique_id_sinp_grp, id_dataset, id_digitiser, observers_txt, id_nomenclature_obs_technique, id_nomenclature_grp_typ, date_min, date_max, hour_min, hour_max, altitude_min, altitude_max, meta_device_entry, comment, geom_4326, precision",
         "json_to_db_columns": {
             "id_dataset": "id_dataset",
@@ -299,7 +315,7 @@ FAUNE_TABLE_INFOS = {
             "precision": "precision",
         },
     },
-    TABLE_FAUNA_TAXA: {
+    TABLE_GN2_TAXA: {
         "id_col": "id_nom",
         "json_name": "taxa",
         "sqlite_name": "taxa",
@@ -315,23 +331,23 @@ FAUNE_TABLE_INFOS = {
             "message": "message",
             "contactfaune": "cf",
         },
-        #'where_string' : 'contactfaune = TRUE'
+        # 'where_string' : 'contactfaune = TRUE'
     },
     # TABLE_FAUNA_FAMILY: {
-    #'id_col': 'id_famille',
-    #'json_name': 'family',
-    #'sqlite_name': 'family',
-    #'select_col': 'id_famille, nom_famille',
-    #'db_to_json_columns' : {
-    #'id_famille' : 'id',
-    #'nom_famille' : 'name'
+    # 'id_col': 'id_famille',
+    # 'json_name': 'family',
+    # 'sqlite_name': 'family',
+    # 'select_col': 'id_famille, nom_famille',
+    # 'db_to_json_columns' : {
+    # 'id_famille' : 'id',
+    # 'nom_famille' : 'name'
     # }
     # },
-    TABLE_FAUNA_UNITY: {
+    TABLE_GN2_UNITY: {
         "id_col": "id_unite_geo",
         "json_name": "unity",
         "sqlite_name": "unities",
-        #'select_col': 'id_unite_geo, code_insee, commune',
+        # 'select_col': 'id_unite_geo, code_insee, commune',
         "select_col": "id_unite_geo",
         "db_to_json_columns": {
             "id_unite_geo": "_id",
@@ -339,7 +355,7 @@ FAUNE_TABLE_INFOS = {
             "commune": "city",
         },
     },
-    TABLE_FAUNA_TAXA_UNITY: {
+    TABLE_GN2_TAXA_UNITY: {
         "id_col": "id_unite_geo",
         "json_name": "taxa_unity",
         "sqlite_name": "taxa_unities",
@@ -364,7 +380,7 @@ FAUNE_TABLE_INFOS = {
             "id_classe": "class_id",
         },
     },
-    TABLE_FAUNA_USER: {
+    TABLE_OCCTAX_SHEET_ROLE: {
         "id_col": "id_role",
         "json_name": "user",
         "sqlite_name": "observers",
@@ -376,7 +392,7 @@ FAUNE_TABLE_INFOS = {
             "prenom_role": "firstname",
         },
     },
-    TABLE_FAUNA_CLASSES: {
+    TABLE_OCCTAX_CLASSES: {
         "id_col": "id_classe",
         "json_name": "classes",
         "sqlite_name": "classes",
@@ -446,23 +462,23 @@ INV_TABLE_INFOS = {
             "patrimonial": "patrimonial",
             "message": "message",
         },
-        #'where_string' : 'contactfaune = TRUE'
+        # 'where_string' : 'contactfaune = TRUE'
     },
     # TABLE_INV_FAMILY: {
-    #'id_col': 'id_famille',
-    #'json_name': 'family',
-    #'sqlite_name': 'family',
-    #'select_col': 'id_famille, nom_famille',
-    #'db_to_json_columns' : {
-    #'id_famille' : 'id',
-    #'nom_famille' : 'name'
+    # 'id_col': 'id_famille',
+    # 'json_name': 'family',
+    # 'sqlite_name': 'family',
+    # 'select_col': 'id_famille, nom_famille',
+    # 'db_to_json_columns' : {
+    # 'id_famille' : 'id',
+    # 'nom_famille' : 'name'
     # }
     # },
     TABLE_INV_UNITY: {
         "id_col": "id_unite_geo",
         "json_name": "unity",
         "sqlite_name": "unities",
-        #'select_col': 'id_unite_geo, code_insee, commune',
+        # 'select_col': 'id_unite_geo, code_insee, commune',
         "select_col": "id_unite_geo",
         "db_to_json_columns": {
             "id_unite_geo": "_id",
@@ -610,16 +626,16 @@ FLORA_TABLE_INFOS = {
             "nom_latin": "name",
             "nom_francais": "name_fr",
         },
-        #'where_string' : 'contactfaune = TRUE'
+        # 'where_string' : 'contactfaune = TRUE'
     },
     # TABLE_FLORA_FAMILY: {
-    #'id_col': 'id_famille',
-    #'json_name': 'family',
-    #'sqlite_name': 'family',
-    #'select_col': 'id_famille, nom_famille',
-    #'db_to_json_columns' : {
-    #'id_famille' : 'id',
-    #'nom_famille' : 'name'
+    # 'id_col': 'id_famille',
+    # 'json_name': 'family',
+    # 'sqlite_name': 'family',
+    # 'select_col': 'id_famille, nom_famille',
+    # 'db_to_json_columns' : {
+    # 'id_famille' : 'id',
+    # 'nom_famille' : 'name'
     # }
     # },
     TABLE_FLORA_USER: {
@@ -714,8 +730,8 @@ FLORA_TABLE_INFOS = {
     },
 }
 
-FAUNE_TABLE_INFOS_GEOJSON = {
-    TABLE_FAUNA_UNITY_GEOJSON: {
+OCCTAX_TABLE_INFOS_GEOJSON = {
+    TABLE_GN2_UNITY_GEOJSON: {
         "id_col": "id_unite_geo",
         "json_name": "unity_geojson",
         "select_col": "id_unite_geo, ST_AsText(ST_SnapToGrid(st_transform(the_geom,4326),0.00001)) as geom",
@@ -749,7 +765,7 @@ MAPPING_CRITERION_NOMENCLATURE_COUNTING = {
     "22": ("id_nomenclature_sex", 168),
     "23": ("id_nomenclature_sex", 168),
     "29": ("id_nomenclature_life_stage", 4),
-} 
+}
 MAPPING_CRITERION_NOMENCLATURE_STATEMENT = {
     "2": ('id_nomenclature_bio_condition', 159),
     "3": ('id_nomenclature_obs_meth', 61),
@@ -759,18 +775,18 @@ MAPPING_CRITERION_NOMENCLATURE_STATEMENT = {
     "20": ('id_nomenclature_obs_meth', 49),
     "26": ('id_nomenclature_bio_status', 32),
     "38": ('id_nomenclature_bio_status', 34),
-} 
+}
 
 # FLORA_TABLE_INFOS_GEOJSON =  {
 # TABLE_FLORA_UNITY_GEOJSON: {
-#'id_col': 'id_unite_geo',
-#'json_name': 'unity_geojson',
-#'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(st_transform(the_geom,4326),0.00001)) as geom',
-#'db_to_json_columns' : {
-#'id_unite_geo' : 'id',
-#'code_insee' : 'insee',
-#'commune' : 'city',
-#'geom': 'geometry'
+# 'id_col': 'id_unite_geo',
+# 'json_name': 'unity_geojson',
+# 'select_col': 'id_unite_geo, ST_AsText(ST_SnapToGrid(st_transform(the_geom,4326),0.00001)) as geom',
+# 'db_to_json_columns' : {
+# 'id_unite_geo' : 'id',
+# 'code_insee' : 'insee',
+# 'commune' : 'city',
+# 'geom': 'geometry'
 # }
 # }
 # }
@@ -795,5 +811,3 @@ MOBILE_SQLITE_CREATE_QUERY = (
 
 
 MOBILE_SQLITE_EXTRA_SQL = ('INSERT INTO android_metadata VALUES ("en_US")',)
-
-from settings_local import *

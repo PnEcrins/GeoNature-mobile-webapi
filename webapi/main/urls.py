@@ -15,7 +15,6 @@ from main.views import (
     soft_version,
     soft_download,
     data_download,
-    machin,
 )
 
 urlpatterns = patterns(
@@ -38,6 +37,4 @@ urlpatterns = patterns(
     (r"^export/classes/$", export_classes),
     (r"^export/unity_geojson/$", export_unity_geojson),
     (r"^export/unity_polygons/$", export_unity_polygons),
-    (r"^$", machin),
 )
-

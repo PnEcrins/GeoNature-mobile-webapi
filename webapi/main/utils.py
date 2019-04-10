@@ -2,7 +2,7 @@ import logging
 from operator import itemgetter
 import uuid
 
-from django.db import connections, transaction, IntegrityError
+from django.db import connections, transaction, IntegrityError, DatabaseError
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
@@ -34,7 +34,8 @@ def check_connection(database_id):
         return True
     except:
         return False
-    
+
+
 def query_db(sqlquery, database_id):
     """
     Executes a single query on the GeoNature database defined in project settings.
@@ -64,7 +65,7 @@ def sync_db(objects, table_infos, database_id):
             q = build_sync_query(feature, table_infos)
             cursor = query_db(q, database_id)
         return cursor
-    except IntegrityError, e:
+    except (IntegrityError, DatabaseError), e:
         logger.error(e)
         logger.info(_("ROLLBACK"))
         transaction.savepoint_rollback(sid)
@@ -111,25 +112,12 @@ def build_sync_query(datafields, table_infos, table_name=None):
         id_col_string = " RETURNING %s" % id_col
 
     sql_string = u"INSERT INTO %s (%s) VALUES (%s) %s" % (table_name,
-                                                ', '.join(map(itemgetter(0), updates)),
-                                                ', '.join(map(itemgetter(1), updates)),
-                                                id_col_string)
+                                                          ', '.join(
+                                                              map(itemgetter(0), updates)),
+                                                          ', '.join(
+                                                              map(itemgetter(1), updates)),
+                                                          id_col_string)
     # Manage null values
     sql_string = sql_string.replace("'NULL_VALUE'", "Null")
     sql_string = sql_string.replace("NULL_VALUE", "Null")
     return sql_string
-
-
-def get_default_nomenclatures(database_id):
-    """
-    Return default nomenclature for occtax
-    """
-    query = """
-            SELECT * FROM pr_occtax.defaults_nomenclatures_value
-            """
-    # Connect to correct DB
-    cursor = connections[database_id].cursor()
-    # Execute SQL
-    cursor.execute(sqlquery)
-    res = cursor.fetchall()
-    return { r[0]: r[4] for r in res }
