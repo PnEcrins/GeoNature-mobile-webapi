@@ -43,10 +43,10 @@ def import_data(request):
 
     if params:
         # HACK: data from client not well formated
-        #data = params['data']
-        data = {}
-        for key, value in params.items():
-            data = json.loads(key)
+        data = params['data']
+        # data = {}
+        # for key, value in params.items():
+        #     data = json.loads(key)
     else:
         response_content.update({
             'status': _("No POST param given")
@@ -721,7 +721,6 @@ def import_data_flora(json_data, data):
                 'status_message': _("Bad json or data (%s)") % e
             })
     else:
-        print('PASSE LAAAAA')
         archive_bad_data(data, json_data)
 
     response = HttpResponse()
@@ -819,7 +818,7 @@ def export_sqlite(request):
             #with con:
             cur = con.cursor()
 
-            tables_infos = {'fauna': settings.OCCTAX_TABLE_INFOS, 'invertebrate': settings.INV_TABLE_INFOS, 'flora': settings.FLORA_TABLE_INFOS}
+            tables_infos = {'fauna': settings.OCCTAX_TABLE_INFOS, 'invertebrate': settings.OCCTAX_TABLE_INFOS, 'flora': settings.FLORA_TABLE_INFOS}
 
             for create_string in settings.MOBILE_SQLITE_CREATE_QUERY:
                 cur.execute(create_string)
@@ -832,7 +831,11 @@ def export_sqlite(request):
             table_infos = settings.GLOBAL_TABLE_INFOS
             tabTab = []
             tabTab.append({'table_name': settings.TABLE_USERS})
+            print('TABTABLEEEEEEEEEEE')
+            print(tabTab)
             for current_tab in tabTab:
+                print('BOUCLEEEEEEEEEEEEE')
+                # ->pg_table_name = utilisateurs.v_nomade_observateurs_all
                 pg_table_name = current_tab['table_name']
                 li_table_name = table_infos.get(pg_table_name).get('sqlite_name')
                 where_string = table_infos.get(pg_table_name).get('where_string')
@@ -846,7 +849,6 @@ def export_sqlite(request):
                     complement_string = "GROUP BY %s" % (complement_string)
                 else:
                     complement_string = ""
-
                 response_content = get_data(request, pg_table_name, where_string, complement_string, table_infos, False, database_id)
                 for obj in response_content[table_infos.get(pg_table_name).get('json_name')]:
                     colTab = []
@@ -880,6 +882,7 @@ def export_sqlite(request):
 
             # Fill data (fauna, invertebrate...)
             for mode in tables_infos:
+                print('ICITTTTTTR')
                 table_infos = tables_infos[mode]
                 tabTab = []
                 if mode == "fauna":
@@ -1077,7 +1080,7 @@ def check_token(request):
     Check the validity of the token
     """
 
-    # hack TODO: remove temporary check token
+    # HACK TODO: remove temporary check token
     if request.method == 'POST':
         # if request.POST['token']:
         #     if request.POST['token'] == settings.TOKEN:

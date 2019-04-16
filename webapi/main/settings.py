@@ -331,7 +331,7 @@ OCCTAX_TABLE_INFOS = {
             "message": "message",
             "contactfaune": "cf",
         },
-        # 'where_string' : 'contactfaune = TRUE'
+        'where_string' : 'contactfaune = TRUE'
     },
     # TABLE_FAUNA_FAMILY: {
     # 'id_col': 'id_famille',
