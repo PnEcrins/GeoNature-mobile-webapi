@@ -828,10 +828,7 @@ def export_sqlite(request):
             table_infos = settings.GLOBAL_TABLE_INFOS
             tabTab = []
             tabTab.append({'table_name': settings.TABLE_USERS})
-            print('TABTABLEEEEEEEEEEE')
-            print(tabTab)
             for current_tab in tabTab:
-                print('BOUCLEEEEEEEEEEEEE')
                 # ->pg_table_name = utilisateurs.v_nomade_observateurs_all
                 pg_table_name = current_tab['table_name']
                 li_table_name = table_infos.get(pg_table_name).get('sqlite_name')
@@ -879,7 +876,6 @@ def export_sqlite(request):
 
             # Fill data (fauna, invertebrate...)
             for mode in tables_infos:
-                print('ICITTTTTTR')
                 table_infos = tables_infos[mode]
                 tabTab = []
                 if mode == "fauna":
