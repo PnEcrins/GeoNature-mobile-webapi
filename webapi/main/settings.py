@@ -187,7 +187,7 @@ DB_FLORA = "flora"
 # Occtax v2
 TABLE_GN2_TAXA = "contactfaune.v_nomade_taxons_faune"
 TABLE_GN2_UNITY = "contactfaune.v_nomade_unites_geo_cf"
-TABLE_GN2_TAXA_UNITY = "contactfaune.cor_unite_taxon"
+TABLE_GN2_TAXA_UNITY = "gn_synthese.cor_area_taxon"
 TABLE_FAUNA_CRITERION = "contactfaune.v_nomade_criteres_cf"
 TABLE_OCCTAX_SHEET = "pr_occtax.t_releves_occtax"
 TABLE_OCCTAX_STATEMENT = "pr_occtax.t_occurrences_occtax"
