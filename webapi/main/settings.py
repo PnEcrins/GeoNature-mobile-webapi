@@ -344,11 +344,11 @@ OCCTAX_TABLE_INFOS = {
     # }
     # },
     TABLE_GN2_UNITY: {
-        "id_col": "id_unite_geo",
+        "id_col": "id_area",
         "json_name": "unity",
         "sqlite_name": "unities",
         # 'select_col': 'id_unite_geo, code_insee, commune',
-        "select_col": "id_unite_geo",
+        "select_col": "id_area",
         "db_to_json_columns": {
             "id_unite_geo": "_id",
             "code_insee": "insee",
@@ -356,15 +356,15 @@ OCCTAX_TABLE_INFOS = {
         },
     },
     TABLE_GN2_TAXA_UNITY: {
-        "id_col": "id_unite_geo",
+        "id_col": "id_area",
         "json_name": "taxa_unity",
         "sqlite_name": "taxa_unities",
-        "select_col": "id_unite_geo, id_nom, to_char(derniere_date,'YYYY/MM/dd') as derniere_date, couleur, nb_obs",
+        "select_col": "id_area, cd_nom, to_char(derniere_date,'YYYY/MM/dd') as last_date, color, nb_obs",
         "db_to_json_columns": {
-            "id_unite_geo": "unity_id",
-            "id_nom": "taxon_id",
-            "derniere_date": "date",
-            "couleur": "color",
+            "id_unite_geo": "area_id",
+            "cd_nom": "taxon_id",
+            "laste_date": "date",
+            "color": "color",
             "nb_obs": "nb_obs",
         },
     },
