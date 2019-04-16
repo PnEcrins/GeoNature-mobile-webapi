@@ -44,9 +44,6 @@ def import_data(request):
     if params:
         # HACK: data from client not well formated
         data = params['data']
-        # data = {}
-        # for key, value in params.items():
-        #     data = json.loads(key)
     else:
         response_content.update({
             'status': _("No POST param given")
@@ -59,7 +56,7 @@ def import_data(request):
     res, response = check_token(request)
     if not res:
         return response
-    # HACK TODO: json already loads
+    #json_data = simplejson.loads(data)
     json_data = simplejson.loads(data)
     #json_data = data['data']
 
