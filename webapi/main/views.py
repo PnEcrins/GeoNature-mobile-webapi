@@ -875,8 +875,6 @@ def export_sqlite(request):
                     cur.execute(insert_string)
 
             # Fill data (fauna, invertebrate...)
-            print('FIRST')
-            print(tables_infos)
             for mode in tables_infos:
                 table_infos = tables_infos[mode]
                 tabTab = []
