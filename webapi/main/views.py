@@ -890,14 +890,14 @@ def export_sqlite(request):
                     tabTab.append({'table_name': settings.TABLE_INV_TAXA, 'filter': True})
                     tabTab.append({'table_name': settings.TABLE_INV_CRITERION, 'filter': False})
                     tabTab.append({'table_name': settings.TABLE_INV_ENVIRONEMENTS, 'filter': False})
-                # if mode == "flora":
-                #     tabTab.append({'table_name': settings.TABLE_FLORA_TAXA, 'filter': True})
-                #     tabTab.append({'table_name': settings.TABLE_FLORA_INCLINES, 'filter': False})
-                #     tabTab.append({'table_name': settings.TABLE_FLORA_DISTURBANCES, 'filter': False})
-                #     tabTab.append({'table_name': settings.TABLE_FLORA_PHENOLOGY, 'filter': False})
-                #     tabTab.append({'table_name': settings.TABLE_FLORA_PHYSIOGNOMY, 'filter': False})
-                #     tabTab.append({'table_name': settings.TABLE_FLORA_VISU_FP, 'filter': False})
-                #     tabTab.append({'table_name': settings.TABLE_FLORA_SEARCH, 'filter': False})
+                if mode == "flora":
+                    tabTab.append({'table_name': settings.TABLE_FLORA_TAXA, 'filter': True})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_INCLINES, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_DISTURBANCES, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_PHENOLOGY, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_PHYSIOGNOMY, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_VISU_FP, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_FLORA_SEARCH, 'filter': False})
                 for current_tab in tabTab:
                     pg_table_name = current_tab['table_name']
                     apply_filter = current_tab['filter']
