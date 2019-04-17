@@ -192,7 +192,7 @@ TABLE_FAUNA_CRITERION = "v1_compat.v_nomade_criteres_cf"
 TABLE_OCCTAX_SHEET = "pr_occtax.t_releves_occtax"
 TABLE_OCCTAX_STATEMENT = "pr_occtax.t_occurrences_occtax"
 TABLE_OCCTAX_COUNTING = "pr_occtax.cor_counting_occtax"
-TABLE_OCCTAX_USER = "pr_occtax.cor_role_releves_occtax"
+TABLE_OCCTAX_USER = "v1_compat.v_nomade_observateurs_faune"
 TABLE_OCCTAX_SHEET_ROLE = "pr_occtax.cor_role_releves_occtax"
 TABLE_FAILED_JSON_OCCTAX = "gn_synchronomade.erreurs_occtax"
 # TODO: c'est quoi
@@ -203,13 +203,13 @@ TABLE_GN2_UNITY_GEOJSON = "contactfaune.v_nomade_unites_geo_cf"
 TABLE_INV_TAXA = "v1_compat.v_nomade_taxons_inv"
 TABLE_INV_UNITY = "v1_compat.v_nomade_unites_geo_inv"
 TABLE_INV_UNITY_GEOJSON = "v1_compat.v_nomade_unites_geo_inv"
-TABLE_INV_TAXA_UNITY = "gn_synthese.cor_area_taxon"
+TABLE_INV_TAXA_UNITY = "gn_synchronomade.v_nomade_cor_area_taxon"
 TABLE_INV_CRITERION = "v1_compat.v_nomade_criteres_inv"
 TABLE_INV_USER = "contactinv.v_nomade_observateurs_inv"
-TABLE_INV_STATEMENT = "contactinv.t_releves_inv"
-TABLE_INV_SHEET = "contactinv.t_fiches_inv"
-TABLE_INV_SHEET_ROLE = "contactinv.cor_role_fiche_inv"
-TABLE_INV_ENVIRONEMENTS = "contactinv.v_nomade_milieux_inv"
+TABLE_INV_STATEMENT = "pr_occtax.t_occurrences_occtax"
+TABLE_INV_SHEET = "pr_occtax.t_releves_occtax"
+TABLE_INV_SHEET_ROLE = "pr_occtax.cor_role_releves_occtax"
+TABLE_INV_ENVIRONEMENTS = "v1_compat.v_nomade_milieux_inv"
 TABLE_FAILED_JSON_INV = "gn_synchronomade.erreurs_inv"
 TABLE_INV_CLASSES = "taxonomie.v_nomade_classes"
 
@@ -347,7 +347,7 @@ OCCTAX_TABLE_INFOS = {
         "id_col": "id_area",
         "json_name": "unity",
         "sqlite_name": "unities",
-        # 'select_col': 'id_unite_geo, code_insee, commune',
+        'select_col': 'id_unite_geo, code_insee, commune',
         "select_col": "id_area",
         "db_to_json_columns": {
             "id_unite_geo": "_id",
@@ -411,41 +411,46 @@ INV_TABLE_INFOS = {
     "database_id": "inv",
     TABLE_FAILED_JSON_INV: {"id_col": "id", "select_col": "id,json_date_import"},
     TABLE_INV_SHEET_ROLE: {
-        "select_col": "id_inv,id_role",
-        "json_to_db_columns": {"id_inv": "id_inv", "observer_id": "id_role"},
+        "select_col": "id_releve_occtax,id_role",
+        "json_to_db_columns": {"id_inv": "id_releve_occtax", "observer_id": "id_role"},
     },
     TABLE_INV_STATEMENT: {
-        "id_col": "id_releve_inv",
-        "select_col": "id_releve_inv, id_inv, id_nom, id_critere_inv, am, af, ai, na, nom_taxon_saisi, commentaire, supprime, prelevement",
+        "id_col": "id_occurrence_occtax",
+        "select_col": "id_occurrence_occtax, id_releve_occtax, unique_id_occurence_occtax, id_nomenclature_obs_meth, id_nomenclature_bio_condition, id_nomenclature_bio_status, id_nomenclature_naturalness, id_nomenclature_exist_proof, id_nomenclature_diffusion_level, id_nomenclature_observation_status, id_nomenclature_blurring, id_nomenclature_source_status, determiner, id_nomenclature_determination_method, cd_nom, nom_cite, meta_v_taxref, sample_number_proof, digital_proof, non_digital_proof, comment",
         "json_to_db_columns": {
-            "id_inv": "id_inv",
-            "id": "id_nom",
-            "criterion": "id_critere_inv",
-            "adult_male": "am",
-            "adult_female": "af",
-            "adult": "ai",
-            "not_adult": "na",
-            "sex_age_unspecified": "sai",
-            "young": "jeune",
-            "yearling": "yearling",
-            "name_entered": "nom_taxon_saisi",
-            "comment": "commentaire",
-            "supprime": "supprime",
-            "sample": "prelevement",
+            "id_inv": "id_occurrence_occtax",
+            # "id": "id_nom",
+            # "criterion": "id_critere_inv",
+            # "adult_male": "am",
+            # "adult_female": "af",
+            # "adult": "ai",
+            # "not_adult": "na",
+            # "sex_age_unspecified": "sai",
+            # "young": "jeune",
+            # "yearling": "yearling",
+            # "name_entered": "nom_taxon_saisi",
+            # "comment": "commentaire",
+            # "supprime": "supprime",
+            # "sample": "prelevement",
         },
     },
     TABLE_INV_SHEET: {
-        "id_col": "id_inv",
-        "select_col": "id_inv, dateobs, heure, altitude_saisie, supprime, pdop, the_geom_local, saisie_initiale, id_organisme, id_protocole, id_lot, id_milieu_inv",
+        "id_col": "id_releve_occtax",
+        "select_col": "id_releve_occtax, unique_id_sinp_grp, id_dataset, id_digitiser, observers_txt, id_nomenclature_obs_technique, id_nomenclature_grp_typ, date_min, date_max, hour_min, hour_max, altitude_min, altitude_max, meta_device_entry, comment, geom_4326, precision",
         "json_to_db_columns": {
-            "dateobs": "dateobs",
-            "altitude": "altitude_saisie",
-            "supprime": "supprime",
-            "accuracy": "pdop",
-            "geometry": "the_geom_local",
-            "initial_input": "saisie_initiale",
-            "environment": "id_milieu_inv",
-            "heure": "heure",
+            "id_dataset": "id_dataset",
+            "id_digitiser": "id_digitiser",
+            "id_nomenclature_obs_technique": "id_nomenclature_obs_technique",
+            "id_nomenclature_grp_typ": "id_nomenclature_grp_typ",
+            "date_min": "date_min",
+            "date_max": "date_max",
+            "hour_min": "hour_min",
+            "hour_max": "hour_max",
+            "altitude_min": "altitude_min",
+            "meta_device_entry": "meta_device_entry",
+            "comment": "comment",
+            "geom_4326": "geom_4326",
+            "precision": "precision",
         },
     },
     TABLE_INV_TAXA: {
@@ -478,7 +483,7 @@ INV_TABLE_INFOS = {
         "id_col": "id_unite_geo",
         "json_name": "unity",
         "sqlite_name": "unities",
-        # 'select_col': 'id_unite_geo, code_insee, commune',
+        'select_col': 'id_unite_geo, code_insee, commune',
         "select_col": "id_unite_geo",
         "db_to_json_columns": {
             "id_unite_geo": "_id",
@@ -490,7 +495,7 @@ INV_TABLE_INFOS = {
         "id_col": "id_area",
         "json_name": "taxa_unity",
         "sqlite_name": "taxa_unities",
-        "select_col": "id_area, id_nom, to_char(last_obs,'YYYY/MM/dd') as last_obs, color, nb_obs",
+        "select_col": "id_area, id_nom, to_char(last_date,'YYYY/MM/dd') as last_date, color, nb_obs",
         "db_to_json_columns": {
             "id_area": "unity_id",
             "id_nom": "taxon_id",
@@ -541,6 +546,7 @@ INV_TABLE_INFOS = {
         "db_to_json_columns": {"id_milieu_inv": "_id", "nom_milieu_inv": "name"},
     },
 }
+
 
 # FLORA -------------------------------------------------------------------
 FLORA_TABLE_INFOS = {

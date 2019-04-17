@@ -815,7 +815,7 @@ def export_sqlite(request):
             #with con:
             cur = con.cursor()
 
-            tables_infos = {'fauna': settings.OCCTAX_TABLE_INFOS, 'invertebrate': settings.OCCTAX_TABLE_INFOS, 'flora': settings.FLORA_TABLE_INFOS}
+            tables_infos = {'fauna': settings.OCCTAX_TABLE_INFOS, 'invertebrate': settings.INV_TABLE_INFOS, 'flora': settings.FLORA_TABLE_INFOS}
 
             for create_string in settings.MOBILE_SQLITE_CREATE_QUERY:
                 cur.execute(create_string)
@@ -875,6 +875,8 @@ def export_sqlite(request):
                     cur.execute(insert_string)
 
             # Fill data (fauna, invertebrate...)
+            print('FIRST')
+            print(tables_infos)
             for mode in tables_infos:
                 table_infos = tables_infos[mode]
                 tabTab = []
@@ -883,11 +885,11 @@ def export_sqlite(request):
                     tabTab.append({'table_name': settings.TABLE_GN2_TAXA_UNITY, 'filter': False})
                     tabTab.append({'table_name': settings.TABLE_GN2_TAXA, 'filter': True})
                     tabTab.append({'table_name': settings.TABLE_FAUNA_CRITERION, 'filter': False})
-                # if mode == "invertebrate":
-                #     tabTab.append({'table_name': settings.TABLE_INV_TAXA_UNITY, 'filter': False})
-                #     tabTab.append({'table_name': settings.TABLE_INV_TAXA, 'filter': True})
-                #     tabTab.append({'table_name': settings.TABLE_INV_CRITERION, 'filter': False})
-                #     tabTab.append({'table_name': settings.TABLE_INV_ENVIRONEMENTS, 'filter': False})
+                if mode == "invertebrate":
+                    tabTab.append({'table_name': settings.TABLE_INV_TAXA_UNITY, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_INV_TAXA, 'filter': True})
+                    tabTab.append({'table_name': settings.TABLE_INV_CRITERION, 'filter': False})
+                    tabTab.append({'table_name': settings.TABLE_INV_ENVIRONEMENTS, 'filter': False})
                 # if mode == "flora":
                 #     tabTab.append({'table_name': settings.TABLE_FLORA_TAXA, 'filter': True})
                 #     tabTab.append({'table_name': settings.TABLE_FLORA_INCLINES, 'filter': False})
@@ -899,10 +901,6 @@ def export_sqlite(request):
                 for current_tab in tabTab:
                     pg_table_name = current_tab['table_name']
                     apply_filter = current_tab['filter']
-                    # print('LAAAAAAAAAAAAA')
-                    # print(table_infos)
-                    # print('ET LA ?')
-                    # print(pg_table_name)
                     li_table_name = table_infos.get(pg_table_name).get('sqlite_name')
                     where_string = table_infos.get(pg_table_name).get('where_string')
                     database_id = table_infos.get('database_id') 
