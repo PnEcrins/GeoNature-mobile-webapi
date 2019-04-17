@@ -228,11 +228,11 @@ TABLE_FLORA_DISTURBANCES = "florepatri.v_mobile_perturbations"
 TABLE_FLORA_PHENOLOGY = "florepatri.v_mobile_phenologies"
 TABLE_FLORA_PHYSIOGNOMY = "florepatri.v_mobile_physionomies"
 TABLE_FLORA_VISU_FP = "florepatri.v_mobile_visu_zp"
-TABLE_FLORA_SEARCH = "public.v_mobile_recherche"
+TABLE_FLORA_SEARCH = "gn_synchronomade.v_mobile_recherche"
 
 TABLE_USERS = "utilisateurs.v_nomade_observateurs_all"
 
-
+# TODO: dataset différent pour mortalité/invertebré/faune
 DEFAULT_ID_DATASET = 1
 
 # GLOBAL -------------------------------------------------------------------
