@@ -185,9 +185,9 @@ DB_FLORA = "flora"
 
 
 # Occtax v2
-TABLE_GN2_TAXA = "contactfaune.v_nomade_taxons_faune"
+TABLE_GN2_TAXA = "v1_compat.v_nomade_taxons_faune"
 TABLE_GN2_UNITY = "contactfaune.v_nomade_unites_geo_cf"
-TABLE_GN2_TAXA_UNITY = "gn_synthese.cor_area_taxon"
+TABLE_GN2_TAXA_UNITY = "synchronomade.v_nomade_cor_area_taxon"
 TABLE_FAUNA_CRITERION = "v1_compat.v_nomade_criteres_cf"
 TABLE_OCCTAX_SHEET = "pr_occtax.t_releves_occtax"
 TABLE_OCCTAX_STATEMENT = "pr_occtax.t_occurrences_occtax"
@@ -331,7 +331,7 @@ OCCTAX_TABLE_INFOS = {
             "message": "message",
             "contactfaune": "cf",
         },
-        'where_string' : 'contactfaune = TRUE'
+        # 'where_string': 'contactfaune = TRUE'
     },
     # TABLE_FAUNA_FAMILY: {
     # 'id_col': 'id_famille',
@@ -359,11 +359,11 @@ OCCTAX_TABLE_INFOS = {
         "id_col": "id_area",
         "json_name": "taxa_unity",
         "sqlite_name": "taxa_unities",
-        "select_col": "id_area, cd_nom, to_char(derniere_date,'YYYY/MM/dd') as last_date, color, nb_obs",
+        "select_col": "id_area, id_nom, to_char(last_date,'YYYY/MM/dd') as last_date, color, nb_obs",
         "db_to_json_columns": {
-            "id_unite_geo": "area_id",
-            "cd_nom": "taxon_id",
-            "laste_date": "date",
+            "id_area": "unity_id",
+            "id_nom": "taxon_id",
+            "last_date": "date",
             "color": "color",
             "nb_obs": "nb_obs",
         },
@@ -487,15 +487,15 @@ INV_TABLE_INFOS = {
         },
     },
     TABLE_INV_TAXA_UNITY: {
-        "id_col": "id_unite_geo",
+        "id_col": "id_area",
         "json_name": "taxa_unity",
         "sqlite_name": "taxa_unities",
-        "select_col": "id_unite_geo, id_nom, to_char(derniere_date,'YYYY/MM/dd') as derniere_date, couleur, nb_obs",
+        "select_col": "id_area, id_nom, to_char(last_obs,'YYYY/MM/dd') as last_obs, color, nb_obs",
         "db_to_json_columns": {
-            "id_unite_geo": "unity_id",
+            "id_area": "unity_id",
             "id_nom": "taxon_id",
-            "derniere_date": "date",
-            "couleur": "color",
+            "last_date": "date",
+            "color": "color",
             "nb_obs": "nb_obs",
         },
     },
