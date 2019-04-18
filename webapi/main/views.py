@@ -354,9 +354,10 @@ def import_data_occtax_gn2(json_data, data):
             # set nomenclature from criterion mapping
             MAPPING_CRITERION = settings.FAUNA_MAPPING_CRITERION_NOMENCLATURE_STATEMENT if json_data['input_type'] in ('mortality', 'fauna') else settings.INV_MAPPING_CRITERION_NOMENCLATURE_STATEMENT
             for nomenclature in MAPPING_CRITERION:
+                print(nomenclature)
                 for mapping in nomenclature['mapping_id']:
                     if taxon.observation.criterion in mapping['id_criterion_origin']:
-                        new_feature[mapping['nomenclature_target']] = mapping['id_nomenclature_target']
+                        new_feature[nomenclature['nomenclature_type_target']] = get_id_nomenclature(*mapping['id_nomenclature_target'])
             #column, id_nomenclature = settings.MAPPING_CRITERION_NOMENCLATURE_STATEMENT.get(taxon.observation.criterion, (None, None))
             # if column is not None:
             #     new_feature[column] = id_nomenclature
@@ -395,9 +396,6 @@ def import_data_occtax_gn2(json_data, data):
             if taxon.counting.adult_female > 0:
                 objects = []
                 count_feature = {'table_name': table_counting, 'id_occurrence_occtax': id_occurence}
-                column, id_nomenclature = settings.MAPPING_CRITERION_NOMENCLATURE_COUNTING.get(taxon.observation.criterion, (None, None))
-                if column is not None:
-                    count_feature[column] = id_nomenclature
                 # adulte
                 count_feature['id_nomenclature_life_stage'] = get_id_nomenclature('STADE_VIE', '2')
                 # sexe = femelle
@@ -415,9 +413,6 @@ def import_data_occtax_gn2(json_data, data):
 
             if taxon.counting.adult > 0:
                 count_feature = {'table_name': table_counting, 'id_occurrence_occtax': id_occurence}
-                column, id_nomenclature = settings.MAPPING_CRITERION_NOMENCLATURE_COUNTING.get(taxon.observation.criterion, (None, None))
-                if column is not None:
-                    count_feature[column] = id_nomenclature
                 # adulte
                 count_feature['id_nomenclature_life_stage'] = get_id_nomenclature('STADE_VIE', '2')
                 # sexe = inconnu
@@ -434,9 +429,6 @@ def import_data_occtax_gn2(json_data, data):
 
             if taxon.counting.not_adult > 0:
                 count_feature = {'table_name': table_counting, 'id_occurrence_occtax': id_occurence}
-                column, id_nomenclature = settings.MAPPING_CRITERION_NOMENCLATURE_COUNTING.get(taxon.observation.criterion, (None, None))
-                if column is not None:
-                    count_feature[column] = id_nomenclature
                 # stade devie = inconnu
                 count_feature['id_nomenclature_life_stage'] = get_id_nomenclature('STADE_VIE', '0')
                 # sexe = inconnu
@@ -452,9 +444,6 @@ def import_data_occtax_gn2(json_data, data):
 
             if taxon.counting.yearling > 0:
                 count_feature = {'table_name': table_counting, 'id_occurrence_occtax': id_occurence}
-                column, id_nomenclature = settings.MAPPING_CRITERION_NOMENCLATURE_COUNTING.get(taxon.observation.criterion, (None, None))
-                if column is not None:
-                    count_feature[column] = id_nomenclature
                 # stade de vie = immature
                 count_feature['id_nomenclature_life_stage'] = get_id_nomenclature('STADE_VIE', '4')
                 # sexe = inconnu
@@ -470,9 +459,6 @@ def import_data_occtax_gn2(json_data, data):
 
             if taxon.counting.young > 0:
                 count_feature = {'table_name': table_counting, 'id_occurrence_occtax': id_occurence}
-                column, id_nomenclature = settings.MAPPING_CRITERION_NOMENCLATURE_COUNTING.get(taxon.observation.criterion, (None, None))
-                if column is not None:
-                    count_feature[column] = id_nomenclature
                 # stade de vie = immature
                 count_feature['id_nomenclature_life_stage'] = get_id_nomenclature('STADE_VIE', '3')
                 # sexe = inconnu
@@ -488,9 +474,6 @@ def import_data_occtax_gn2(json_data, data):
 
             if taxon.counting.sex_age_unspecified > 0:
                 count_feature = {'table_name': table_counting, 'id_occurrence_occtax': id_occurence}
-                column, id_nomenclature = settings.MAPPING_CRITERION_NOMENCLATURE_COUNTING.get(taxon.observation.criterion, (None, None))
-                if column is not None:
-                    count_feature[column] = id_nomenclature
                 # stade devie = inconnu
                 count_feature['id_nomenclature_life_stage'] = get_id_nomenclature('STADE_VIE', '0')
                 # sexe = inconnu

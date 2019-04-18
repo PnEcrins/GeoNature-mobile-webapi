@@ -795,68 +795,68 @@ INV_TABLE_INFOS_GEOJSON = {
 
 FAUNA_MAPPING_CRITERION_NOMENCLATURE_STATEMENT = [
     {
-        'nomenclature_target': 'id_nomenclature_obs_meth', 
+        'nomenclature_type_target': 'id_nomenclature_obs_meth', 
         'mapping_id': [
             # vu
-            {'id_criterion_origin': [2,5,6,8,9,10,11,12,14,16,18,21,22,23,26,27,29,30,31,33,34,35,37,38,101,102,103,201,204,208,209,214,215,217,221,222,224,226], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('METH_OBS','0')"},
+            {'id_criterion_origin': [2,5,6,8,9,10,11,12,14,16,18,21,22,23,26,27,29,30,31,33,34,35,37,38,101,102,103,201,204,208,209,214,215,217,221,222,224,226], 'id_nomenclature_target': ('METH_OBS','0')},
             # entendu
-            {'id_criterion_origin': [4,7, 207], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('METH_OBS','1')"},
+            {'id_criterion_origin': [4,7, 207], 'id_nomenclature_target': ('METH_OBS','1')},
             # Empreinte
-            {'id_criterion_origin': [3, 219], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('METH_OBS','4')"},
+            {'id_criterion_origin': [3, 219], 'id_nomenclature_target': ('METH_OBS','4')},
             #" Fèces/Guano/Epreintes"
-            {'id_criterion_origin': [205], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('METH_OBS','6')"},
+            {'id_criterion_origin': [205], 'id_nomenclature_target': ('METH_OBS','6')},
             # Nid/Gîte
-            {'id_criterion_origin': [13,15,17,19,20,216], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('METH_OBS','8')"},
+            {'id_criterion_origin': [13,15,17,19,20,216], 'id_nomenclature_target': ('METH_OBS','8')},
             # Restes de repas
-            {'id_criterion_origin': [211], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('METH_OBS','12')"},
+            {'id_criterion_origin': [211], 'id_nomenclature_target': ('METH_OBS','12')},
             # Autres
-            {'id_criterion_origin': [105,203,220], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('METH_OBS','20')"},
+            {'id_criterion_origin': [105,203,220], 'id_nomenclature_target': ('METH_OBS','20')},
             # Galerie/terrier
-            {'id_criterion_origin': [24,25], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('METH_OBS','23')"},
+            {'id_criterion_origin': [24,25], 'id_nomenclature_target': ('METH_OBS','23')},
         ]
     },
     {
-        'nomenclature_target': 'id_nomenclature_bio_condition',
+        'nomenclature_type_target': 'id_nomenclature_bio_condition',
         'mapping_id':[
             # trouvé mort
-            {'id_criterion_origin': [2], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('ETA_BIO','3')"}
+            {'id_criterion_origin': [2], 'id_nomenclature_target': ('ETA_BIO','3')}
         ]
     },
     {
-        'nomenclature_target': 'id_nomenclature_bio_status',
+        'nomenclature_type_target': 'id_nomenclature_bio_status',
         'mapping_id':
          [
             # reproduction
-            {'id_criterion_origin': [10,11,12,13,14,15,16,17,18,19,20,21,22,23,27,28,29,31,32,33,35,36,37,101,102,204,209,215,216,221,224,226], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('STATUT_BIO','3')"},
+            {'id_criterion_origin': [10,11,12,13,14,15,16,17,18,19,20,21,22,23,27,28,29,31,32,33,35,36,37,101,102,204,209,215,216,221,224,226], 'id_nomenclature_target': ('STATUT_BIO','3')},
             # hibernation
-            {'id_criterion_origin': [26], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('STATUT_BIO','4')"},
+            {'id_criterion_origin': [26], 'id_nomenclature_target': ('STATUT_BIO','4')},
         ]
     }
 ]
 
 INV_MAPPING_CRITERION_NOMENCLATURE_STATEMENT = [
     {
-        'nomenclature_target': 'id_nomenclature_obs_meth', 
+        'nomenclature_type_target': 'id_nomenclature_obs_meth', 
         'mapping_id': [
             # vu
-            {'id_criterion_origin': [1, 2, 3, 8], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('METH_OBS','0')"},
+            {'id_criterion_origin': [1, 2, 3, 8], 'id_nomenclature_target': ('METH_OBS','0')},
             # Autres
-            {'id_criterion_origin': [5], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('METH_OBS','20')"},
+            {'id_criterion_origin': [5], 'id_nomenclature_target': ('METH_OBS','20')},
         ]
     },
     {
-        'nomenclature_target': 'id_nomenclature_bio_condition',
+        'nomenclature_type_target': 'id_nomenclature_bio_condition',
         'mapping_id':[
             # trouvé mort
-            {'id_criterion_origin': [8], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('ETA_BIO','3')"}
+            {'id_criterion_origin': [8], 'id_nomenclature_target': ('ETA_BIO','3')}
         ]
     },
     {
-        'nomenclature_target': 'id_nomenclature_bio_status',
+        'nomenclature_type_target': 'id_nomenclature_bio_status',
         'mapping_id':
          [
-            # reproduction # TODO: parade nuptial
-            {'id_criterion_origin': [2], 'id_nomenclature_target': "ref_nomenclatures.get_id_nomenclature('STATUT_BIO','3')"},
+            # TODO: parade nuptiale =  reproduction ?
+            {'id_criterion_origin': [2], 'id_nomenclature_target': ('STATUT_BIO','3')},
         ]
     }
 ]
