@@ -352,7 +352,7 @@ def import_data_occtax_gn2(json_data, data):
             new_feature['meta_v_taxref'] = None
 
             # set nomenclature from criterion mapping
-            MAPPING_CRITERION = settings.MAPPING_CRITERION_NOMENCLATURE_STATEMENT if json_data['input_type'] in ('mortality', 'fauna') else settings.INV_MAPPING_CRITERION_NOMENCLATURE_STATEMENT
+            MAPPING_CRITERION = settings.FAUNA_MAPPING_CRITERION_NOMENCLATURE_STATEMENT if json_data['input_type'] in ('mortality', 'fauna') else settings.INV_MAPPING_CRITERION_NOMENCLATURE_STATEMENT
             for nomenclature in MAPPING_CRITERION:
                 for mapping in nomenclature['mapping_id']:
                     if taxon.observation.criterion in mapping['id_criterion_origin']:
