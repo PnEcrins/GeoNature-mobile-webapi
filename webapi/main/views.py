@@ -872,7 +872,9 @@ def export_sqlite(request):
                     tabTab.append({'table_name': settings.TABLE_GN2_TAXA, 'filter': True})
                     tabTab.append({'table_name': settings.TABLE_FAUNA_CRITERION, 'filter': False})
                 if mode == "invertebrate":
-                    tabTab.append({'table_name': settings.TABLE_INV_TAXA_UNITY, 'filter': False})
+                    # on ne recalcule pas les corespodance pour inverterbré, car tout est dans la table
+                    # gn_synthese.cor_area_taxon et dans a la vue  gn_synchronomade.v_nomade_cor_area_taxon
+                    #tabTab.append({'table_name': settings.TABLE_INV_TAXA_UNITY, 'filter': False})
                     tabTab.append({'table_name': settings.TABLE_INV_TAXA, 'filter': True})
                     tabTab.append({'table_name': settings.TABLE_INV_CRITERION, 'filter': False})
                     tabTab.append({'table_name': settings.TABLE_INV_ENVIRONEMENTS, 'filter': False})
