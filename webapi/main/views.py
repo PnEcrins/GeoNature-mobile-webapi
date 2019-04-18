@@ -315,8 +315,8 @@ def import_data_occtax_gn2(json_data, data):
 
         new_feature['meta_device_entry'] = d.initial_input
 
-        # default id_dataset for all data
-        new_feature['id_dataset'] = settings.DEFAULT_ID_DATASET
+        # default id_dataset for per app
+        new_feature['id_dataset'] = settings.DEFAULT_ID_DATASET.get(json_data['input_type'])
 
         # write to the database in 4326 column -> the trigger write in geom_local
         new_feature['geom_4326'] = "ST_GeomFromText('POINT(%s %s)', 4326)" % (d.geolocation.longitude, d.geolocation.latitude)
@@ -351,10 +351,15 @@ def import_data_occtax_gn2(json_data, data):
             new_feature['id_nomenclature_determination_method'] = default_nomenclatures.get('METH_DETERMIN')
             new_feature['meta_v_taxref'] = None
 
-            # set nomenclature from criterion
-            column, id_nomenclature = settings.MAPPING_CRITERION_NOMENCLATURE_STATEMENT.get(taxon.observation.criterion, (None, None))
-            if column is not None:
-                new_feature[column] = id_nomenclature
+            # set nomenclature from criterion mapping
+            MAPPING_CRITERION = settings.MAPPING_CRITERION_NOMENCLATURE_STATEMENT if json_data['input_type'] in ('mortality', 'fauna') else settings.INV_MAPPING_CRITERION_NOMENCLATURE_STATEMENT
+            for nomenclature in MAPPING_CRITERION:
+                for mapping in nomenclature['mapping_id']:
+                    if taxon.observation.criterion in mapping['id_criterion_origin']:
+                        new_feature[mapping['nomenclature_target']] = mapping['id_nomenclature_target']
+            #column, id_nomenclature = settings.MAPPING_CRITERION_NOMENCLATURE_STATEMENT.get(taxon.observation.criterion, (None, None))
+            # if column is not None:
+            #     new_feature[column] = id_nomenclature
 
             new_feature['comment'] = taxon.comment
 
@@ -371,9 +376,9 @@ def import_data_occtax_gn2(json_data, data):
             if taxon.counting.adult_male > 0:
                 objects = []
                 count_feature = {'table_name': table_counting, 'id_occurrence_occtax': id_occurence}
-                column, id_nomenclature = settings.MAPPING_CRITERION_NOMENCLATURE_COUNTING.get(taxon.observation.criterion, (None, None))
-                if column is not None:
-                    count_feature[column] = id_nomenclature
+                # column, id_nomenclature = settings.MAPPING_CRITERION_NOMENCLATURE_COUNTING.get(taxon.observation.criterion, (None, None))
+                # if column is not None:
+                #     count_feature[column] = id_nomenclature
                 # adulte
                 count_feature['id_nomenclature_life_stage'] = get_id_nomenclature('STADE_VIE', '2')
                 # male
