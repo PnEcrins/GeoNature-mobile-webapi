@@ -232,12 +232,6 @@ TABLE_FLORA_SEARCH = "gn_synchronomade.v_mobile_recherche"
 
 TABLE_USERS = "utilisateurs.v_nomade_observateurs_all"
 
-# TODO: dataset différent pour mortalité/invertebré/faune
-DEFAULT_ID_DATASET = {
-    'fauna': 1,
-    'mortality': 1,
-    'invertebrate': 1,
-}
 
 # GLOBAL -------------------------------------------------------------------
 GLOBAL_TABLE_INFOS = {

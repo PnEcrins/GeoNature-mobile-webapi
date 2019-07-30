@@ -935,7 +935,6 @@ def export_sqlite(request):
 
             con.commit()
             con.close()
-
             wrapper = FileWrapper(file(output))
             response = HttpResponse(wrapper, content_type='application/x-sqlite3')
             response["Last-Modified"] = http_date()
