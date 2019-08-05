@@ -1,3 +1,9 @@
+
+if [ ! -d 'log' ]
+  then
+      mkdir log
+fi
+
 APP_DIR=$(readlink -e "${0%/*}")
 echo $APP_DIR
 echo $PWD

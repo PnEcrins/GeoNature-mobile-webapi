@@ -3,7 +3,6 @@ bin/ lib/:
 
 install: bin/
 	bin/python setup.py install
-	mkdir log
 	/bin/bash install_app.sh
 
 clean:
