@@ -3,6 +3,8 @@ bin/ lib/:
 
 install: bin/
 	bin/python setup.py install
+	mkdir log
+	/bin/bash install_app.sh
 
 clean:
-	rm -rf bin/ lib/ build/ dist/ main.egg-info/ include/ local/
+	sudo rm -rf bin/ lib/ build/ dist/ main.egg-info/ include/ local/ /etc/supervisor/conf.d/webapi-service.conf log/

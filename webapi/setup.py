@@ -14,20 +14,21 @@ setup(
     description="Webapi GeoNature",
     long_description=open(os.path.join(here, 'README.rst')).read(),
     zip_safe=False,
-    install_requires = [
+    install_requires=[
         'django == 1.4.1',  # pinned by buildout
         'psycopg2 == 2.7.5',
         'easydict == 1.4',
         'shapely == 1.2.16',
         'geojson == 1.0.1',
-        'simplejson == 2.6.2',        
+        'simplejson == 2.6.2',
+        'gunicorn==19.9.0'
     ],
     data_files=[('main', ['main/data.db.sample'])],
-    tests_requires = [],
+    tests_requires=[],
     packages=find_packages(),
-    classifiers  = ['Natural Language :: English',
-                    'Environment :: Web Environment',
-                    'Framework :: Django',
-                    'Development Status :: 5 - Production/Stable',
-                    'Programming Language :: Python :: 2.5'],
+    classifiers=['Natural Language :: English',
+                 'Environment :: Web Environment',
+                 'Framework :: Django',
+                 'Development Status :: 5 - Production/Stable',
+                 'Programming Language :: Python :: 2.5'],
 )

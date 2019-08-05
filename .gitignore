@@ -15,4 +15,6 @@ webapi/local/*
 webapi/share/*
 webapi/main/settings_local.py
 webapi/pip-selfcheck.json
+webapi/log/*
+webapi/main/webapi.pid
 *.pyc
