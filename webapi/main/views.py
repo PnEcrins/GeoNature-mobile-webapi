@@ -421,12 +421,11 @@ def import_data_occtax_gn2(json_data, data):
                     count_feature['count_min'] = taxon.counting.adult
                     count_feature['count_max'] = taxon.counting.adult
                     cursor = sync_db([count_feature], table_infos, database_id)
-
-
+                print(taxon.counting)
                 if taxon.counting.not_adult > 0:
                     count_feature = {'table_name': table_counting, 'id_occurrence_occtax': id_occurence}
                     # stade devie = inconnu
-                    count_feature['id_nomenclature_life_stage'] = get_id_nomenclature('STADE_VIE', '0')
+                    count_feature['id_nomenclature_life_stage'] = get_id_nomenclature('STADE_VIE', '3')
                     # sexe = inconnu
                     count_feature['id_nomenclature_sex'] = get_id_nomenclature('SEXE', '0')
                     # obj de dénombrement = Individu
