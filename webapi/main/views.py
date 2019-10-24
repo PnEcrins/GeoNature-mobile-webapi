@@ -31,7 +31,6 @@ from main.utils import sync_db, query_db, commit_transaction, check_connection
 
 logger = logging.getLogger(__name__)
 
-
 @csrf_exempt
 def import_data(request):
     """
@@ -297,19 +296,17 @@ def import_data_occtax_gn2(json_data, data):
             new_feature['id_nomenclature_grp_typ'] = default_nomenclatures.get('TYP_GRP')
 
             # get altitude from database function
-            query_altitude = "SELECT ref_geo.fct_get_altitude_intersection(ST_SetSRID(ST_MakePoint('{}','{}'), 4326))".format(
+            query_altitude = "SELECT * FROM ref_geo.fct_get_altitude_intersection(ST_SetSRID(ST_MakePoint('{}','{}'), 4326))".format(
                 d.geolocation.longitude, d.geolocation.latitude
             )
             cursor = query_db(query_altitude, database_id)
             row = cursor.fetchone()
             if row:
                 try:
-                    alt = int(row[0][0])
-                    new_feature['altitude_min'] = row[0][0]
-                    new_feature['altitude_max'] = row[0][0]
+                    new_feature['altitude_min'] = int(row[0])
+                    new_feature['altitude_max'] = int(row[1])
                 except ValueError:
-                    logger.info('altitude is not a integer')
-
+                    logger.info('Erreur while parsing altitude')
             new_feature['meta_device_entry'] = d.initial_input
 
             # default id_dataset for per app
@@ -421,12 +418,11 @@ def import_data_occtax_gn2(json_data, data):
                     count_feature['count_min'] = taxon.counting.adult
                     count_feature['count_max'] = taxon.counting.adult
                     cursor = sync_db([count_feature], table_infos, database_id)
-
-
+                print(taxon.counting)
                 if taxon.counting.not_adult > 0:
                     count_feature = {'table_name': table_counting, 'id_occurrence_occtax': id_occurence}
                     # stade devie = inconnu
-                    count_feature['id_nomenclature_life_stage'] = get_id_nomenclature('STADE_VIE', '0')
+                    count_feature['id_nomenclature_life_stage'] = get_id_nomenclature('STADE_VIE', '3')
                     # sexe = inconnu
                     count_feature['id_nomenclature_sex'] = get_id_nomenclature('SEXE', '0')
                     # obj de dénombrement = Individu
