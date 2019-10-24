@@ -141,17 +141,17 @@ LOGGING = {
         "": {
             "handlers": ["console"],
             "level": "DEBUG",
-            "propagate": False,  # this tells logger to send logging message
+            "propagate": True,  # this tells logger to send logging message
             # to its parent (will send if set to True)
         },
         "django.request": {
             "handlers": ["console", "mail_admins"],
-            "level": "ERROR",
+            "level": "DEBUG",
             "propagate": True,
         },
         "django": {
             "handlers": ["console", "mail_admins"],
-            "level": "ERROR",
+            "level": "DEBUG",
             "propagate": True,
         },
     },
