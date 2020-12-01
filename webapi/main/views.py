@@ -292,7 +292,6 @@ def import_data_occtax_gn2(json_data, data):
             if json_data['input_type'] == 'invertebrate':
                 new_feature['hour_min'] = date_obs[1]
                 new_feature['hour_max'] = date_obs[1]
-            new_feature['id_nomenclature_obs_technique'] = default_nomenclatures.get('TECHNIQUE_OBS')
             new_feature['id_nomenclature_grp_typ'] = default_nomenclatures.get('TYP_GRP')
 
             # get altitude from database function
@@ -331,7 +330,9 @@ def import_data_occtax_gn2(json_data, data):
                 new_feature['cd_nom'] = get_cdnom_from_idnom(database_id, taxon.id_taxon)
                 new_feature['nom_cite'] = taxon.name_entered
 
-                new_feature['id_nomenclature_obs_meth'] = default_nomenclatures.get('METH_OBS')
+                new_feature['id_nomenclature_obs_technique'] = default_nomenclatures.get('METH_OBS')
+                new_feature['id_nomenclature_behaviour'] = default_nomenclatures.get('OCC_COMPORTEMENT')
+                
                 if json_data['input_type'] != 'mortality':
                     new_feature['id_nomenclature_bio_condition'] = default_nomenclatures.get('ETA_BIO')
                 else:
