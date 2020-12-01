@@ -786,6 +786,7 @@ INV_TABLE_INFOS_GEOJSON = {
 # ]
 
 
+
 FAUNA_MAPPING_CRITERION_NOMENCLATURE_STATEMENT = [
     {
         'nomenclature_type_target': 'id_nomenclature_obs_technique', 
@@ -806,6 +807,22 @@ FAUNA_MAPPING_CRITERION_NOMENCLATURE_STATEMENT = [
             {'id_criterion_origin': [105,203,220], 'id_nomenclature_target': ('METH_OBS','20')},
             # Galerie/terrier
             {'id_criterion_origin': [24,25], 'id_nomenclature_target': ('METH_OBS','23')},
+        ]
+    },
+    {
+        'nomenclature_type_target': 'id_nomenclature_behaviour', 
+        'mapping_id': [
+            # chant
+            {'id_criterion_origin': [7, 10, 11], 'id_nomenclature_target': ('OCC_COMPORTEMENT','18')},
+            # territorial
+            {'id_criterion_origin': [9], 'id_nomenclature_target': ('OCC_COMPORTEMENT','22')},
+            # accouplement
+            {'id_criterion_origin': [21, 27, 31], 'id_nomenclature_target': ('OCC_COMPORTEMENT','19')},
+            # Pond
+            {'id_criterion_origin': [28, 32, 35, 36], 'id_nomenclature_target': ('OCC_COMPORTEMENT','23')},
+            # Hivernage
+            {'id_criterion_origin': [30, 34], 'id_nomenclature_target': ('OCC_COMPORTEMENT','9')},
+
         ]
     },
     {
