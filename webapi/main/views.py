@@ -363,6 +363,19 @@ def import_data_occtax_gn2(json_data, data):
                 # get generated id_occurrence
                 id_occurence = cursor.fetchone()[0]
 
+                commit_transaction(database_id)
+
+                # Insert into TABLE_SHEET_ROLE (multiple observers enable)
+                for observer in d.observers_id:
+                    objects = []
+                    new_feature = {}
+                    new_feature['table_name'] = settings.TABLE_OCCTAX_SHEET_ROLE
+                    new_feature['id_releve_occtax'] = d.id
+
+                    new_feature['id_role'] = observer
+                    objects.append(new_feature)
+                    sync_db(objects, table_infos, database_id)
+
                 # Push in counting
                 # set the counting under 'counting" key for mortality JSON
                 if json_data['input_type'] == 'mortality':
@@ -419,7 +432,6 @@ def import_data_occtax_gn2(json_data, data):
                     count_feature['count_min'] = taxon.counting.adult
                     count_feature['count_max'] = taxon.counting.adult
                     cursor = sync_db([count_feature], table_infos, database_id)
-                print(taxon.counting)
                 if taxon.counting.not_adult > 0:
                     count_feature = {'table_name': table_counting, 'id_occurrence_occtax': id_occurence}
                     # stade devie = inconnu
@@ -480,16 +492,6 @@ def import_data_occtax_gn2(json_data, data):
                     count_feature['count_max'] = taxon.counting.sex_age_unspecified
                     cursor = sync_db([count_feature], table_infos, database_id)
 
-            # Insert into TABLE_SHEET_ROLE (multiple observers enable)
-            for observer in d.observers_id:
-                objects = []
-                new_feature = {}
-                new_feature['table_name'] = settings.TABLE_OCCTAX_SHEET_ROLE
-                new_feature['id_releve_occtax'] = d.id
-
-                new_feature['id_role'] = observer
-                objects.append(new_feature)
-                sync_db(objects, table_infos, database_id)
 
             # Commit transaction
             commit_transaction(database_id)
