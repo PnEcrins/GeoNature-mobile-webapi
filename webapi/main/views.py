@@ -317,6 +317,19 @@ def import_data_occtax_gn2(json_data, data):
             objects.append(new_feature)
             cursor = sync_db(objects, table_infos, database_id)
 
+            # Insert into TABLE_SHEET_ROLE (multiple observers enable)
+            # MUST BE BEFORE coutinf for the trigger
+            for observer in d.observers_id:
+                objects = []
+                new_feature = {}
+                new_feature['table_name'] = settings.TABLE_OCCTAX_SHEET_ROLE
+                new_feature['id_releve_occtax'] = d.id
+
+                new_feature['id_role'] = observer
+                objects.append(new_feature)
+                sync_db(objects, table_infos, database_id)
+            
+            
             # Insert into TABLE_STATEMENT = occurrence
             statement_ids = []
             for taxon in d.taxons:
