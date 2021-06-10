@@ -15,7 +15,7 @@ setup(
     long_description=open(os.path.join(here, 'README.rst')).read(),
     zip_safe=False,
     install_requires = [
-        'django == 1.4.1',  # pinned by buildout
+        'django == 2.2.24',  # pinned by buildout
         'psycopg2 == 2.4.1',
         'easydict == 1.4',
         'shapely == 1.2.16',
